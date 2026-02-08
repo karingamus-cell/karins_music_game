@@ -3,69 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>🏆 Family Hitster</title>
+    <title>🏆 Family Hitster (Spotify Edition)</title>
     <style>
-        :root { --spotify-green: #1DB954; --bg: #121212; --card: #181818; --curtain: #ff69b4; }
+        :root { --spotify-green: #1DB954; --bg: #121212; --card: #181818; }
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: white; text-align: center; margin: 0; padding: 20px; -webkit-tap-highlight-color: transparent; }
         
-        .card { background: var(--card); padding: 20px; border-radius: 20px; max-width: 500px; margin: auto; box-shadow: 0 10px 40px rgba(0,0,0,0.5); border: 1px solid #333; }
+        .card { background: var(--card); padding: 25px; border-radius: 20px; max-width: 500px; margin: auto; box-shadow: 0 10px 40px rgba(0,0,0,0.5); border: 1px solid #333; }
         
         h1 { margin-bottom: 20px; font-weight: 800; }
         .accent { color: var(--spotify-green); }
         
-        button { background: var(--spotify-green); border: none; padding: 15px 25px; color: white; border-radius: 30px; font-weight: bold; cursor: pointer; margin: 10px 0; width: 100%; font-size: 16px; transition: transform 0.1s; }
+        button { background: var(--spotify-green); border: none; padding: 16px 25px; color: white; border-radius: 30px; font-weight: bold; cursor: pointer; margin: 10px 0; width: 100%; font-size: 16px; transition: transform 0.1s; }
         button:active { transform: scale(0.98); }
         button.secondary { background: #333; }
+        button.spotify-btn { background: #1ed760; color: black; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        button.danger { background: transparent; border: 1px solid #444; color: #888; width: auto; font-size: 12px; margin-top: 30px; }
         
         input { width: 85%; padding: 12px; border-radius: 10px; border: 1px solid #444; margin-bottom: 10px; background: #222; color: white; font-size: 16px; }
         
         .hidden { display: none !important; }
         
-        /* THE CRITICAL PLAYER WRAPPER */
-        #player-wrapper {
-            position: relative;
-            width: 100%;
-            padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+        /* ACTION BOX STYLING */
+        .action-box {
             background: #000;
+            padding: 30px 20px;
+            border-radius: 15px;
             margin-bottom: 20px;
-            border-radius: 12px;
-            overflow: hidden;
-        }
-        
-        /* The Actual YouTube Iframe */
-        #youtube-player {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-        }
-        
-        /* The "Pink Square" Curtain */
-        #curtain {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background-color: var(--curtain);
-            z-index: 10;
+            border: 1px solid #333;
+            min-height: 150px;
             display: flex;
             flex-direction: column;
-            align-items: center;
             justify-content: center;
-            cursor: pointer;
+            align-items: center;
         }
+
+        .helper-text { font-size: 14px; color: #aaa; margin-bottom: 15px; line-height: 1.4; }
         
-        .play-icon {
-            font-size: 50px;
-            background: rgba(0,0,0,0.2);
-            width: 80px; height: 80px;
-            border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            border: 3px solid white;
-            margin-bottom: 10px;
-        }
-
         .checkbox-group { text-align: left; background: #222; padding: 15px; border-radius: 10px; margin: 15px 0; }
-        .checkbox-group label { display: flex; align-items: center; margin: 10px 0; font-size: 16px; }
-        input[type="checkbox"] { width: 20px; height: 20px; margin-right: 15px; accent-color: var(--spotify-green); }
+        .checkbox-group label { display: flex; align-items: center; margin: 10px 0; font-size: 16px; cursor: pointer; }
+        input[type="checkbox"] { width: 22px; height: 22px; margin-right: 15px; accent-color: var(--spotify-green); }
 
-        #statusText { font-size: 12px; color: #888; min-height: 20px; margin-top: 5px; }
+        .score-badge { display: inline-block; background: #333; padding: 5px 10px; border-radius: 10px; margin: 3px; font-size: 12px; }
+        
+        /* Spotify Icon SVG */
+        .sp-icon { width: 24px; height: 24px; fill: black; }
     </style>
 </head>
 <body>
@@ -74,9 +55,10 @@
     <!-- SETUP SCREEN -->
     <div id="setup">
         <h1>🎵 Family <span class="accent">Hitster</span></h1>
+        <p style="color:#888;">Add players to start!</p>
         <input type="text" id="pName" placeholder="Player Name" autocomplete="off">
         <button onclick="addPlayer()">Add Player</button>
-        <div id="pList" style="margin: 15px 0; display: flex; flex-wrap: wrap; justify-content: center; gap: 5px;"></div>
+        <div id="pList" style="margin: 15px 0;"></div>
         <button id="startBtn" class="hidden" onclick="startGame()" style="background: white; color: black;">Start Game</button>
     </div>
 
@@ -84,35 +66,35 @@
     <div id="game" class="hidden">
         <h2 id="turnTxt" class="accent" style="margin-top: 0;"></h2>
         
-        <!-- PLAYER BOX -->
-        <div id="player-wrapper">
-            <div id="youtube-player"></div>
-            <!-- This is the Pink Curtain -->
-            <div id="curtain" onclick="manualPlay()">
-                <div class="play-icon">▶</div>
-                <span style="font-weight: bold; font-size: 18px;">Tap to Play</span>
-            </div>
-        </div>
-
-        <!-- PHASE 1: PLAYING -->
-        <div id="playPhase">
-            <button id="loadBtn" onclick="playRandomSong()">🎲 1. Load New Song</button>
-            <p id="statusText"></p>
+        <!-- MAIN ACTION AREA -->
+        <div class="action-box">
             
-            <div id="controls" class="hidden">
-                <button onclick="toggleAudio()" class="secondary" id="pauseBtn" style="width: 48%; display: inline-block;">⏸ Pause</button>
-                <button onclick="showResults()" style="width: 48%; display: inline-block; background: var(--spotify-green);">2. Results</button>
+            <!-- STEP 1: OPEN SPOTIFY -->
+            <div id="step1">
+                <p class="helper-text">1. Click below to open song in Spotify.<br><b>Important:</b> Don't look at the screen (or use a DJ)!</p>
+                <button onclick="openSpotify()" class="spotify-btn">
+                    <svg class="sp-icon" viewBox="0 0 24 24"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.299z"/></svg>
+                    Play on Spotify
+                </button>
             </div>
+
+            <!-- STEP 2: REVEAL -->
+            <div id="step2" class="hidden">
+                <p class="helper-text">Music playing in background app...</p>
+                <p class="helper-text" style="color: var(--spotify-green);">Come back here when ready to guess!</p>
+                <button onclick="showResults()" class="secondary">👀 Show Results</button>
+            </div>
+
         </div>
 
-        <!-- PHASE 2: RESULTS -->
+        <!-- RESULTS SCREEN -->
         <div id="results" class="hidden">
             <h2 id="resTitle" style="margin: 5px 0;"></h2>
-            <p id="resArtist" style="color: #aaa; margin: 0;"></p>
+            <p id="resArtist" style="color: #aaa; margin: 0; font-size: 1.2em;"></p>
             <h1 id="resYear" class="accent" style="margin: 10px 0;"></h1>
             
             <div class="checkbox-group">
-                <p style="margin: 0 0 10px 0; color: #aaa; font-size: 14px;">Mark correct answers:</p>
+                <p style="margin: 0 0 10px 0; color: #aaa; font-size: 14px;">Mark correct answers (2+ for point):</p>
                 <label><input type="checkbox" class="sc-check"> Song Name</label>
                 <label><input type="checkbox" class="sc-check"> Artist</label>
                 <label><input type="checkbox" class="sc-check"> Year</label>
@@ -122,116 +104,62 @@
         </div>
 
         <div id="sb" style="margin-top: 20px; padding-top: 15px; border-top: 1px solid #333; font-size: 14px; color: #888;"></div>
+        <button onclick="confirmReset()" class="danger">Reset Game</button>
     </div>
 </div>
 
 <script>
-    // --- YOUTUBE API SETUP ---
-    var tag = document.createElement('script');
-    tag.src = "https://www.youtube.com/iframe_api";
-    var firstScriptTag = document.getElementsByTagName('script')[0];
-    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-
-    let player;
-    let isPlayerReady = false;
-
-    function onYouTubeIframeAPIReady() {
-        player = new YT.Player('youtube-player', {
-            height: '100%',
-            width: '100%',
-            videoId: '',
-            playerVars: { 'playsinline': 1, 'controls': 0, 'fs': 0, 'rel': 0, 'modestbranding': 1 },
-            events: {
-                'onReady': onPlayerReady,
-                'onStateChange': onPlayerStateChange,
-                'onError': onPlayerError
-            }
-        });
-    }
-
-    function onPlayerReady(event) {
-        isPlayerReady = true;
-        event.target.setVolume(100);
-    }
-
-    function onPlayerStateChange(event) {
-        // If playing (1), show controls
-        if (event.data === YT.PlayerState.PLAYING) {
-            document.getElementById('loadBtn').classList.add('hidden');
-            document.getElementById('controls').classList.remove('hidden');
-            document.getElementById('statusText').innerText = "Playing...";
-            document.getElementById('pauseBtn').innerText = "⏸ Pause";
-        }
-    }
-
-    function onPlayerError(event) {
-        // Auto-skip if blocked
-        document.getElementById('statusText').innerText = "Video blocked. Skipping...";
-        setTimeout(playRandomSong, 1000);
-    }
-
-    // --- GAME LOGIC ---
-    // 100 Songs Playlist (ID is the YouTube Video ID)
-    const playlist = [
-        { n: "Bohemian Rhapsody", a: "Queen", y: 1975, id: "fJ9rUzIMcZQ" },
-        { n: "Imagine", a: "John Lennon", y: 1971, id: "YkgkThdzX-8" },
-        { n: "Billie Jean", a: "Michael Jackson", y: 1982, id: "Zi_XLOBDo_Y" },
-        { n: "Stayin' Alive", a: "Bee Gees", y: 1977, id: "I_izvAbhExY" },
-        { n: "Dancing Queen", a: "ABBA", y: 1976, id: "xFrGuyw1V8s" },
-        { n: "Hotel California", a: "Eagles", y: 1976, id: "09839DpTctU" },
-        { n: "Sweet Child O' Mine", a: "Guns N' Roses", y: 1987, id: "1w7OgIMMRc4" },
-        { n: "Smells Like Teen Spirit", a: "Nirvana", y: 1991, id: "hTWKbfoikeg" },
-        { n: "Like a Rolling Stone", a: "Bob Dylan", y: 1965, id: "IwOfCgkyEj0" },
-        { n: "I Will Always Love You", a: "Whitney Houston", y: 1992, id: "3JWTaaS7LdU" },
-        { n: "Rolling in the Deep", a: "Adele", y: 2011, id: "rYEDA3JcQqw" },
-        { n: "Shape of You", a: "Ed Sheeran", y: 2017, id: "JGwWNGJdvx8" },
-        { n: "Uptown Funk", a: "Mark Ronson ft. Bruno Mars", y: 2014, id: "OPf0YbXqDm0" },
-        { n: "Wonderwall", a: "Oasis", y: 1995, id: "6hzrDeceEKc" },
-        { n: "Hey Jude", a: "The Beatles", y: 1968, id: "A_MjCqQoLLA" },
-        { n: "Hallelujah", a: "Jeff Buckley", y: 1994, id: "y8AWFf7EAc4" },
-        { n: "Eye of the Tiger", a: "Survivor", y: 1982, id: "btPJPFnesV4" },
-        { n: "Africa", a: "Toto", y: 1982, id: "FTQbiNvZqaY" },
-        { n: "Take on Me", a: "a-ha", y: 1985, id: "djV11Xbc914" },
-        { n: "Livin' on a Prayer", a: "Bon Jovi", y: 1986, id: "lDK9QqIzhwk" },
-        { n: "Girls Just Want to Have Fun", a: "Cyndi Lauper", y: 1983, id: "PIb6AZdTr-A" },
-        { n: "Every Breath You Take", a: "The Police", y: 1983, id: "OMOGaugKpzs" },
-        { n: "Respect", a: "Aretha Franklin", y: 1967, id: "6FOUqQt3Kg0" },
-        { n: "Superstition", a: "Stevie Wonder", y: 1972, id: "0CFuCYNx-1g" },
-        { n: "Purple Rain", a: "Prince", y: 1984, id: "TVNk2qOT3_E" },
-        { n: "Lose Yourself", a: "Eminem", y: 2002, id: "_Yhyp-_hX2s" },
-        { n: "Single Ladies", a: "Beyoncé", y: 2008, id: "4m1EFMoRFvY" },
-        { n: "Rehab", a: "Amy Winehouse", y: 2006, id: "KUmZp8pR1uc" },
-        { n: "Blinding Lights", a: "The Weeknd", y: 2019, id: "4NRXx6U8ABQ" },
-        { n: "Flowers", a: "Miley Cyrus", y: 2023, id: "G7KNmW9a75Y" },
-        { n: "Heroes", a: "David Bowie", y: 1977, id: "lXgkuM2NhYI" },
-        { n: "Wannabe", a: "Spice Girls", y: 1996, id: "gJLIiF15wjQ" },
-        { n: "I Want to Hold Your Hand", a: "The Beatles", y: 1963, id: "jenWdylTtzs" },
-        { n: "Vogue", a: "Madonna", y: 1990, id: "GuJQSAiODqI" },
-        { n: "Jolene", a: "Dolly Parton", y: 1973, id: "Ixrje2rXLMA" },
-        { n: "Creep", a: "Radiohead", y: 1992, id: "XFkzRNyygfk" },
-        { n: "Thriller", a: "Michael Jackson", y: 1982, id: "sOnqjkJTMaA" },
-        { n: "Umbrella", a: "Rihanna", y: 2007, id: "CvBfHwUxHIk" },
-        { n: "No Woman, No Cry", a: "Bob Marley", y: 1974, id: "IT8XvxIfldk" },
-        { n: "I Will Survive", a: "Gloria Gaynor", y: 1978, id: "ARt9HV9T0w8" },
-        { n: "Someone Like You", a: "Adele", y: 2011, id: "hLQl3WQQoQ0" },
-        { n: "Toxic", a: "Britney Spears", y: 2003, id: "LOZuxwVk7TU" },
-        { n: "Shake It Off", a: "Taylor Swift", y: 2014, id: "nfWlot6h_JM" },
-        { n: "Go Your Own Way", a: "Fleetwood Mac", y: 1977, id: "6ul-cZyuYq4" },
-        { n: "Piano Man", a: "Billy Joel", y: 1973, id: "gxEPV4kolz0" },
-        { n: "Seven Nation Army", a: "The White Stripes", y: 2003, id: "0J2QdDbelmY" },
-        { n: "Mr. Brightside", a: "The Killers", y: 2004, id: "gGdGFtwCNBE" },
-        { n: "Beat It", a: "Michael Jackson", y: 1982, id: "oRdxUFDoQe0" },
-        { n: "Under Pressure", a: "Queen & David Bowie", y: 1981, id: "a01QQZyl-_I" },
-        { n: "Sweet Home Alabama", a: "Lynyrd Skynyrd", y: 1974, id: "ye5BuYf8q4o" }
+    // --- DATA: REAL SPOTIFY IDS ---
+    // The 'id' is the unique Spotify Track ID. 
+    // This will open the specific song directly in the app.
+    const rawPlaylist = [
+        { n: "Bohemian Rhapsody", a: "Queen", y: 1975, id: "7tFiyTwD0nx5a1eklYtX2J" },
+        { n: "Billie Jean", a: "Michael Jackson", y: 1982, id: "5ChkMS8JPOMy3J9mQ6252s" },
+        { n: "Stayin' Alive", a: "Bee Gees", y: 1977, id: "5ubvP9oKmxLUVq506fgLhk" },
+        { n: "I Will Always Love You", a: "Whitney Houston", y: 1992, id: "4eHbdreAnSOrDDsFfc4Fpm" },
+        { n: "Shape of You", a: "Ed Sheeran", y: 2017, id: "7qiZfU4dY1lWllzX7mPBI3" },
+        { n: "Rolling in the Deep", a: "Adele", y: 2011, id: "1CkvWZ0wKxM23uyovCAFvp" },
+        { n: "Smells Like Teen Spirit", a: "Nirvana", y: 1991, id: "5ghIJDpPoe3CfHMGu71E6T" },
+        { n: "Sweet Child O' Mine", a: "Guns N' Roses", y: 1987, id: "7o2CTH4ctstm8TNelqjb51" },
+        { n: "Hotel California", a: "Eagles", y: 1976, id: "40riOy7x9W7GXjyGp4pjAv" },
+        { n: "Dancing Queen", a: "ABBA", y: 1976, id: "0GjEhVFGZW8afUYGChu3Rr" },
+        { n: "Imagine", a: "John Lennon", y: 1971, id: "7pKfPomDEeI4TPT6EOYjn9" },
+        { n: "Mr. Brightside", a: "The Killers", y: 2004, id: "003vvx7Niy0yvhvHt4a68B" },
+        { n: "Uptown Funk", a: "Mark Ronson", y: 2014, id: "32OlwWuMpZ6b0aN2RZOeMS" },
+        { n: "Wonderwall", a: "Oasis", y: 1995, id: "7ygpwy2qP3NbrxVkHvUhXY" },
+        { n: "Hey Jude", a: "The Beatles", y: 1968, id: "0aym2LBJBk9DA602DOaQJ5" },
+        { n: "Africa", a: "Toto", y: 1982, id: "2374M0fQpWi3dLnB54qaLX" },
+        { n: "Take on Me", a: "a-ha", y: 1985, id: "2WfaOiMkCvy7F5fcp2zZ8L" },
+        { n: "Livin' on a Prayer", a: "Bon Jovi", y: 1986, id: "37ZJ0p5Jm13JPevGcx4SkF" },
+        { n: "Girls Just Want to Have Fun", a: "Cyndi Lauper", y: 1983, id: "4y1LsJpmMti1ii2n44t4rj" },
+        { n: "Every Breath You Take", a: "The Police", y: 1983, id: "1JSTJqkT5qHq8MDJnJbRE1" },
+        { n: "Superstition", a: "Stevie Wonder", y: 1972, id: "33lc84JgJ6kiLXj3mG96oP" },
+        { n: "Purple Rain", a: "Prince", y: 1984, id: "54X78diSLoUDI3joC2bjWZ" },
+        { n: "Lose Yourself", a: "Eminem", y: 2002, id: "15JINEqzVMv3SvJTAXAKED" },
+        { n: "Single Ladies", a: "Beyoncé", y: 2008, id: "5SFXNPCmCN3Z5vY3Kuw2Uv" },
+        { n: "Blinding Lights", a: "The Weeknd", y: 2019, id: "0VjIjW4GlUZAMYd2vXMi3b" },
+        { n: "Flowers", a: "Miley Cyrus", y: 2023, id: "0yLdNVWF3Srea0uzk55zLn" },
+        { n: "As It Was", a: "Harry Styles", y: 2022, id: "4LRPiXqCikLlN15c3yImP7" },
+        { n: "Seven Nation Army", a: "The White Stripes", y: 2003, id: "3QP17S5NPLkUPPxiNcUBnF" },
+        { n: "No Woman, No Cry", a: "Bob Marley", y: 1974, id: "3jDdpoIh8cQUBsXmNCyoSV" },
+        { n: "I Want to Hold Your Hand", a: "The Beatles", y: 1963, id: "4pbG9SUmWIxiIU5FQ2IvpO" },
+        { n: "Thriller", a: "Michael Jackson", y: 1982, id: "2LlQb7Uoj1kKyGhlkBf9aC" }
     ];
 
+    // --- LOGIC ---
     let players = [];
     let cur = 0;
     let deck = [];
     let currentSong = null;
 
-    function shuffle(arr) {
-        return arr.sort(() => Math.random() - 0.5);
+    function shuffle(array) {
+        let currentIndex = array.length, randomIndex;
+        while (currentIndex != 0) {
+            randomIndex = Math.floor(Math.random() * currentIndex);
+            currentIndex--;
+            [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+        }
+        return array;
     }
 
     function addPlayer() {
@@ -244,62 +172,52 @@
     }
 
     function renderPlayers() {
-        let html = players.map(p => `<span style="background:#333; padding:5px 10px; border-radius:15px; font-size:12px;">${p.name}</span>`).join(' ');
+        let html = players.map(p => `<span class="score-badge">${p.name}</span>`).join(' ');
         document.getElementById('pList').innerHTML = html;
         if(players.length > 0) document.getElementById('startBtn').classList.remove('hidden');
     }
 
     function startGame() {
-        if(!isPlayerReady) { alert("Player loading... wait a second."); return; }
-        deck = shuffle([...playlist]);
+        deck = shuffle([...rawPlaylist]);
         document.getElementById('setup').classList.add('hidden');
         document.getElementById('game').classList.remove('hidden');
         updateBoard();
+        loadNextSong(); 
     }
 
     function updateBoard() {
         document.getElementById('turnTxt').innerText = players[cur].name + "'s Turn";
-        document.getElementById('sb').innerText = "Scores: " + players.map(p => p.name + ": " + p.score).join('  |  ');
+        document.getElementById('sb').innerHTML = "<b>SCOREBOARD</b><br>" + 
+            players.map(p => `${p.name}: ${p.score}`).join(' | ');
     }
 
-    function playRandomSong() {
+    function loadNextSong() {
         // Reset UI
-        document.getElementById('curtain').style.display = 'flex'; // Show Curtain
         document.getElementById('results').classList.add('hidden');
-        document.getElementById('controls').classList.add('hidden');
-        document.getElementById('statusText').innerText = "Loading Video...";
-
-        if(deck.length === 0) deck = shuffle([...playlist]);
+        document.getElementById('step1').classList.remove('hidden');
+        document.getElementById('step2').classList.add('hidden');
+        
+        if(deck.length === 0) deck = shuffle([...rawPlaylist]);
         currentSong = deck.pop();
-
-        // Load Video
-        if(player && player.loadVideoById) {
-            // Start 40s in to skip silent intros
-            player.loadVideoById({videoId: currentSong.id, startSeconds: 40});
-            player.unMute();
-            player.setVolume(100);
-        }
     }
 
-    // Called when user clicks the Pink Curtain
-    function manualPlay() {
-        if(player && player.playVideo) player.playVideo();
-    }
-
-    function toggleAudio() {
-        let s = player.getPlayerState();
-        if(s === 1) { player.pauseVideo(); document.getElementById('pauseBtn').innerText = "▶ Play"; }
-        else { player.playVideo(); document.getElementById('pauseBtn').innerText = "⏸ Pause"; }
+    function openSpotify() {
+        // Open Spotify Track
+        // Try to open app first, fall back to web
+        const url = `https://open.spotify.com/track/${currentSong.id}`;
+        window.open(url, '_blank');
+        
+        // Show step 2
+        document.getElementById('step1').classList.add('hidden');
+        document.getElementById('step2').classList.remove('hidden');
     }
 
     function showResults() {
-        player.pauseVideo();
-        document.getElementById('curtain').style.display = 'none'; // Reveal Video
-        document.getElementById('controls').classList.add('hidden');
+        document.getElementById('step2').classList.add('hidden');
         document.getElementById('results').classList.remove('hidden');
         
         document.getElementById('resTitle').innerText = currentSong.n;
-        document.getElementById('resArtist').innerText = currentSong.a;
+        document.getElementById('resArtist').innerText = "By: " + currentSong.a;
         document.getElementById('resYear').innerText = currentSong.y;
     }
 
@@ -313,15 +231,15 @@
             return;
         }
 
-        // Reset
+        // Cleanup
         document.querySelectorAll('.sc-check').forEach(c => c.checked = false);
-        document.getElementById('results').classList.add('hidden');
-        document.getElementById('loadBtn').classList.remove('hidden');
-        player.stopVideo();
-        document.getElementById('curtain').style.display = 'flex'; // Hide video again
-        
         cur = (cur + 1) % players.length;
         updateBoard();
+        loadNextSong();
+    }
+
+    function confirmReset() {
+        if(confirm("Restart game?")) location.reload();
     }
 </script>
 </body>
