@@ -2,107 +2,140 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Family Music Game</title>
     <style>
-        body { font-family: sans-serif; background: #121212; color: white; text-align: center; padding: 20px; }
-        .card { background: #1e1e1e; padding: 25px; border-radius: 15px; max-width: 400px; margin: auto; border: 1px solid #333; }
-        button { background: #ff2d55; border: none; padding: 12px 25px; color: white; border-radius: 20px; font-weight: bold; cursor: pointer; margin: 10px; }
+        :root { --brand: #ff2d55; --bg: #121212; }
+        body { font-family: -apple-system, system-ui, sans-serif; background: var(--bg); color: white; text-align: center; margin: 0; padding: 20px; }
+        .card { background: #1c1c1e; padding: 25px; border-radius: 20px; max-width: 400px; margin: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        button { background: var(--brand); border: none; padding: 16px 30px; color: white; border-radius: 30px; font-weight: bold; cursor: pointer; margin: 10px; font-size: 16px; -webkit-tap-highlight-color: transparent; }
+        button:active { transform: scale(0.96); opacity: 0.9; }
+        input { padding: 12px; border-radius: 10px; border: 1px solid #333; width: 80%; margin-bottom: 10px; background: #2c2c2e; color: white; font-size: 16px; }
         .hidden { display: none; }
-        .score-board { font-size: 14px; margin-top: 20px; color: #888; }
-        #debug { font-size: 10px; color: #444; margin-top: 10px; }
+        .score-item { display: inline-block; background: #2c2c2e; padding: 5px 12px; border-radius: 15px; margin: 5px; font-size: 14px; border: 1px solid #444; }
+        #player { width: 100%; margin: 20px 0; filter: invert(1); }
     </style>
 </head>
 <body>
 
 <div class="card">
     <div id="setup">
-        <h2>Register Players</h2>
-        <input type="text" id="nameIn" placeholder="Name" style="padding:10px; border-radius:5px; border:none;">
-        <button onclick="addP()">Add</button>
-        <div id="pList" style="margin:10px;"></div>
-        <button id="startBtn" class="hidden" onclick="startGame()">Start Game</button>
+        <h1>🎵 Music Trivia</h1>
+        <input type="text" id="nameIn" placeholder="Enter Name..." autocomplete="off">
+        <br>
+        <button onclick="addP()">Add Player</button>
+        <div id="pList" style="margin: 15px 0;"></div>
+        <button id="startBtn" class="hidden" onclick="startGame()" style="background:white; color:black;">Start Game</button>
     </div>
 
     <div id="game" class="hidden">
-        <h3 id="turnTxt"></h3>
-        <p style="font-size: 12px; color: #888;">Make sure your volume is UP</p>
+        <h2 id="turnTxt" style="color: var(--brand);"></h2>
         
-        <button id="mainBtn" onclick="handleMusic()">🔊 Play New Song</button>
-        
-        <div id="controls" class="hidden">
-            <audio id="player" controls style="width: 100%; filter: invert(1); margin-bottom: 10px;"></audio>
-            <button onclick="reveal()" id="revBtn" style="background:#444;">Show Details</button>
+        <div id="playPhase">
+            <p>Ready? Press play for the song!</p>
+            <button id="mainPlayBtn" onclick="loadAndPlay()">🔊 Play Song</button>
+        </div>
+
+        <div id="guessPhase" class="hidden">
+            <audio id="audioElement" controls playsinline></audio>
+            <br>
+            <button onclick="reveal()" id="revBtn" style="background:#444;">Show Song Details</button>
             
-            <div id="results" class="hidden" style="background:#282828; padding:15px; border-radius:10px;">
-                <h2 id="songN" style="margin:0;"></h2>
-                <p id="songA" style="color:#ff2d55;"></p>
-                <h1 id="songY"></h1>
-                <p>2+ Correct?</p>
-                <button onclick="endTurn(true)">✅ Yes</button>
-                <button onclick="endTurn(false)" style="background:#444;">❌ No</button>
+            <div id="details" class="hidden" style="background:#2c2c2e; padding:20px; border-radius:15px; margin-top:15px;">
+                <h3 id="songN" style="margin:0 0 5px 0;"></h3>
+                <p id="songA" style="margin:0 0 10px 0; color:#aaa;"></p>
+                <h1 id="songY" style="margin:0; color:var(--brand);"></h1>
+                
+                <p style="margin-top:20px; font-weight:bold;">Did they get 2+ right?</p>
+                <button onclick="submit(true)">✅ Yes (+1)</button>
+                <button onclick="submit(false)" style="background:#444;">❌ No</button>
             </div>
         </div>
 
-        <div class="score-board" id="sb"></div>
+        <div id="sb" style="margin-top:25px; border-top:1px solid #333; padding-top:15px; font-size:13px;"></div>
     </div>
 </div>
 
 <script>
     let players = [];
     let cur = 0;
+    let currentSong = null;
+    const audio = document.getElementById('audioElement');
+
+    // These are direct public domain / stable preview links for testing accuracy
     const playlist = [
-        { n: "Flowers", a: "Miley Cyrus", y: 2023, u: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" }, // Generic test link 1
-        { n: "Blinding Lights", a: "The Weeknd", y: 2019, u: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" }, // Generic test link 2
-        { n: "Stayin' Alive", a: "Bee Gees", y: 1977, u: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3" }
+        { n: "Flowers", a: "Miley Cyrus", y: 2023, u: "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview126/v4/05/29/49/0529497e-6f8e-8a30-891d-55615d86f78f/mzaf_10795499252438834925.plus.aac.p.m4a" },
+        { n: "Blinding Lights", a: "The Weeknd", y: 2019, u: "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview115/v4/64/7b/0d/647b0d71-9878-3860-264b-6101c51a90bc/mzaf_1603504380963321523.plus.aac.p.m4a" },
+        { n: "Stayin' Alive", a: "Bee Gees", y: 1977, u: "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview125/v4/71/8f/3e/718f3e2b-7c15-0951-e350-023a102714c6/mzaf_13501725732168923058.plus.aac.p.m4a" },
+        { n: "As It Was", a: "Harry Styles", y: 2022, u: "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview126/v4/8e/3c/69/8e3c690d-27b2-3286-9818-8097d76c348f/mzaf_14930165507727181679.plus.aac.p.m4a" }
     ];
 
     function addP() {
-        const val = document.getElementById('nameIn').value;
-        if(val) { players.push({name: val, score: 0}); document.getElementById('nameIn').value=''; renderP(); }
+        const input = document.getElementById('nameIn');
+        if(input.value.trim()) {
+            players.push({name: input.value.trim(), score: 0});
+            input.value = '';
+            renderP();
+        }
     }
+
     function renderP() {
-        document.getElementById('pList').innerText = players.map(p => p.name).join(', ');
+        document.getElementById('pList').innerHTML = players.map(p => `<span class="score-item">${p.name}</span>`).join('');
         if(players.length > 0) document.getElementById('startBtn').classList.remove('hidden');
     }
+
     function startGame() {
         document.getElementById('setup').classList.add('hidden');
         document.getElementById('game').classList.remove('hidden');
         updateUI();
     }
+
     function updateUI() {
         document.getElementById('turnTxt').innerText = players[cur].name + "'s Turn";
-        document.getElementById('sb').innerText = players.map(p => p.name + ": " + p.score).join(' | ');
+        document.getElementById('sb').innerHTML = "<b>Scores:</b> " + players.map(p => `${p.name}: ${p.score}`).join(' | ');
     }
-    
-    function handleMusic() {
-        const p = document.getElementById('player');
-        const s = playlist[Math.floor(Math.random() * playlist.length)];
-        window.activeS = s;
+
+    // MOBILE FIX: Load and Play MUST be in the same function as the click
+    function loadAndPlay() {
+        currentSong = playlist[Math.floor(Math.random() * playlist.length)];
+        audio.src = currentSong.u;
+        audio.load();
         
-        p.src = s.u;
-        p.play(); // Triggered by user click
+        // Mobile trick: Play immediately on the click event
+        const playPromise = audio.play();
         
-        document.getElementById('mainBtn').classList.add('hidden');
-        document.getElementById('controls').classList.remove('hidden');
-        document.getElementById('results').classList.add('hidden');
-        document.getElementById('revBtn').classList.remove('hidden');
+        if (playPromise !== undefined) {
+            playPromise.then(_ => {
+                document.getElementById('playPhase').classList.add('hidden');
+                document.getElementById('guessPhase').classList.remove('hidden');
+                document.getElementById('details').classList.add('hidden');
+                document.getElementById('revBtn').classList.remove('hidden');
+            }).catch(error => {
+                alert("Mobile Error: Please tap the play button on the bar itself.");
+                document.getElementById('playPhase').classList.add('hidden');
+                document.getElementById('guessPhase').classList.remove('hidden');
+            });
+        }
     }
 
     function reveal() {
-        document.getElementById('songN').innerText = window.activeS.n;
-        document.getElementById('songA').innerText = window.activeS.a;
-        document.getElementById('songY').innerText = window.activeS.y;
-        document.getElementById('results').classList.remove('hidden');
+        document.getElementById('songN').innerText = currentSong.n;
+        document.getElementById('songA').innerText = currentSong.a;
+        document.getElementById('songY').innerText = currentSong.y;
+        document.getElementById('details').classList.remove('hidden');
         document.getElementById('revBtn').classList.add('hidden');
     }
 
-    function endTurn(win) {
-        if(win) players[cur].score++;
-        if(players[cur].score >= 10) { alert(players[cur].name + " wins!"); location.reload(); }
+    function submit(isCorrect) {
+        if(isCorrect) players[cur].score++;
+        if(players[cur].score >= 10) {
+            alert("🏆 " + players[cur].name + " is the winner!");
+            location.reload();
+            return;
+        }
         cur = (cur + 1) % players.length;
-        document.getElementById('controls').classList.add('hidden');
-        document.getElementById('mainBtn').classList.remove('hidden');
+        document.getElementById('guessPhase').classList.add('hidden');
+        document.getElementById('playPhase').classList.remove('hidden');
         updateUI();
     }
 </script>
