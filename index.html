@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Family Music Trivia</title>
+    <style>
+        :root { --spotify-green: #1DB954; --dark-bg: #121212; --card-bg: #181818; }
+        body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background-color: var(--dark-bg); color: white; display: flex; justify-content: center; padding: 20px; margin: 0; }
+        .container { width: 100%; max-width: 500px; background: var(--card-bg); padding: 30px; border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.7); text-align: center; }
+        h1 { color: var(--spotify-green); margin-bottom: 10px; }
+        input[type="text"] { width: 80%; padding: 12px; border-radius: 25px; border: none; margin-bottom: 10px; font-size: 16px; }
+        button { background: var(--spotify-green); border: none; padding: 12px 25px; color: white; border-radius: 25px; font-weight: bold; cursor: pointer; margin: 10px 5px; transition: 0.2s; }
+        button:hover { transform: scale(1.05); background: #1ed760; }
+        button:disabled { background: #444; cursor: not-allowed; }
+        .player-tag { display: inline-block; background: #333; padding: 5px 15px; border-radius: 15px; margin: 5px; font-size: 14px; }
+        .turn-box { border: 2px solid var(--spotify-green); border-radius: 15px; padding: 15px; margin: 20px 0; font-size: 1.2em; }
+        .results-area { background: #222; border-radius: 15px; padding: 20px; margin-top: 20px; border: 1px solid #444; }
+        .check-item { display: block; text-align: left; margin: 10px 0; font-size: 18px; cursor: pointer; }
+        .score-list { margin-top: 30px; font-size: 14px; color: #aaa; border-top: 1px solid #333; padding-top: 15px; }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div id="setupScreen">
+        <h1>🎵 Hitster Clone</h1>
+        <p>First to 10 points wins!</p>
+        <input type="text" id="nameInput" placeholder="Enter Player Name">
+        <br>
+        <button onclick="addPlayer()">Add Player</button>
+        <div id="playerNames"></div>
+        <button id="startBtn" class="hidden" onclick="startGame()" style="background: white; color: black; margin-top: 20px;">Start Game</button>
+    </div>
+
+    <div id="gameScreen" class="hidden">
+        <div class="turn-box" id="turnDisplay"></div>
+        
+        <button id="playBtn" onclick="playSong()">🔊 Play Song</button>
+        <audio id="musicPlayer"></audio>
+
+        <div id="guessingUI" class="hidden">
+            <button onclick="revealInfo()" id="revealBtn">Show Results</button>
+            
+            <div id="infoDisplay" class="hidden results-area">
+                <h2 id="rTitle" style="margin: 5px 0;"></h2>
+                <p id="rArtist" style="color: #aaa; margin: 5px 0;"></p>
+                <h1 id="rYear" style="color: var(--spotify-green); margin: 10px 0;"></h1>
+                
+                <hr style="border: 0.5px solid #333;">
+                <p>What did they get right?</p>
+                <label class="check-item"><input type="checkbox" class="score-check"> Song Name</label>
+                <label class="check-item"><input type="checkbox" class="score-check"> Performer</label>
+                <label class="check-item"><input type="checkbox" class="score-check"> Release Year</label>
+                
+                <button onclick="nextTurn()" style="width: 100%; margin-top: 15px;">Next Player</button>
+            </div>
+        </div>
+
+        <div class="score-list" id="scoreboard"></div>
+        <button onclick="confirmReset()" style="background:none; color:#555; font-size: 12px;">Reset Game</button>
+    </div>
+
+    <div id="winScreen" class="hidden">
+        <h1 style="font-size: 50px;">🏆</h1>
+        <h1 id="winnerName"></h1>
+        <p>Is the new Music Master!</p>
+        <button onclick="location.reload()">New Game</button>
+    </div>
+</div>
+
+<script>
+    let players = [];
+    let currentPlayerIndex = 0;
+    let currentSong = null;
+
+    // A sample of the top hits with Spotify preview links
+    const playlist = [
+        { name: "Shape of You", artist: "Ed Sheeran", year: 2017, preview: "https://p.scdn.co/mp3-preview/84fa6992764b8a74e548f382a3250cc6f40b8a4f" },
+        { name: "Blinding Lights", artist: "The Weeknd", year: 2019, preview: "https://p.scdn.co/mp3-preview/db64808383e204a91901cf10f1359c1c69137a1a" },
+        { name: "Bohemian Rhapsody", artist: "Queen", year: 1975, preview: "https://p.scdn.co/mp3-preview/903e91120078235e2e858712368a44b82531d27f" },
+        { name: "Flowers", artist: "Miley Cyrus", year: 2023, preview: "https://p.scdn.co/mp3-preview/8966c888258b4b733152504992925b6ec6e5b497" },
+        { name: "Billie Jean", artist: "Michael Jackson", year: 1982, preview: "https://p.scdn.co/mp3-preview/3f282433b70860840c8f53347f384f506b3a2688" },
+        { name: "Uptown Funk", artist: "Bruno Mars", year: 2014, preview: "https://p.scdn.co/mp3-preview/88a264a7c1325d7967926b05dfb2d6a50689e472" },
+        { name: "As It Was", artist: "Harry Styles", year: 2022, preview: "https://p.scdn.co/mp3-preview/419067b864a72666a7b73c4d7e5d654523f2f811" },
+        { name: "Sweet Child O' Mine", artist: "Guns N' Roses", year: 1987, preview: "https://p.scdn.co/mp3-preview/51b1481e4b857700a406798059e9a4f22c1516e8" },
+        { name: "Stayin' Alive", artist: "Bee Gees", year: 1977, preview: "https://p.scdn.co/mp3-preview/38062534568858a74130d7be940428d0e74f1345" },
+        { name: "Levitating", artist: "Dua Lipa", year: 2020, preview: "https://p.scdn.co/mp3-preview/45693158c8e14e1f727c65f042e616f73167195e" },
+        { name: "Dreams", artist: "Fleetwood Mac", year: 1977, preview: "https://p.scdn.co/mp3-preview/9f96896256f140685934149e37f68c7833077e6f" },
+        { name: "Cruel Summer", artist: "Taylor Swift", year: 2019, preview: "https://p.scdn.co/mp3-preview/612a87851216b206263df9e6659f8a37930810d8" },
+        { name: "Starboy", artist: "The Weeknd", year: 2016, preview: "https://p.scdn.co/mp3-preview/3a34a8a07119b9b5f50882798889980d2673235b" },
+        { name: "Smells Like Teen Spirit", artist: "Nirvana", year: 1991, preview: "https://p.scdn.co/mp3-preview/38600c9f13e5be37b5853f09204010377a06c873" }
+    ];
+
+    function addPlayer() {
+        const name = document.getElementById('nameInput').value.trim();
+        if (name) {
+            players.push({ name: name, score: 0 });
+            document.getElementById('nameInput').value = "";
+            renderPlayers();
+        }
+    }
+
+    function renderPlayers() {
+        const div = document.getElementById('playerNames');
+        div.innerHTML = players.map(p => `<span class="player-tag">${p.name}</span>`).join('');
+        if (players.length > 0) document.getElementById('startBtn').classList.remove('hidden');
+    }
+
+    function startGame() {
+        document.getElementById('setupScreen').classList.add('hidden');
+        document.getElementById('gameScreen').classList.remove('hidden');
+        updateTurnDisplay();
+    }
+
+    function updateTurnDisplay() {
+        document.getElementById('turnDisplay').innerText = `Current Turn: ${players[currentPlayerIndex].name}`;
+        renderScoreboard();
+    }
+
+    function playSong() {
+        currentSong = playlist[Math.floor(Math.random() * playlist.length)];
+        const audio = document.getElementById('musicPlayer');
+        audio.src = currentSong.preview;
+        audio.play();
+        
+        document.getElementById('playBtn').disabled = true;
+        document.getElementById('guessingUI').classList.remove('hidden');
+        document.getElementById('infoDisplay').classList.add('hidden');
+        document.getElementById('revealBtn').classList.remove('hidden');
+    }
+
+    function revealInfo() {
+        document.getElementById('rTitle').innerText = currentSong.name;
+        document.getElementById('rArtist').innerText = currentSong.artist;
+        document.getElementById('rYear').innerText = currentSong.year;
+        document.getElementById('infoDisplay').classList.remove('hidden');
+        document.getElementById('revealBtn').classList.add('hidden');
+    }
+
+    function nextTurn() {
+        const checked = document.querySelectorAll('.score-check:checked').length;
+        if (checked >= 2) {
+            players[currentPlayerIndex].score++;
+        }
+
+        if (players[currentPlayerIndex].score >= 10) {
+            showWinScreen();
+            return;
+        }
+
+        // Reset for next player
+        currentPlayerIndex = (currentPlayerIndex + 1) % players.length;
+        document.querySelectorAll('.score-check').forEach(c => c.checked = false);
+        document.getElementById('guessingUI').classList.add('hidden');
+        document.getElementById('playBtn').disabled = false;
+        updateTurnDisplay();
+    }
+
+    function renderScoreboard() {
+        const sb = document.getElementById('scoreboard');
+        sb.innerHTML = "<strong>Leaderboard:</strong><br>" + 
+            players.map(p => `${p.name}: ${p.score}/10`).join(' | ');
+    }
+
+    function showWinScreen() {
+        document.getElementById('gameScreen').classList.add('hidden');
+        document.getElementById('winScreen').classList.remove('hidden');
+        document.getElementById('winnerName').innerText = players[currentPlayerIndex].name;
+    }
+
+    function confirmReset() {
+        if (confirm("Start a new game? Current scores will be deleted.")) {
+            location.reload();
+        }
+    }
+</script>
+
+</body>
+</html>
