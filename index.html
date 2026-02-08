@@ -131,6 +131,9 @@
 </div>
 
 <script>
+    // --- STORAGE KEY ---
+    const STORAGE_KEY = 'family_hitster_save_v1';
+
     // --- YOUTUBE API SETUP ---
     var tag = document.createElement('script');
     tag.src = "https://www.youtube.com/iframe_api";
@@ -161,7 +164,6 @@
     }
 
     function onPlayerStateChange(event) {
-        // If playing (1), show controls and hide loading text
         if (event.data === YT.PlayerState.PLAYING) {
             document.getElementById('loadBtn').classList.add('hidden');
             document.getElementById('controls').classList.remove('hidden');
@@ -176,7 +178,7 @@
         if (retryCount < 3) {
             retryCount++;
             document.getElementById('statusText').innerText = "Video blocked/deleted. Shuffling to next...";
-            setTimeout(playRandomSong, 1500); // Wait a moment then auto-skip
+            setTimeout(playRandomSong, 1500); 
         } else {
             document.getElementById('statusText').innerText = "Connection issue. Tap pink square to retry.";
             document.getElementById('loadBtn').classList.remove('hidden');
@@ -243,7 +245,43 @@
     let deck = [];
     let currentSong = null;
 
-    // --- LOGIC ---
+    // --- SAVE/LOAD SYSTEM ---
+    function saveState() {
+        const state = {
+            players: players,
+            cur: cur,
+            deck: deck,
+            gameStarted: !document.getElementById('game').classList.contains('hidden')
+        };
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    }
+
+    function loadState() {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if(!raw) return;
+        
+        try {
+            const state = JSON.parse(raw);
+            players = state.players || [];
+            cur = state.cur || 0;
+            deck = state.deck || [];
+            
+            if(players.length > 0) renderPlayers();
+
+            // If game was already running, skip setup and show game screen
+            if(state.gameStarted && players.length > 0) {
+                document.getElementById('setup').classList.add('hidden');
+                document.getElementById('game').classList.remove('hidden');
+                updateBoard();
+                // We reset to the "Load Song" phase to avoid trying to auto-resume video
+                document.getElementById('results').classList.add('hidden');
+                document.getElementById('controls').classList.add('hidden');
+                document.getElementById('loadBtn').classList.remove('hidden');
+            }
+        } catch(e) { console.error("Save Error", e); }
+    }
+
+    // --- GAME LOGIC ---
 
     function shuffle(array) {
         let currentIndex = array.length, randomIndex;
@@ -261,6 +299,7 @@
             players.push({ name: n, score: 0 });
             document.getElementById('pName').value = '';
             renderPlayers();
+            saveState(); // SAVE
         }
     }
 
@@ -272,12 +311,13 @@
 
     function startGame() {
         if(!isPlayerReady) { alert("YouTube player loading... please wait."); return; }
-        // Shuffle playlist into deck
-        deck = shuffle([...playlist]);
+        // Only shuffle new deck if we don't have one (e.g. new game)
+        if(deck.length === 0) deck = shuffle([...playlist]);
+        
         document.getElementById('setup').classList.add('hidden');
         document.getElementById('game').classList.remove('hidden');
-        document.getElementById('player-wrapper').classList.add('active'); 
         updateBoard();
+        saveState(); // SAVE
     }
 
     function updateBoard() {
@@ -293,25 +333,22 @@
         document.getElementById('curtain').style.display = 'flex'; 
         document.getElementById('statusText').innerText = "Loading Video...";
         
-        // Stop previous video first
         if(player && player.stopVideo) player.stopVideo();
 
-        // Deck Management
+        // Deck Management with Logic
         if(deck.length === 0) {
-            // Reshuffle if empty, but ensure first new song != last song
             let lastSongId = currentSong ? currentSong.id : null;
             deck = shuffle([...playlist]);
+            // Ensure we don't repeat the very last song immediately
             if(deck[deck.length-1].id === lastSongId) {
-                // Swap last with first if same
                 let temp = deck[0];
                 deck[0] = deck[deck.length-1];
                 deck[deck.length-1] = temp;
             }
         }
         
-        // Pop unique song from deck
         currentSong = deck.pop();
-        console.log("Now Playing:", currentSong.n); // Debug for you
+        saveState(); // SAVE (deck changed)
 
         if(player && player.loadVideoById) {
             player.unMute();
@@ -337,7 +374,7 @@
 
     function showResults() {
         player.pauseVideo();
-        document.getElementById('curtain').style.display = 'none'; // Reveal
+        document.getElementById('curtain').style.display = 'none'; 
         document.getElementById('controls').classList.add('hidden');
         document.getElementById('results').classList.remove('hidden');
         
@@ -352,6 +389,7 @@
         
         if(players[cur].score >= 10) {
             alert(players[cur].name + " WINS!");
+            localStorage.removeItem(STORAGE_KEY); // Clear save on win
             location.reload();
             return;
         }
@@ -367,11 +405,18 @@
         document.getElementById('statusText').innerText = "";
         
         updateBoard();
+        saveState(); // SAVE (score changed)
     }
 
     function confirmReset() {
-        if(confirm("Restart game?")) location.reload();
+        if(confirm("Restart game?")) {
+            localStorage.removeItem(STORAGE_KEY);
+            location.reload();
+        }
     }
+
+    // Initialize Save System
+    loadState();
 </script>
 </body>
 </html>
