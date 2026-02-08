@@ -2,142 +2,107 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>100 Greatest Hits Trivia</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Family Music Trivia</title>
     <style>
-        :root { --brand: #ff2d55; --bg: #121212; }
-        body { font-family: -apple-system, system-ui, sans-serif; background: var(--bg); color: white; text-align: center; margin: 0; padding: 20px; }
-        .card { background: #1c1c1e; padding: 25px; border-radius: 20px; max-width: 450px; margin: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.5); border: 1px solid #333; }
-        button { background: var(--brand); border: none; padding: 16px 30px; color: white; border-radius: 30px; font-weight: bold; cursor: pointer; margin: 10px; font-size: 16px; width: 85%; }
+        body { font-family: sans-serif; background: #121212; color: white; text-align: center; padding: 20px; }
+        .card { background: #1e1e1e; padding: 20px; border-radius: 20px; max-width: 450px; margin: auto; }
+        button { background: #ff2d55; border: none; padding: 15px; color: white; border-radius: 30px; font-weight: bold; cursor: pointer; width: 80%; margin: 10px 0; }
         .hidden { display: none; }
-        #audioElement { width: 100%; margin: 20px 0; height: 50px; }
-        .score-chip { display: inline-block; background: #2c2c2e; padding: 5px 12px; border-radius: 15px; margin: 5px; font-size: 13px; border: 1px solid #444; }
-        input { padding: 12px; border-radius: 10px; border: 1px solid #333; width: 75%; margin-bottom: 10px; background: #2c2c2e; color: white; font-size: 16px; }
+        #video-container { width: 100%; height: 250px; background: #000; margin: 15px 0; border-radius: 10px; overflow: hidden; position: relative; }
+        #cover { position: absolute; top:0; left:0; width:100%; height:100%; background: #000; color: #555; display: flex; align-items: center; justify-content: center; z-index: 10; }
+        .score { font-size: 14px; opacity: 0.6; margin-top: 20px; }
     </style>
 </head>
 <body>
 
 <div class="card">
     <div id="setup">
-        <h1>🏆 Greatest Hits 100</h1>
-        <input type="text" id="nameIn" placeholder="Enter Player Name" autocomplete="off">
-        <br>
+        <h1>🎵 Family Hitster</h1>
+        <input type="text" id="pName" placeholder="Player Name" style="padding:10px; border-radius:5px; border:none; width:70%;">
         <button onclick="addP()">Add Player</button>
-        <div id="pList" style="margin: 15px 0;"></div>
-        <button id="startBtn" class="hidden" onclick="startGame()" style="background:white; color:black;">Start Game</button>
+        <div id="pList" style="margin:10px"></div>
+        <button id="startBtn" class="hidden" onclick="startG()" style="background:white; color:black;">Start Game</button>
     </div>
 
     <div id="game" class="hidden">
-        <h2 id="turnTxt" style="color: var(--brand);"></h2>
+        <h2 id="turnTxt"></h2>
         
-        <div id="playPhase">
-            <button onclick="loadSong()">🎲 Load New Song</button>
-            <audio id="audioElement" controls playsinline></audio>
+        <div id="video-container">
+            <div id="cover">❓ Song Playing... ❓</div>
+            <iframe id="ytPlayer" width="100%" height="100%" src="" frameborder="0" allow="autoplay"></iframe>
         </div>
 
-        <div id="guessPhase" class="hidden">
-            <button onclick="reveal()" id="revBtn" style="background:#444;">Show Song Details</button>
-            
-            <div id="details" class="hidden" style="background:#2c2c2e; padding:20px; border-radius:15px; margin-top:15px;">
-                <h3 id="songN" style="margin:0;"></h3>
-                <p id="songA" style="margin:5px 0; color:#aaa;"></p>
-                <h1 id="songY" style="margin:10px 0; color:var(--brand);"></h1>
-                
-                <p>Did they get 2+ right?</p>
-                <button onclick="submit(true)" style="width:40%; margin:5px;">✅ Yes</button>
-                <button onclick="submit(false)" style="background:#444; width:40%; margin:5px;">❌ No</button>
+        <button id="nextBtn" onclick="nextSong()">🎲 Load Random Song</button>
+        
+        <div id="controls" class="hidden">
+            <button onclick="reveal()" id="revBtn" style="background:#444;">Show Details</button>
+            <div id="resultUI" class="hidden">
+                <p>Did they get 2+ correct?</p>
+                <button onclick="score(true)" style="width:40%">✅ Yes</button>
+                <button onclick="score(false)" style="background:#444; width:40%">❌ No</button>
             </div>
         </div>
-        <div id="sb" style="margin-top:25px; border-top:1px solid #333; padding-top:15px; font-size:14px;"></div>
+        <div class="score" id="sb"></div>
     </div>
 </div>
 
 <script>
     let players = [];
     let cur = 0;
-    let playedSongs = [];
-
-    // COMPACT LIST OF TOP ALL-TIME HITS
-    const playlist = [
-        { n: "Stayin' Alive", a: "Bee Gees", y: 1977, u: "https://www.soundboard.com/handler/DownLoadTrack.ashx?cliptitle=Stayin+Alive&filename=mt/mti4ndu0ndm4ndu0ody3_7m86f_2b_2f_2b_2bmlo.MP3" },
-        { n: "Billie Jean", a: "Michael Jackson", y: 1982, u: "https://www.soundboard.com/handler/DownLoadTrack.ashx?cliptitle=Michael+Jackson+-+Billie+Jean&filename=mz/mzm0mdqxnti0mzm0mzk2_v_2f_2bh9v8v7re.MP3" },
-        { n: "Imagine", a: "John Lennon", y: 1971, u: "https://www.soundboard.com/handler/DownLoadTrack.ashx?cliptitle=John+Lennon+-+Imagine&filename=mz/mzm0mdqxnti0mzm0mzk2_scit59p_2b_2f_2bk.MP3" },
-        { n: "Bohemian Rhapsody", a: "Queen", y: 1975, u: "https://www.soundboard.com/handler/DownLoadTrack.ashx?cliptitle=Queen+-+Bohemian+Rhapsody&filename=mz/mzm0mdqxnti0mzm0mzk2_7u_2f_2b_2b8z88f98.MP3" },
-        { n: "Dancing Queen", a: "ABBA", y: 1976, u: "https://www.soundboard.com/handler/DownLoadTrack.ashx?cliptitle=ABBA+-+Dancing+Queen&filename=mz/mzm0mdqxnti0mzm0mzk2_vpsv_2b_2fz13_2bc.MP3" },
-        { n: "Superstition", a: "Stevie Wonder", y: 1972, u: "https://www.soundboard.com/handler/DownLoadTrack.ashx?cliptitle=Stevie+Wonder+-+Superstition&filename=mz/mzm0mdqxnti0mzm0mzk2_33id_2b_2fbtmsu.MP3" },
-        { n: "Hotel California", a: "Eagles", y: 1976, u: "https://www.soundboard.com/handler/DownLoadTrack.ashx?cliptitle=Eagles+-+Hotel+California&filename=mz/mzm0mdqxnti0mzm0mzk2_atn_2bcsh7m6s.MP3" },
-        { n: "Dreams", a: "Fleetwood Mac", y: 1977, u: "https://www.soundboard.com/handler/DownLoadTrack.ashx?cliptitle=Fleetwood+Mac+-+Dreams&filename=mz/mzm0mdqxnti0mzm0mzk2_v_2f3n_2b3o9_2bjw.MP3" },
-        { n: "Sweet Child O' Mine", a: "Guns N' Roses", y: 1987, u: "https://www.soundboard.com/handler/DownLoadTrack.ashx?cliptitle=Guns+N+Roses+-+Sweet+Child+O+Mine&filename=mz/mzm0mdqxnti0mzm0mzk2_p_2f4o_2ba1j4_2bo.MP3" },
-        { n: "Smells Like Teen Spirit", a: "Nirvana", y: 1991, u: "https://www.soundboard.com/handler/DownLoadTrack.ashx?cliptitle=Nirvana+-+Smells+Like+Teen+Spirit&filename=mz/mzm0mdqxnti0mzm0mzk2_a_2bs7u5m3m_2bg.MP3" },
-        { n: "Like a Rolling Stone", a: "Bob Dylan", y: 1965, u: "https://www.soundboard.com/handler/DownLoadTrack.ashx?cliptitle=Bob+Dylan+-+Like+a+Rolling+Stone&filename=mz/mzm0mdqxnti0mzm0mzk2_3vun7_2b_2f_2b_2fbtu.MP3" },
-        { n: "Rolling in the Deep", a: "Adele", y: 2011, u: "https://www.soundboard.com/handler/DownLoadTrack.ashx?cliptitle=Adele+-+Rolling+in+the+Deep&filename=mz/mzm0mdqxnti0mzm0mzk2_euvt_2bw_2f_2b8_2fyo.MP3" },
-        { n: "Uptown Funk", a: "Bruno Mars", y: 2014, u: "https://www.soundboard.com/handler/DownLoadTrack.ashx?cliptitle=Mark+Ronson+ft.+Bruno+Mars+-+Uptown+Funk&filename=mz/mzm0mdqxnti0mzm0mzk2_v_2fmx62tphre.MP3" },
-        { n: "Wonderwall", a: "Oasis", y: 1995, u: "https://www.soundboard.com/handler/DownLoadTrack.ashx?cliptitle=Oasis+-+Wonderwall&filename=mz/mzm0mdqxnti0mzm0mzk2_p43v_2bvev9t8.MP3" }
-        // To reach 100, we simply keep adding to this array.
+    
+    // Using YouTube Video IDs (Stable and won't be blocked)
+    const songs = [
+        { id: "fHI8X4OXluQ", n: "Amazing", y: "1980s" }, // Just examples, you can find more
+        { id: "dQw4w9WgXcQ", n: "Never Gonna Give You Up", y: "1987" },
+        { id: "L_jWHffIx5E", n: "Smash Mouth - All Star", y: "1999" }
     ];
 
-    const audio = document.getElementById('audioElement');
-
     function addP() {
-        const input = document.getElementById('nameIn');
-        if(input.value.trim()) {
-            players.push({name: input.value.trim(), score: 0});
-            input.value = '';
-            renderP();
-        }
+        const n = document.getElementById('pName').value;
+        if(n) { players.push({name: n, score: 0}); document.getElementById('pName').value=''; renderP(); }
     }
-
     function renderP() {
-        document.getElementById('pList').innerHTML = players.map(p => `<span class="score-chip">${p.name}</span>`).join('');
+        document.getElementById('pList').innerText = players.map(p => p.name).join(', ');
         if(players.length > 0) document.getElementById('startBtn').classList.remove('hidden');
     }
-
-    function startGame() {
+    function startG() {
         document.getElementById('setup').classList.add('hidden');
         document.getElementById('game').classList.remove('hidden');
-        updateUI();
+        update();
     }
-
-    function updateUI() {
+    function update() {
         document.getElementById('turnTxt').innerText = players[cur].name + "'s Turn";
-        document.getElementById('sb').innerHTML = "<b>Scores:</b><br>" + players.map(p => `${p.name}: ${p.score}`).join(' | ');
+        document.getElementById('sb').innerText = players.map(p => p.name + ": " + p.score).join(' | ');
     }
 
-    function loadSong() {
-        // Random Shuffling Logic
-        let available = playlist.filter(s => !playedSongs.includes(s.n));
-        if (available.length === 0) { playedSongs = []; available = playlist; }
+    function nextSong() {
+        const s = songs[Math.floor(Math.random() * songs.length)];
+        // Load YouTube video and start at a random time so they don't hear the intro
+        const startAt = Math.floor(Math.random() * 60) + 30;
+        document.getElementById('ytPlayer').src = `https://www.youtube.com/embed/${s.id}?autoplay=1&start=${startAt}`;
         
-        window.currentSong = available[Math.floor(Math.random() * available.length)];
-        playedSongs.push(window.currentSong.n);
-
-        // Load the audio
-        audio.src = window.currentSong.u;
-        audio.load();
-        
-        document.getElementById('guessPhase').classList.remove('hidden');
-        document.getElementById('details').classList.add('hidden');
+        document.getElementById('cover').classList.remove('hidden');
+        document.getElementById('controls').classList.remove('hidden');
+        document.getElementById('resultUI').classList.add('hidden');
         document.getElementById('revBtn').classList.remove('hidden');
+        document.getElementById('nextBtn').classList.add('hidden');
     }
 
     function reveal() {
-        document.getElementById('songN').innerText = window.currentSong.n;
-        document.getElementById('songA').innerText = "By: " + window.currentSong.a;
-        document.getElementById('songY').innerText = window.currentSong.y;
-        document.getElementById('details').classList.remove('hidden');
+        document.getElementById('cover').classList.add('hidden');
+        document.getElementById('resultUI').classList.remove('hidden');
         document.getElementById('revBtn').classList.add('hidden');
     }
 
-    function submit(isCorrect) {
-        if(isCorrect) players[cur].score++;
-        if(players[cur].score >= 10) {
-            alert("🏆 " + players[cur].name + " IS THE MUSIC MASTER!");
-            location.reload();
-            return;
-        }
+    function score(win) {
+        if(win) players[cur].score++;
+        if(players[cur].score >= 10) { alert(players[cur].name + " wins!"); location.reload(); }
         cur = (cur + 1) % players.length;
-        document.getElementById('guessPhase').classList.add('hidden');
-        updateUI();
+        document.getElementById('ytPlayer').src = "";
+        document.getElementById('controls').classList.add('hidden');
+        document.getElementById('nextBtn').classList.remove('hidden');
+        update();
     }
 </script>
 </body>
