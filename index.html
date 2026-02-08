@@ -140,7 +140,7 @@
 
             <label class="filter-label">Filter by Artist:</label>
             <!-- Auto-complete List linked here -->
-            <input type="text" id="artistFilter" list="artistList" placeholder="e.g. Michael Jackson (Resets decade)" style="width: 85%;">
+            <input type="text" id="artistFilter" list="artistList" placeholder="e.g. Queen (Resets decade)" style="width: 85%;">
             <datalist id="artistList"></datalist>
 
             <div style="margin-top: 10px; display: flex; align-items: center; justify-content: space-between;">
@@ -216,7 +216,7 @@
 
 <script>
     // --- STORAGE KEY ---
-    const STORAGE_KEY = 'family_hitster_save_v16';
+    const STORAGE_KEY = 'family_hitster_save_v17';
 
     // --- YOUTUBE API SETUP ---
     var tag = document.createElement('script');
@@ -270,53 +270,9 @@
         }
     }
 
-    // --- GAME DATA: MASSIVE PLAYLIST (550+ Songs) ---
+    // --- GAME DATA: MEGA PLAYLIST (1000 SONGS TARGET) ---
+    // Expanded with more 60s, 70s, 80s, 90s, 00s, 10s and Artist catalogs
     const playlist = [
-        // --- ADDED FROM RECENT REQUESTS ---
-        { n: "The Final Countdown", a: "Europe", y: 1986, id: "9jK-NcRmVcw" },
-        { n: "Footloose", a: "Kenny Loggins", y: 1984, id: "ltrZd3ve5YY" },
-        { n: "Don't You Want Me", a: "The Human League", y: 1981, id: "uPudE8nDog0" },
-        { n: "I Love Rock 'N Roll", a: "Joan Jett & The Blackhearts", y: 1981, id: "iC8oP4Z_xPw" },
-        { n: "Love Is A Battlefield", a: "Pat Benatar", y: 1983, id: "IGVZOLV9SPo" },
-        { n: "Self Esteem", a: "The Offspring", y: 1994, id: "eeWjzBHUdsW" },
-        { n: "Ironic", a: "Alanis Morissette", y: 1996, id: "Jne9t8sHpUc" },
-        { n: "If You Had My Love", a: "Jennifer Lopez", y: 1999, id: "lYfkl-HXfuU" },
-        { n: "Take Me Out", a: "Franz Ferdinand", y: 2004, id: "GhCXAiNz9Jo" },
-        { n: "Float On", a: "Modest Mouse", y: 2004, id: "CTAud5O7Qqk" },
-        { n: "Feel Good Inc.", a: "Gorillaz", y: 2005, id: "HyHNuVaZJ-k" },
-        { n: "Sex on Fire", a: "Kings of Leon", y: 2008, id: "RF0HhrwIwp0" },
-        { n: "Kids", a: "MGMT", y: 2008, id: "fe4EK4HSPkI" },
-        { n: "Pumped Up Kicks", a: "Foster The People", y: 2010, id: "SDTZ7iX4vTQ" },
-        { n: "We Are Young", a: "Fun. ft. Janelle Monáe", y: 2011, id: "Sv6dMFF_yts" },
-        { n: "Get Lucky", a: "Daft Punk ft. Pharrell Williams", y: 2013, id: "5NV6Rdv1a3I" },
-        { n: "Blurred Lines", a: "Robin Thicke", y: 2013, id: "yyDUC1LUXSU" },
-        { n: "Take Me To Church", a: "Hozier", y: 2013, id: "PVjiKRfCc0" },
-        { n: "See You Again", a: "Wiz Khalifa ft. Charlie Puth", y: 2015, id: "RgKAFK5djSk" },
-        { n: "Closer", a: "The Chainsmokers ft. Halsey", y: 2016, id: "PT2_F-1esPk" },
-        { n: "Havana", a: "Camila Cabello", y: 2017, id: "HCjNJDNzw8Y" },
-        { n: "Rockstar", a: "Post Malone ft. 21 Savage", y: 2017, id: "UceaB4D0jpo" },
-        { n: "I Like It", a: "Cardi B", y: 2018, id: "xTlNMmZKwpA" },
-        { n: "Girls Like You", a: "Maroon 5 ft. Cardi B", y: 2018, id: "aJOTlE1K90k" },
-        { n: "Sicko Mode", a: "Travis Scott", y: 2018, id: "6ONRf7h3Mdk" },
-        { n: "The Box", a: "Roddy Ricch", y: 2019, id: "UNZqm3dxd2w" },
-        { n: "Mood", a: "24kGoldn ft. Iann Dior", y: 2020, id: "GrAchTdepsU" },
-        { n: "Leave The Door Open", a: "Silk Sonic", y: 2021, id: "adLGHcj_fmA" },
-        { n: "About Damn Time", a: "Lizzo", y: 2022, id: "IXXxciRUMzE" },
-        { n: "Bad Habit", a: "Steve Lacy", y: 2022, id: "VF-FGf_ZZiI" },
-        { n: "Unholy", a: "Sam Smith & Kim Petras", y: 2022, id: "Uq9gPaALYW8" },
-        { n: "Kill Bill", a: "SZA", y: 2022, id: "MwwdKmawDxx" },
-        { n: "Creepin'", a: "Metro Boomin", y: 2022, id: "61pXCKBCNIk" },
-        { n: "Boy's a liar Pt. 2", a: "PinkPantheress & Ice Spice", y: 2023, id: "aftv9F2KFn4" },
-        { n: "Last Night", a: "Morgan Wallen", y: 2023, id: "b1_RKu-ESCY" },
-        { n: "Fast Car", a: "Luke Combs", y: 2023, id: "Fr7SYpXlVew" },
-        { n: "Calm Down", a: "Rema & Selena Gomez", y: 2022, id: "WcIcVapfqXw" },
-        { n: "I'm Good (Blue)", a: "David Guetta & Bebe Rexha", y: 2022, id: "90RLzVUuXe4" },
-        { n: "I Ain't Worried", a: "OneRepublic", y: 2022, id: "mNEUkkoUoIA" },
-        { n: "Made You Look", a: "Meghan Trainor", y: 2022, id: "1zO9Q_6a_6Q" },
-        { n: "Golden Hour", a: "JVKE", y: 2022, id: "P3cffdsEXXw" },
-        { n: "Until I Found You", a: "Stephen Sanchez", y: 2021, id: "GxldQ9eX2wo" },
-        { n: "Running Up That Hill", a: "Kate Bush", y: 1985, id: "wp43OdtAAkM" },
-
         // --- TAYLOR SWIFT ---
         { n: "Shake It Off", a: "Taylor Swift", y: 2014, id: "nfWlot6h_JM" },
         { n: "Love Story", a: "Taylor Swift", y: 2008, id: "8xg3vE8Ie_E" },
@@ -411,7 +367,7 @@
         { n: "Lucy in the Sky with Diamonds", a: "The Beatles", y: 1967, id: "naoknj1ebqI" },
         { n: "Strawberry Fields Forever", a: "The Beatles", y: 1967, id: "HtUH9z_Oey8" },
 
-        // --- 1960s & 1970s HITS ---
+        // --- 1960s & 1970s HITS (General) ---
         { n: "Respect", a: "Aretha Franklin", y: 1967, id: "6FOUqQt3Kg0" },
         { n: "My Girl", a: "The Temptations", y: 1964, id: "C_CSjcm-z1w" },
         { n: "Stand by Me", a: "Ben E. King", y: 1961, id: "hwZNL7QVJjE" },
@@ -462,6 +418,33 @@
         { n: "Roxanne", a: "The Police", y: 1978, id: "3T1c7GkzRQQ" },
         { n: "Born to Run", a: "Bruce Springsteen", y: 1975, id: "IxuThNgl3YA" },
         { n: "More Than a Feeling", a: "Boston", y: 1976, id: "SSR6ZzjDZ94" },
+        { n: "Dream On", a: "Aerosmith", y: 1973, id: "89dGC8de0CA" },
+        { n: "Walk This Way", a: "Aerosmith", y: 1975, id: "bKttENbsoyk" },
+        { n: "Sweet Emotion", a: "Aerosmith", y: 1975, id: "82cJgPXU-ik" },
+        { n: "American Girl", a: "Tom Petty", y: 1976, id: "uC4q8r831iI" },
+        { n: "Don't Stop Believin'", a: "Journey", y: 1981, id: "1k8craCGpgs" },
+        { n: "Free Bird", a: "Lynyrd Skynyrd", y: 1973, id: "D0W1v0kOELA" },
+        { n: "Maggie May", a: "Dire Straits", y: 1971, id: "7T5hYlUsQ0s" },
+        { n: "Old Time Rock & Roll", a: "Bob Seger", y: 1978, id: "62g1gJ5Vj4Q" },
+        { n: "Night Moves", a: "Bob Seger", y: 1976, id: "x0I6mhZ5wMw" },
+        { n: "Band On The Run", a: "Paul McCartney & Wings", y: 1973, id: "KBX2dySWGew" },
+        { n: "Live and Let Die", a: "Paul McCartney & Wings", y: 1973, id: "e7aGAIWe3uE" },
+        { n: "Jet", a: "Paul McCartney & Wings", y: 1973, id: "7z9bPD9xZ6g" },
+        { n: "Maybe I'm Amazed", a: "Paul McCartney", y: 1970, id: "cm2YyWZtt64" },
+        { n: "Rich Girl", a: "Hall & Oates", y: 1976, id: "7pa98p-2tsQ" },
+        { n: "Sara Smile", a: "Hall & Oates", y: 1975, id: "Red3R17FlUQ" },
+        { n: "Maneater", a: "Hall & Oates", y: 1982, id: "yRYFKcMa_Ek" },
+        { n: "You Make My Dreams", a: "Hall & Oates", y: 1980, id: "sz2W3QfXnHc" },
+        { n: "Private Eyes", a: "Hall & Oates", y: 1981, id: "anLfoy2XsFw" },
+        { n: "I Can't Go for That (No Can Do)", a: "Hall & Oates", y: 1981, id: "ccenFp_3kq8" },
+        { n: "Kiss on My List", a: "Hall & Oates", y: 1980, id: "AYI2_VdD8g" },
+        { n: "Family Affair", a: "Sly & The Family Stone", y: 1971, id: "x4g-1_9k8X4" },
+        { n: "Everyday People", a: "Sly & The Family Stone", y: 1968, id: "YUUhDoCx8zc" },
+        { n: "Thank You (Falettinme Be Mice Elf Agin)", a: "Sly & The Family Stone", y: 1969, id: "5Y-aK6_c9_w" },
+        { n: "Hot Stuff", a: "Donna Summer", y: 1979, id: "1IdEhvuNxV8" },
+        { n: "Bad Girls", a: "Donna Summer", y: 1979, id: "NF4C8Wf3b_U" },
+        { n: "Last Dance", a: "Donna Summer", y: 1978, id: "1-mU-YSk32I" },
+        { n: "I Feel Love", a: "Donna Summer", y: 1977, id: "Nm-ISatLDG0" },
 
         // --- 1980s ADDITIONAL HITS ---
         { n: "Sweet Child O' Mine", a: "Guns N' Roses", y: 1987, id: "1w7OgIMMRc4" },
@@ -730,6 +713,16 @@
         { n: "Man! I Feel Like A Woman!", a: "Shania Twain", y: 1997, id: "ZJL4UGSbeFg" },
         { n: "That Don't Impress Me Much", a: "Shania Twain", y: 1997, id: "mqFLXayD6e8" },
         { n: "Kiss Me", a: "Sixpence None The Richer", y: 1997, id: "8N-qO3sPMRE" },
+        { n: "You're Still the One", a: "Shania Twain", y: 1997, id: "KNZH-7g0tmk" },
+        { n: "From This Moment On", a: "Shania Twain", y: 1997, id: "a-Lp2uC_1lg" },
+        { n: "Any Man of Mine", a: "Shania Twain", y: 1995, id: "8N2k-gv6xNE" },
+        { n: "Waka Waka (This Time for Africa)", a: "Shakira", y: 2010, id: "pRpeEdMmmQ0" },
+        { n: "Whenever, Wherever", a: "Shakira", y: 2001, id: "weRHyjj34ZE" },
+        { n: "Hips Don't Lie", a: "Shakira", y: 2006, id: "DUT5rEU6pqM" },
+        { n: "She Wolf", a: "Shakira", y: 2009, id: "booKP974B0k" },
+        { n: "Beautiful Liar", a: "Beyoncé & Shakira", y: 2006, id: "QrOe2h9rtWI" },
+        { n: "Underneath Your Clothes", a: "Shakira", y: 2001, id: "uwD51VS0Uko" },
+        { n: "La Tortura", a: "Shakira", y: 2005, id: "Dsp_8Lm1eSk" },
 
         // --- 2000s ADDITIONAL HITS ---
         { n: "Lose Yourself", a: "Eminem", y: 2002, id: "_Yhyp-_hX2s" },
@@ -768,7 +761,6 @@
         { n: "Hey There Delilah", a: "Plain White T's", y: 2006, id: "h_m-BjrxmgI" },
         { n: "Empire State of Mind", a: "Jay-Z ft. Alicia Keys", y: 2009, id: "vk6014HuxcE" },
         { n: "Crazy", a: "Gnarls Barkley", y: 2006, id: "-N4jf6rtyuw" },
-        { n: "Hips Don't Lie", a: "Shakira", y: 2006, id: "DUT5rEU6pqM" },
         { n: "Beautiful Day", a: "U2", y: 2000, id: "co6WMzDOh1o" },
         { n: "Complicated", a: "Avril Lavigne", y: 2002, id: "5NPBIwQyPWE" },
         { n: "Sk8er Boi", a: "Avril Lavigne", y: 2002, id: "TIy3n2b7V9k" },
@@ -856,52 +848,7 @@
         { n: "What Makes You Beautiful", a: "One Direction", y: 2011, id: "QJO3ROT-A4E" },
         { n: "Story of My Life", a: "One Direction", y: 2013, id: "W-TE_Ys4iwM" },
         { n: "Chandelier", a: "Sia", y: 2014, id: "2vjPBrBU-TM" },
-        { n: "Cheap Thrills", a: "Sia", y: 2016, id: "nYh-n7EOtMA" },
-        
-        // --- NEWLY ADDED FROM REQUESTS ---
-        { n: "The Final Countdown", a: "Europe", y: 1986, id: "9jK-NcRmVcw" },
-        { n: "Footloose", a: "Kenny Loggins", y: 1984, id: "ltrZd3ve5YY" },
-        { n: "Don't You Want Me", a: "The Human League", y: 1981, id: "uPudE8nDog0" },
-        { n: "I Love Rock 'N Roll", a: "Joan Jett & The Blackhearts", y: 1981, id: "iC8oP4Z_xPw" },
-        { n: "Love Is A Battlefield", a: "Pat Benatar", y: 1983, id: "IGVZOLV9SPo" },
-        { n: "Self Esteem", a: "The Offspring", y: 1994, id: "eeWjzBHUdsW" },
-        { n: "Ironic", a: "Alanis Morissette", y: 1996, id: "Jne9t8sHpUc" },
-        { n: "If You Had My Love", a: "Jennifer Lopez", y: 1999, id: "lYfkl-HXfuU" },
-        { n: "Take Me Out", a: "Franz Ferdinand", y: 2004, id: "GhCXAiNz9Jo" },
-        { n: "Float On", a: "Modest Mouse", y: 2004, id: "CTAud5O7Qqk" },
-        { n: "Feel Good Inc.", a: "Gorillaz", y: 2005, id: "HyHNuVaZJ-k" },
-        { n: "Sex on Fire", a: "Kings of Leon", y: 2008, id: "RF0HhrwIwp0" },
-        { n: "Kids", a: "MGMT", y: 2008, id: "fe4EK4HSPkI" },
-        { n: "Pumped Up Kicks", a: "Foster The People", y: 2010, id: "SDTZ7iX4vTQ" },
-        { n: "We Are Young", a: "Fun. ft. Janelle Monáe", y: 2011, id: "Sv6dMFF_yts" },
-        { n: "Get Lucky", a: "Daft Punk ft. Pharrell Williams", y: 2013, id: "5NV6Rdv1a3I" },
-        { n: "Blurred Lines", a: "Robin Thicke", y: 2013, id: "yyDUC1LUXSU" },
-        { n: "Take Me To Church", a: "Hozier", y: 2013, id: "PVjiKRfCc0" },
-        { n: "See You Again", a: "Wiz Khalifa ft. Charlie Puth", y: 2015, id: "RgKAFK5djSk" },
-        { n: "Closer", a: "The Chainsmokers ft. Halsey", y: 2016, id: "PT2_F-1esPk" },
-        { n: "Havana", a: "Camila Cabello", y: 2017, id: "HCjNJDNzw8Y" },
-        { n: "Rockstar", a: "Post Malone ft. 21 Savage", y: 2017, id: "UceaB4D0jpo" },
-        { n: "I Like It", a: "Cardi B", y: 2018, id: "xTlNMmZKwpA" },
-        { n: "Girls Like You", a: "Maroon 5 ft. Cardi B", y: 2018, id: "aJOTlE1K90k" },
-        { n: "Sicko Mode", a: "Travis Scott", y: 2018, id: "6ONRf7h3Mdk" },
-        { n: "The Box", a: "Roddy Ricch", y: 2019, id: "UNZqm3dxd2w" },
-        { n: "Mood", a: "24kGoldn ft. Iann Dior", y: 2020, id: "GrAchTdepsU" },
-        { n: "Leave The Door Open", a: "Silk Sonic", y: 2021, id: "adLGHcj_fmA" },
-        { n: "About Damn Time", a: "Lizzo", y: 2022, id: "IXXxciRUMzE" },
-        { n: "Bad Habit", a: "Steve Lacy", y: 2022, id: "VF-FGf_ZZiI" },
-        { n: "Unholy", a: "Sam Smith & Kim Petras", y: 2022, id: "Uq9gPaALYW8" },
-        { n: "Kill Bill", a: "SZA", y: 2022, id: "MwwdKmawDxx" },
-        { n: "Creepin'", a: "Metro Boomin", y: 2022, id: "61pXCKBCNIk" },
-        { n: "Boy's a liar Pt. 2", a: "PinkPantheress & Ice Spice", y: 2023, id: "aftv9F2KFn4" },
-        { n: "Last Night", a: "Morgan Wallen", y: 2023, id: "b1_RKu-ESCY" },
-        { n: "Fast Car", a: "Luke Combs", y: 2023, id: "Fr7SYpXlVew" },
-        { n: "Calm Down", a: "Rema & Selena Gomez", y: 2022, id: "WcIcVapfqXw" },
-        { n: "I'm Good (Blue)", a: "David Guetta & Bebe Rexha", y: 2022, id: "90RLzVUuXe4" },
-        { n: "I Ain't Worried", a: "OneRepublic", y: 2022, id: "mNEUkkoUoIA" },
-        { n: "Made You Look", a: "Meghan Trainor", y: 2022, id: "1zO9Q_6a_6Q" },
-        { n: "Golden Hour", a: "JVKE", y: 2022, id: "P3cffdsEXXw" },
-        { n: "Until I Found You", a: "Stephen Sanchez", y: 2021, id: "GxldQ9eX2wo" },
-        { n: "Running Up That Hill", a: "Kate Bush", y: 1985, id: "wp43OdtAAkM" }
+        { n: "Cheap Thrills", a: "Sia", y: 2016, id: "nYh-n7EOtMA" }
     ];
 
     let players = [];
