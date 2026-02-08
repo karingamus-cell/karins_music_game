@@ -200,7 +200,7 @@
 
 <script>
     // --- STORAGE KEY ---
-    const STORAGE_KEY = 'family_hitster_save_v10';
+    const STORAGE_KEY = 'family_hitster_save_v11';
 
     // --- YOUTUBE API SETUP ---
     var tag = document.createElement('script');
@@ -254,10 +254,9 @@
         }
     }
 
-    // --- GAME DATA: MASSIVE PLAYLIST (400+ Songs) ---
-    // Note: This list is expanded to support decade/artist filtering.
+    // --- GAME DATA: EXPANDED MASTER LIST ---
     const playlist = [
-        // --- TAYLOR SWIFT (Modern Era) ---
+        // --- TAYLOR SWIFT ---
         { n: "Shake It Off", a: "Taylor Swift", y: 2014, id: "nfWlot6h_JM" },
         { n: "Love Story", a: "Taylor Swift", y: 2008, id: "8xg3vE8Ie_E" },
         { n: "Blank Space", a: "Taylor Swift", y: 2014, id: "e-ORhEE9VVg" },
@@ -278,8 +277,13 @@
         { n: "We Are Never Ever Getting Back Together", a: "Taylor Swift", y: 2012, id: "WA4iX5D9Z64" },
         { n: "Mean", a: "Taylor Swift", y: 2010, id: "jYa1eI1hpDE" },
         { n: "Mine", a: "Taylor Swift", y: 2010, id: "XPBwXKgDTdE" },
+        { n: "The Man", a: "Taylor Swift", y: 2019, id: "AqAJLh9wuZ0" },
+        { n: "Lover", a: "Taylor Swift", y: 2019, id: "-BjZmE2gtdo" },
+        { n: "Bejeweled", a: "Taylor Swift", y: 2022, id: "b7QlX3yR2xs" },
+        { n: "Midnight Rain", a: "Taylor Swift", y: 2022, id: "t7h9eJ1t6gE" },
+        { n: "Enchanted", a: "Taylor Swift", y: 2010, id: "igIfiqqVHtA" },
 
-        // --- MICHAEL JACKSON (80s/90s King) ---
+        // --- MICHAEL JACKSON ---
         { n: "Billie Jean", a: "Michael Jackson", y: 1982, id: "Zi_XLOBDo_Y" },
         { n: "Thriller", a: "Michael Jackson", y: 1982, id: "sOnqjkJTMaA" },
         { n: "Beat It", a: "Michael Jackson", y: 1982, id: "oRdxUFDoQe0" },
@@ -300,8 +304,12 @@
         { n: "You Are Not Alone", a: "Michael Jackson", y: 1995, id: "pAyKJAtDNCw" },
         { n: "Scream", a: "Michael Jackson", y: 1995, id: "0P4A1K4lXDo" },
         { n: "They Don't Care About Us", a: "Michael Jackson", y: 1996, id: "QNJL6nfuOqI" },
+        { n: "Love Never Felt So Good", a: "Michael Jackson", y: 2014, id: "oG08ukJPtR8" },
+        { n: "I Want You Back", a: "The Jackson 5", y: 1969, id: "s3Q80mk7bxE" },
+        { n: "ABC", a: "The Jackson 5", y: 1970, id: "ho7796-au8U" },
+        { n: "Ben", a: "Michael Jackson", y: 1972, id: "T1dAQN5QcZU" },
 
-        // --- QUEEN (70s/80s Rock) ---
+        // --- QUEEN ---
         { n: "Bohemian Rhapsody", a: "Queen", y: 1975, id: "fJ9rUzIMcZQ" },
         { n: "Don't Stop Me Now", a: "Queen", y: 1978, id: "HgzGwKwLmgM" },
         { n: "Another One Bites the Dust", a: "Queen", y: 1980, id: "rY0WxgSXdEE" },
@@ -317,8 +325,11 @@
         { n: "Bicycle Race", a: "Queen", y: 1978, id: "GugsCdLHm-Q" },
         { n: "Love of My Life", a: "Queen", y: 1975, id: "sUJkCXE4sAA" },
         { n: "The Show Must Go On", a: "Queen", y: 1991, id: "t99KH0TR-J4" },
+        { n: "Who Wants to Live Forever", a: "Queen", y: 1986, id: "_Jtpf8N5IDE" },
+        { n: "A Kind of Magic", a: "Queen", y: 1986, id: "0p_1QSUsbsM" },
+        { n: "You're My Best Friend", a: "Queen", y: 1975, id: "HaZpZQG2z10" },
 
-        // --- THE BEATLES (60s) ---
+        // --- THE BEATLES ---
         { n: "Imagine", a: "John Lennon", y: 1971, id: "YkgkThdzX-8" },
         { n: "Hey Jude", a: "The Beatles", y: 1968, id: "A_MjCqQoLLA" },
         { n: "I Want to Hold Your Hand", a: "The Beatles", y: 1963, id: "jenWdylTtzs" },
@@ -334,21 +345,21 @@
         { n: "All You Need Is Love", a: "The Beatles", y: 1967, id: "_7xMfIp-irg" },
         { n: "Here Comes The Sun", a: "The Beatles", y: 1969, id: "KQetemT1sWc" },
         { n: "Blackbird", a: "The Beatles", y: 1968, id: "Man4Xw8XJeQ" },
+        { n: "While My Guitar Gently Weeps", a: "The Beatles", y: 1968, id: "VJDJs9dumZI" },
+        { n: "Something", a: "The Beatles", y: 1969, id: "UelDrZ1aFeY" },
+        { n: "Lucy in the Sky with Diamonds", a: "The Beatles", y: 1967, id: "naoknj1ebqI" },
+        { n: "Strawberry Fields Forever", a: "The Beatles", y: 1967, id: "HtUH9z_Oey8" },
 
-        // --- 1960s ADDITIONAL HITS ---
+        // --- 1960s & 1970s HITS (General) ---
         { n: "Respect", a: "Aretha Franklin", y: 1967, id: "6FOUqQt3Kg0" },
         { n: "My Girl", a: "The Temptations", y: 1964, id: "C_CSjcm-z1w" },
         { n: "Stand by Me", a: "Ben E. King", y: 1961, id: "hwZNL7QVJjE" },
-        { n: "I Want You Back", a: "The Jackson 5", y: 1969, id: "s3Q80mk7bxE" },
         { n: "Paint It, Black", a: "The Rolling Stones", y: 1966, id: "O4irXQhgMn0" },
         { n: "(I Can't Get No) Satisfaction", a: "The Rolling Stones", y: 1965, id: "nrIPxlFzDi0" },
         { n: "Space Oddity", a: "David Bowie", y: 1969, id: "iYYRH4apXDo" },
         { n: "Good Vibrations", a: "The Beach Boys", y: 1966, id: "Eab_beh07HU" },
-        { n: "Wouldn't It Be Nice", a: "The Beach Boys", y: 1966, id: "nZBKfoeDKJo" },
-        { n: "I'm a Believer", a: "The Monkees", y: 1966, id: "wB9YIsKIEbA" },
         { n: "California Dreamin'", a: "The Mamas & The Papas", y: 1965, id: "N-aK6JnyFmk" },
         { n: "Ring of Fire", a: "Johnny Cash", y: 1963, id: "It7107ELQvY" },
-        { n: "Son of a Preacher Man", a: "Dusty Springfield", y: 1968, id: "DjydOI4MEIw" },
         { n: "Suspicious Minds", a: "Elvis Presley", y: 1969, id: "RxOBOhRECoo" },
         { n: "Can't Help Falling in Love", a: "Elvis Presley", y: 1961, id: "vGJTaP6anOU" },
         { n: "Jailhouse Rock", a: "Elvis Presley", y: 1957, id: "qka6JrKq5kY" },
@@ -356,24 +367,28 @@
         { n: "Brown Eyed Girl", a: "Van Morrison", y: 1967, id: "U8AsjWYNJDA" },
         { n: "Mrs. Robinson", a: "Simon & Garfunkel", y: 1968, id: "9C1BCAgu2I8" },
         { n: "The Sound of Silence", a: "Simon & Garfunkel", y: 1964, id: "4fWyzwo1xg0" },
-
-        // --- 1970s ADDITIONAL HITS ---
         { n: "Dancing Queen", a: "ABBA", y: 1976, id: "xFrGuyw1V8s" },
         { n: "Mamma Mia", a: "ABBA", y: 1975, id: "unfzfe8f9NI" },
+        { n: "Gimme! Gimme! Gimme!", a: "ABBA", y: 1979, id: "XEjLoHdbVeE" },
         { n: "Stayin' Alive", a: "Bee Gees", y: 1977, id: "I_izvAbhExY" },
+        { n: "How Deep Is Your Love", a: "Bee Gees", y: 1977, id: "XpqqjU7u5Yc" },
         { n: "Hotel California", a: "Eagles", y: 1976, id: "09839DpTctU" },
+        { n: "Take It Easy", a: "Eagles", y: 1972, id: "IKpay8gumw0" },
         { n: "Superstition", a: "Stevie Wonder", y: 1972, id: "0CFuCYNx-1g" },
         { n: "Dreams", a: "Fleetwood Mac", y: 1977, id: "Y3ywicffAxM" },
         { n: "Go Your Own Way", a: "Fleetwood Mac", y: 1977, id: "6ul-cZyuYq4" },
         { n: "Piano Man", a: "Billy Joel", y: 1973, id: "gxEPV4kolz0" },
         { n: "Sweet Home Alabama", a: "Lynyrd Skynyrd", y: 1974, id: "ye5BuYf8q4o" },
         { n: "September", a: "Earth, Wind & Fire", y: 1978, id: "Gs069dndIYk" },
+        { n: "Boogie Wonderland", a: "Earth, Wind & Fire", y: 1979, id: "god7fZVNp6E" },
         { n: "I Will Survive", a: "Gloria Gaynor", y: 1978, id: "ARt9HV9T0w8" },
         { n: "Heroes", a: "David Bowie", y: 1977, id: "lXgkuM2NhYI" },
+        { n: "Starman", a: "David Bowie", y: 1972, id: "sI66hcu9fIs" },
         { n: "Rocket Man", a: "Elton John", y: 1972, id: "DtVBCG6ThDk" },
         { n: "Tiny Dancer", a: "Elton John", y: 1971, id: "yYcyacLrpUu" },
         { n: "Jolene", a: "Dolly Parton", y: 1973, id: "Ixrje2rXLMA" },
         { n: "No Woman, No Cry", a: "Bob Marley", y: 1974, id: "3jDdpoIh8cQUBsXmNCyoSV" },
+        { n: "Three Little Birds", a: "Bob Marley", y: 1977, id: "LanCLS_hIo4" },
         { n: "Stairway to Heaven", a: "Led Zeppelin", y: 1971, id: "xbhCPt6PZIU" },
         { n: "Highway to Hell", a: "AC/DC", y: 1979, id: "l482T0yNMAo" },
         { n: "YMCA", a: "Village People", y: 1978, id: "CS9OO0S5w2k" },
@@ -381,19 +396,29 @@
         { n: "Le Freak", a: "Chic", y: 1978, id: "h1qQ1SKNlgY" },
         { n: "American Pie", a: "Don McLean", y: 1971, id: "iX_TFkut1uE" },
         { n: "Killing Me Softly", a: "Roberta Flack", y: 1973, id: "kgl-VRdXr7I" },
-        { n: "Imagine", a: "John Lennon", y: 1971, id: "YkgkThdzX-8" },
+        { n: "Sultans of Swing", a: "Dire Straits", y: 1978, id: "8Pa9x9fZBtY" },
+        { n: "London Calling", a: "The Clash", y: 1979, id: "EfK-WX2pa8c" },
+        { n: "Roxanne", a: "The Police", y: 1978, id: "3T1c7GkzRQQ" },
+        { n: "Born to Run", a: "Bruce Springsteen", y: 1975, id: "IxuThNgl3YA" },
+        { n: "More Than a Feeling", a: "Boston", y: 1976, id: "SSR6ZzjDZ94" },
 
         // --- 1980s ADDITIONAL HITS ---
         { n: "Sweet Child O' Mine", a: "Guns N' Roses", y: 1987, id: "1w7OgIMMRc4" },
+        { n: "Welcome to the Jungle", a: "Guns N' Roses", y: 1987, id: "o1tj2zJ2Wvg" },
+        { n: "Paradise City", a: "Guns N' Roses", y: 1987, id: "Rbm6GXllBiw" },
         { n: "Livin' on a Prayer", a: "Bon Jovi", y: 1986, id: "lDK9QqIzhwk" },
+        { n: "You Give Love A Bad Name", a: "Bon Jovi", y: 1986, id: "KrZHPOeOxQQ" },
         { n: "Every Breath You Take", a: "The Police", y: 1983, id: "OMOGaugKpzs" },
         { n: "Girls Just Want to Have Fun", a: "Cyndi Lauper", y: 1983, id: "PIb6AZdTr-A" },
         { n: "Time After Time", a: "Cyndi Lauper", y: 1983, id: "VdQY7BusJNU" },
         { n: "Purple Rain", a: "Prince", y: 1984, id: "TVNk2qOT3_E" },
+        { n: "1999", a: "Prince", y: 1982, id: "rblt2EtFfC4" },
+        { n: "Kiss", a: "Prince", y: 1986, id: "H9tEvfIsD7w" },
         { n: "Take on Me", a: "a-ha", y: 1985, id: "djV11Xbc914" },
         { n: "Africa", a: "Toto", y: 1982, id: "FTQbiNvZqaY" },
         { n: "Eye of the Tiger", a: "Survivor", y: 1982, id: "btPJPFnesV4" },
         { n: "Careless Whisper", a: "George Michael", y: 1984, id: "izGwDsrQ1eQ" },
+        { n: "Faith", a: "George Michael", y: 1987, id: "6Cs3Pvmmv0E" },
         { n: "Material Girl", a: "Madonna", y: 1984, id: "DNSUOFgj97M" },
         { n: "Like a Prayer", a: "Madonna", y: 1989, id: "79fzeNUqQbQ" },
         { n: "Holiday", a: "Madonna", y: 1983, id: "5Rswx2Z7SDw" },
@@ -409,32 +434,57 @@
         { n: "Should I Stay or Should I Go", a: "The Clash", y: 1982, id: "BN1WwnEDWAM" },
         { n: "Pour Some Sugar on Me", a: "Def Leppard", y: 1987, id: "0UIB9Y4OFPs" },
         { n: "Jump", a: "Van Halen", y: 1984, id: "SwYN7mTi6HM" },
+        { n: "Back in Black", a: "AC/DC", y: 1980, id: "pAgnJDJN4VA" },
+        { n: "You Shook Me All Night Long", a: "AC/DC", y: 1980, id: "Lo2qQmj0_h4" },
+        { n: "Need You Tonight", a: "INXS", y: 1987, id: "F93ywiGMDnQ" },
+        { n: "Never Tear Us Apart", a: "INXS", y: 1987, id: "AIBv2GEnxLk" },
+        { n: "Everybody Wants to Rule the World", a: "Tears for Fears", y: 1985, id: "aGCdLKXNF3w" },
+        { n: "Sweet Dreams (Are Made of This)", a: "Eurythmics", y: 1983, id: "qeMFqDBMXOE" },
+        { n: "Like a Virgin", a: "Madonna", y: 1984, id: "s__rX_WL100" },
+        { n: "Dancing in the Dark", a: "Bruce Springsteen", y: 1984, id: "129kuDCQtHs" },
+        { n: "Free Fallin'", a: "Tom Petty", y: 1989, id: "1lWJXDG2i0A" },
+        { n: "Fast Car", a: "Tracy Chapman", y: 1988, id: "DwrHwZyFN7M" },
 
         // --- 1990s ADDITIONAL HITS ---
         { n: "Smells Like Teen Spirit", a: "Nirvana", y: 1991, id: "hTWKbfoikeg" },
+        { n: "Come As You Are", a: "Nirvana", y: 1991, id: "vabnZ9-ex7o" },
         { n: "Wonderwall", a: "Oasis", y: 1995, id: "6hzrDeceEKc" },
+        { n: "Don't Look Back in Anger", a: "Oasis", y: 1995, id: "r8OipmKFDeM" },
         { n: "I Will Always Love You", a: "Whitney Houston", y: 1992, id: "3JWTaaS7LdU" },
         { n: "Creep", a: "Radiohead", y: 1992, id: "XFkzRNyygfk" },
+        { n: "Karma Police", a: "Radiohead", y: 1997, id: "IBH97ma9YiI" },
         { n: "Baby One More Time", a: "Britney Spears", y: 1998, id: "C-u5WLJ9Yk4" },
+        { n: "Oops!... I Did It Again", a: "Britney Spears", y: 2000, id: "C-u5WLJ9Yk4" },
         { n: "I Want It That Way", a: "Backstreet Boys", y: 1999, id: "4fndeDfaWCg" },
+        { n: "Everybody", a: "Backstreet Boys", y: 1997, id: "6M6samPEMpM" },
         { n: "No Scrubs", a: "TLC", y: 1999, id: "FrLequ6dUdM" },
+        { n: "Waterfalls", a: "TLC", y: 1995, id: "8WEtxJ4-sh4" },
         { n: "Say My Name", a: "Destiny's Child", y: 1999, id: "sQgd6MccwZc" },
         { n: "Wannabe", a: "Spice Girls", y: 1996, id: "gJLIiF15wjQ" },
         { n: "Hallelujah", a: "Jeff Buckley", y: 1994, id: "y8AWFf7EAc4" },
         { n: "Californication", a: "Red Hot Chili Peppers", y: 1999, id: "YlUKcNNmywk" },
+        { n: "Under The Bridge", a: "Red Hot Chili Peppers", y: 1991, id: "lwlogyj7nFE" },
         { n: "Basket Case", a: "Green Day", y: 1994, id: "NUTGr5t3MoY" },
+        { n: "Good Riddance (Time of Your Life)", a: "Green Day", y: 1997, id: "CnQ8N1KacJc" },
         { n: "All The Small Things", a: "Blink-182", y: 1999, id: "9Ht5RZpzPqw" },
         { n: "Enter Sandman", a: "Metallica", y: 1991, id: "CD-E-LDc384" },
         { n: "Losing My Religion", a: "R.E.M.", y: 1991, id: "xwtdhWltSIg" },
         { n: "Gangsta's Paradise", a: "Coolio", y: 1995, id: "fPO76Jlnz6c" },
-        { n: "Waterfalls", a: "TLC", y: 1995, id: "8WEtxJ4-sh4" },
         { n: "Barbie Girl", a: "Aqua", y: 1997, id: "ZyhrYis509A" },
         { n: "Torn", a: "Natalie Imbruglia", y: 1997, id: "VV1XWJNJAMc" },
         { n: "Don't Speak", a: "No Doubt", y: 1996, id: "TR3Vdo5etCQ" },
         { n: "Bittersweet Symphony", a: "The Verve", y: 1997, id: "1lyu1KKwC74" },
-        { n: "Vogue", a: "Madonna", y: 1990, id: "GuJQSAiODqI" },
         { n: "Frozen", a: "Madonna", y: 1998, id: "XS088Opj9o0" },
         { n: "Ray of Light", a: "Madonna", y: 1998, id: "x3ov9USxVxY" },
+        { n: "Vogue", a: "Madonna", y: 1990, id: "GuJQSAiODqI" },
+        { n: "Black Hole Sun", a: "Soundgarden", y: 1994, id: "3mbBbFH9fAg" },
+        { n: "Jeremy", a: "Pearl Jam", y: 1991, id: "MS91knuzoOA" },
+        { n: "Alive", a: "Pearl Jam", y: 1991, id: "qM0zIN9hM7E" },
+        { n: "1979", a: "The Smashing Pumpkins", y: 1995, id: "4aeETEoNfOg" },
+        { n: "Iris", a: "Goo Goo Dolls", y: 1998, id: "NdYWuo9OFAw" },
+        { n: "Semi-Charmed Life", a: "Third Eye Blind", y: 1997, id: "beINamVRGy4" },
+        { n: "Smooth", a: "Santana ft. Rob Thomas", y: 1999, id: "6Whgn_iE5uc" },
+        { n: "Genie in a Bottle", a: "Christina Aguilera", y: 1999, id: "kIDWgqDBNXA" },
 
         // --- 2000s ADDITIONAL HITS ---
         { n: "Lose Yourself", a: "Eminem", y: 2002, id: "_Yhyp-_hX2s" },
@@ -473,6 +523,14 @@
         { n: "Hey There Delilah", a: "Plain White T's", y: 2006, id: "h_m-BjrxmgI" },
         { n: "Empire State of Mind", a: "Jay-Z ft. Alicia Keys", y: 2009, id: "vk6014HuxcE" },
         { n: "Crazy", a: "Gnarls Barkley", y: 2006, id: "-N4jf6rtyuw" },
+        { n: "Hips Don't Lie", a: "Shakira", y: 2006, id: "DUT5rEU6pqM" },
+        { n: "Beautiful Day", a: "U2", y: 2000, id: "co6WMzDOh1o" },
+        { n: "Complicated", a: "Avril Lavigne", y: 2002, id: "5NPBIwQyPWE" },
+        { n: "Sk8er Boi", a: "Avril Lavigne", y: 2002, id: "TIy3n2b7V9k" },
+        { n: "Bring Me to Life", a: "Evanescence", y: 2003, id: "3YxaaGgTQYM" },
+        { n: "Where Is the Love?", a: "The Black Eyed Peas", y: 2003, id: "WpYeekQkAdc" },
+        { n: "Lose Control", a: "Missy Elliott", y: 2005, id: "na7l3spS_SI" },
+        { n: "Get Ur Freak On", a: "Missy Elliott", y: 2001, id: "FPoKiGQzbSQ" },
 
         // --- 2010s & 2020s ADDITIONAL HITS ---
         { n: "Rolling in the Deep", a: "Adele", y: 2011, id: "rYEDA3JcQqw" },
