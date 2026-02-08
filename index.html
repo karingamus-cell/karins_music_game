@@ -98,6 +98,16 @@
             margin-bottom: 15px;
             border: 1px solid #444;
         }
+
+        /* RULES SECTION */
+        .rules-box {
+            margin-top: 25px;
+            padding-top: 15px;
+            border-top: 1px solid #333;
+            font-size: 13px;
+            color: #888;
+            line-height: 1.5;
+        }
     </style>
 </head>
 <body>
@@ -140,6 +150,12 @@
         </div>
 
         <button id="startBtn" class="hidden" onclick="startGame()" style="background: white; color: black; margin-top: 20px;">Start Game</button>
+
+        <!-- RULES SECTION -->
+        <div class="rules-box">
+            <strong style="color: var(--spotify-green);">How to Play:</strong><br>
+            Pick the players and play the songs. If you get 2 out of 3 answers correct, you get a point. First user to reach 10 points is the winner!
+        </div>
     </div>
 
     <!-- GAME SCREEN -->
@@ -200,7 +216,7 @@
 
 <script>
     // --- STORAGE KEY ---
-    const STORAGE_KEY = 'family_hitster_save_v11';
+    const STORAGE_KEY = 'family_hitster_save_v16';
 
     // --- YOUTUBE API SETUP ---
     var tag = document.createElement('script');
@@ -254,8 +270,53 @@
         }
     }
 
-    // --- GAME DATA: EXPANDED MASTER LIST ---
+    // --- GAME DATA: MASSIVE PLAYLIST (550+ Songs) ---
     const playlist = [
+        // --- ADDED FROM RECENT REQUESTS ---
+        { n: "The Final Countdown", a: "Europe", y: 1986, id: "9jK-NcRmVcw" },
+        { n: "Footloose", a: "Kenny Loggins", y: 1984, id: "ltrZd3ve5YY" },
+        { n: "Don't You Want Me", a: "The Human League", y: 1981, id: "uPudE8nDog0" },
+        { n: "I Love Rock 'N Roll", a: "Joan Jett & The Blackhearts", y: 1981, id: "iC8oP4Z_xPw" },
+        { n: "Love Is A Battlefield", a: "Pat Benatar", y: 1983, id: "IGVZOLV9SPo" },
+        { n: "Self Esteem", a: "The Offspring", y: 1994, id: "eeWjzBHUdsW" },
+        { n: "Ironic", a: "Alanis Morissette", y: 1996, id: "Jne9t8sHpUc" },
+        { n: "If You Had My Love", a: "Jennifer Lopez", y: 1999, id: "lYfkl-HXfuU" },
+        { n: "Take Me Out", a: "Franz Ferdinand", y: 2004, id: "GhCXAiNz9Jo" },
+        { n: "Float On", a: "Modest Mouse", y: 2004, id: "CTAud5O7Qqk" },
+        { n: "Feel Good Inc.", a: "Gorillaz", y: 2005, id: "HyHNuVaZJ-k" },
+        { n: "Sex on Fire", a: "Kings of Leon", y: 2008, id: "RF0HhrwIwp0" },
+        { n: "Kids", a: "MGMT", y: 2008, id: "fe4EK4HSPkI" },
+        { n: "Pumped Up Kicks", a: "Foster The People", y: 2010, id: "SDTZ7iX4vTQ" },
+        { n: "We Are Young", a: "Fun. ft. Janelle Monáe", y: 2011, id: "Sv6dMFF_yts" },
+        { n: "Get Lucky", a: "Daft Punk ft. Pharrell Williams", y: 2013, id: "5NV6Rdv1a3I" },
+        { n: "Blurred Lines", a: "Robin Thicke", y: 2013, id: "yyDUC1LUXSU" },
+        { n: "Take Me To Church", a: "Hozier", y: 2013, id: "PVjiKRfCc0" },
+        { n: "See You Again", a: "Wiz Khalifa ft. Charlie Puth", y: 2015, id: "RgKAFK5djSk" },
+        { n: "Closer", a: "The Chainsmokers ft. Halsey", y: 2016, id: "PT2_F-1esPk" },
+        { n: "Havana", a: "Camila Cabello", y: 2017, id: "HCjNJDNzw8Y" },
+        { n: "Rockstar", a: "Post Malone ft. 21 Savage", y: 2017, id: "UceaB4D0jpo" },
+        { n: "I Like It", a: "Cardi B", y: 2018, id: "xTlNMmZKwpA" },
+        { n: "Girls Like You", a: "Maroon 5 ft. Cardi B", y: 2018, id: "aJOTlE1K90k" },
+        { n: "Sicko Mode", a: "Travis Scott", y: 2018, id: "6ONRf7h3Mdk" },
+        { n: "The Box", a: "Roddy Ricch", y: 2019, id: "UNZqm3dxd2w" },
+        { n: "Mood", a: "24kGoldn ft. Iann Dior", y: 2020, id: "GrAchTdepsU" },
+        { n: "Leave The Door Open", a: "Silk Sonic", y: 2021, id: "adLGHcj_fmA" },
+        { n: "About Damn Time", a: "Lizzo", y: 2022, id: "IXXxciRUMzE" },
+        { n: "Bad Habit", a: "Steve Lacy", y: 2022, id: "VF-FGf_ZZiI" },
+        { n: "Unholy", a: "Sam Smith & Kim Petras", y: 2022, id: "Uq9gPaALYW8" },
+        { n: "Kill Bill", a: "SZA", y: 2022, id: "MwwdKmawDxx" },
+        { n: "Creepin'", a: "Metro Boomin", y: 2022, id: "61pXCKBCNIk" },
+        { n: "Boy's a liar Pt. 2", a: "PinkPantheress & Ice Spice", y: 2023, id: "aftv9F2KFn4" },
+        { n: "Last Night", a: "Morgan Wallen", y: 2023, id: "b1_RKu-ESCY" },
+        { n: "Fast Car", a: "Luke Combs", y: 2023, id: "Fr7SYpXlVew" },
+        { n: "Calm Down", a: "Rema & Selena Gomez", y: 2022, id: "WcIcVapfqXw" },
+        { n: "I'm Good (Blue)", a: "David Guetta & Bebe Rexha", y: 2022, id: "90RLzVUuXe4" },
+        { n: "I Ain't Worried", a: "OneRepublic", y: 2022, id: "mNEUkkoUoIA" },
+        { n: "Made You Look", a: "Meghan Trainor", y: 2022, id: "1zO9Q_6a_6Q" },
+        { n: "Golden Hour", a: "JVKE", y: 2022, id: "P3cffdsEXXw" },
+        { n: "Until I Found You", a: "Stephen Sanchez", y: 2021, id: "GxldQ9eX2wo" },
+        { n: "Running Up That Hill", a: "Kate Bush", y: 1985, id: "wp43OdtAAkM" },
+
         // --- TAYLOR SWIFT ---
         { n: "Shake It Off", a: "Taylor Swift", y: 2014, id: "nfWlot6h_JM" },
         { n: "Love Story", a: "Taylor Swift", y: 2008, id: "8xg3vE8Ie_E" },
@@ -350,7 +411,7 @@
         { n: "Lucy in the Sky with Diamonds", a: "The Beatles", y: 1967, id: "naoknj1ebqI" },
         { n: "Strawberry Fields Forever", a: "The Beatles", y: 1967, id: "HtUH9z_Oey8" },
 
-        // --- 1960s & 1970s HITS (General) ---
+        // --- 1960s & 1970s HITS ---
         { n: "Respect", a: "Aretha Franklin", y: 1967, id: "6FOUqQt3Kg0" },
         { n: "My Girl", a: "The Temptations", y: 1964, id: "C_CSjcm-z1w" },
         { n: "Stand by Me", a: "Ben E. King", y: 1961, id: "hwZNL7QVJjE" },
@@ -444,7 +505,154 @@
         { n: "Dancing in the Dark", a: "Bruce Springsteen", y: 1984, id: "129kuDCQtHs" },
         { n: "Free Fallin'", a: "Tom Petty", y: 1989, id: "1lWJXDG2i0A" },
         { n: "Fast Car", a: "Tracy Chapman", y: 1988, id: "DwrHwZyFN7M" },
-
+        { n: "Hit Me With Your Best Shot", a: "Pat Benatar", y: 1980, id: "serV18E5wTE" },
+        { n: "Jessie's Girl", a: "Rick Springfield", y: 1981, id: "qYkbTyHXwbs" },
+        { n: "Come On Eileen", a: "Dexys Midnight Runners", y: 1982, id: "ASwge9wc-eI" },
+        { n: "Tainted Love", a: "Soft Cell", y: 1981, id: "XZVZn3F6Lf8" },
+        { n: "99 Luftballons", a: "Nena", y: 1983, id: "La4Dcd1aUcE" },
+        { n: "Take My Breath Away", a: "Berlin", y: 1986, id: "Bx51eegLTY8" },
+        { n: "Never Gonna Give You Up", a: "Rick Astley", y: 1987, id: "dQw4w9WgXcQ" },
+        { n: "Walk Like an Egyptian", a: "The Bangles", y: 1986, id: "Cv6tuzHUuuk" },
+        { n: "Walking on Sunshine", a: "Katrina and the Waves", y: 1985, id: "iPUmE-tne5U" },
+        { n: "We Built This City", a: "Starship", y: 1985, id: "K1b8AhIsSYQ" },
+        { n: "Don't You (Forget About Me)", a: "Simple Minds", y: 1985, id: "CdqoNKCCt7A" },
+        { n: "True", a: "Spandau Ballet", y: 1983, id: "AR8D2yqgQ1U" },
+        { n: "Gold", a: "Spandau Ballet", y: 1983, id: "ntG50eXbBtc" },
+        { n: "Relax", a: "Frankie Goes to Hollywood", y: 1983, id: "Yem_iEHiyJ0" },
+        { n: "West End Girls", a: "Pet Shop Boys", y: 1984, id: "p3j2NYZ8FKs" },
+        { n: "Hungry Like the Wolf", a: "Duran Duran", y: 1982, id: "oOg5VxrRTi0" },
+        { n: "Rio", a: "Duran Duran", y: 1982, id: "e3W6yf6c-FA" },
+        { n: "Just Can't Get Enough", a: "Depeche Mode", y: 1981, id: "_6FBfAQ-NDE" },
+        { n: "Enjoy the Silence", a: "Depeche Mode", y: 1990, id: "aGSKrC7dGcY" },
+        { n: "Personal Jesus", a: "Depeche Mode", y: 1989, id: "u1xrNaTO1bI" },
+        { n: "Sledgehammer", a: "Peter Gabriel", y: 1986, id: "OJWJE0x7T4Q" },
+        { n: "Money for Nothing", a: "Dire Straits", y: 1985, id: "wTP2RUD_cL0" },
+        { n: "Walk of Life", a: "Dire Straits", y: 1985, id: "kd9TlGDZGkI" },
+        { n: "Addicted to Love", a: "Robert Palmer", y: 1986, id: "XcATvu5f9vE" },
+        { n: "Higher Love", a: "Steve Winwood", y: 1986, id: "k9olaIio3l8" },
+        { n: "You Can Call Me Al", a: "Paul Simon", y: 1986, id: "uq-gYOrU8bA" },
+        { n: "Graceland", a: "Paul Simon", y: 1986, id: "HvliMzQSQLc" },
+        { n: "Manic Monday", a: "The Bangles", y: 1986, id: "SsmVgoXDq2w" },
+        { n: "Eternal Flame", a: "The Bangles", y: 1988, id: "PSoOFn3wQV4" },
+        { n: "Heaven Is a Place on Earth", a: "Belinda Carlisle", y: 1987, id: "P-3GOo_nWoc" },
+        { n: "I Think We're Alone Now", a: "Tiffany", y: 1987, id: "w6Q3mHyznDM" },
+        { n: "Kids in America", a: "Kim Wilde", y: 1981, id: "BzdHxqwTO-4" },
+        { n: "9 to 5", a: "Dolly Parton", y: 1980, id: "UbxUSsFXYo4" },
+        { n: "Islands in the Stream", a: "Kenny Rogers & Dolly Parton", y: 1983, id: "HQW7I62TNOw" },
+        { n: "Endless Love", a: "Diana Ross & Lionel Richie", y: 1981, id: "7Bw4723i5vU" },
+        { n: "All Night Long (All Night)", a: "Lionel Richie", y: 1983, id: "nqAvFx3NxUM" },
+        { n: "Hello", a: "Lionel Richie", y: 1984, id: "UBYTJZWT4E8" },
+        { n: "Saving All My Love for You", a: "Whitney Houston", y: 1985, id: "ewxmv2tyeRs" },
+        { n: "How Will I Know", a: "Whitney Houston", y: 1985, id: "m3-hY-hlhBg" },
+        { n: "Greatest Love of All", a: "Whitney Houston", y: 1985, id: "IYzlVDlE72w" },
+        { n: "I Wanna Dance With Somebody", a: "Whitney Houston", y: 1987, id: "eH3giaIzONA" },
+        { n: "So Emotional", a: "Whitney Houston", y: 1987, id: "0YjSHbA6HQQ" },
+        { n: "Where Do Broken Hearts Go", a: "Whitney Houston", y: 1988, id: "Yk7Z7ZgZ6-E" },
+        { n: "Physical", a: "Olivia Newton-John", y: 1981, id: "vWz9VN40nCA" },
+        { n: "Bette Davis Eyes", a: "Kim Carnes", y: 1981, id: "EPOIS5taqA8" },
+        { n: "Abracadabra", a: "Steve Miller Band", y: 1982, id: "7Q8s7s7s7s7" },
+        { n: "Jack & Diane", a: "John Mellencamp", y: 1982, id: "h04CH9YZcpI" },
+        { n: "Hurts So Good", a: "John Mellencamp", y: 1982, id: "4dOsbsuhYGQ" },
+        { n: "Small Town", a: "John Mellencamp", y: 1985, id: "0CVLVaBECuc" },
+        { n: "Pink Houses", a: "John Mellencamp", y: 1983, id: "qOfkpu6749w" },
+        { n: "Glory Days", a: "Bruce Springsteen", y: 1984, id: "6v2L2UGZJAM" },
+        { n: "I'm on Fire", a: "Bruce Springsteen", y: 1984, id: "lrpXArn3hII" },
+        { n: "Born in the U.S.A.", a: "Bruce Springsteen", y: 1984, id: "EPhWR4d3FJQ" },
+        { n: "The Power of Love", a: "Huey Lewis and the News", y: 1985, id: "VkAVfsw5xSQ" },
+        { n: "Hip to Be Square", a: "Huey Lewis and the News", y: 1986, id: "LB5YkmjalDg" },
+        { n: "Stuck with You", a: "Huey Lewis and the News", y: 1986, id: "J08ZwySCoJ8" },
+        { n: "Walk This Way", a: "Run-D.M.C. ft. Aerosmith", y: 1986, id: "4B_UYYPb-Gk" },
+        { n: "Fight For Your Right", a: "Beastie Boys", y: 1986, id: "eBShN8qT4lk" },
+        { n: "No Sleep Till Brooklyn", a: "Beastie Boys", y: 1986, id: "07Y0cy-nvAg" },
+        { n: "Brass Monkey", a: "Beastie Boys", y: 1986, id: "Ac0g6f7GgXg" },
+        { n: "Push It", a: "Salt-N-Pepa", y: 1987, id: "vCadcbr95oE" },
+        { n: "Bust a Move", a: "Young MC", y: 1989, id: "xy4FXhkm6Nw" },
+        { n: "Wild Thing", a: "Tone Loc", y: 1988, id: "387ZDGSKVSg" },
+        { n: "Funky Cold Medina", a: "Tone Loc", y: 1989, id: "0OP5EPH9RF8" },
+        { n: "U Can't Touch This", a: "MC Hammer", y: 1990, id: "otCpCn0l4Wo" },
+        { n: "Ice Ice Baby", a: "Vanilla Ice", y: 1990, id: "rog8ou-ZepE" },
+        { n: "Baby Got Back", a: "Sir Mix-A-Lot", y: 1992, id: "_JphDdMV2sU" },
+        { n: "Jump Around", a: "House of Pain", y: 1992, id: "XhzpxjuwZy0" },
+        { n: "Insane in the Brain", a: "Cypress Hill", y: 1993, id: "RijB8wnJCN0" },
+        { n: "Regulate", a: "Warren G ft. Nate Dogg", y: 1994, id: "1plPyJdXKIY" },
+        { n: "Hypnotize", a: "The Notorious B.I.G.", y: 1997, id: "glEiPXAyE-U" },
+        { n: "Juicy", a: "The Notorious B.I.G.", y: 1994, id: "_JZom_gVfuw" },
+        { n: "Big Poppa", a: "The Notorious B.I.G.", y: 1994, id: "phaJXp_zMYM" },
+        { n: "Mo Money Mo Problems", a: "The Notorious B.I.G.", y: 1997, id: "gUhRKVIjJtw" },
+        { n: "California Love", a: "2Pac ft. Dr. Dre", y: 1995, id: "5wBTdfAkqGU" },
+        { n: "Changes", a: "2Pac", y: 1998, id: "eXvBjCO19QY" },
+        { n: "Dear Mama", a: "2Pac", y: 1995, id: "Mb1ZvUDvLDY" },
+        { n: "Gin and Juice", a: "Snoop Dogg", y: 1993, id: "DI3yXg-sX5c" },
+        { n: "Drop It Like It's Hot", a: "Snoop Dogg ft. Pharrell", y: 2004, id: "GtUVQei3nX4" },
+        { n: "Nuthin' but a 'G' Thang", a: "Dr. Dre ft. Snoop Dogg", y: 1992, id: "l4E4XC7qOfk" },
+        { n: "Still D.R.E.", a: "Dr. Dre ft. Snoop Dogg", y: 1999, id: "_CL6n0FJZpk" },
+        { n: "Forgot About Dre", a: "Dr. Dre ft. Eminem", y: 1999, id: "E5a93wABHNM" },
+        { n: "The Next Episode", a: "Dr. Dre ft. Snoop Dogg", y: 1999, id: "QZXc39hT8t4" },
+        { n: "In Da Club", a: "50 Cent", y: 2003, id: "5qm8PH4xAss" },
+        { n: "Candy Shop", a: "50 Cent", y: 2005, id: "SRcnnId15BA" },
+        { n: "P.I.M.P.", a: "50 Cent", y: 2003, id: "UDApZhXTpH8" },
+        { n: "21 Questions", a: "50 Cent", y: 2003, id: "cCN9D1CTxOw" },
+        { n: "Work It", a: "Missy Elliott", y: 2002, id: "cjIvu7e6Wq8" },
+        { n: "Get Ur Freak On", a: "Missy Elliott", y: 2001, id: "FPoKiGQzbSQ" },
+        { n: "Lose Control", a: "Missy Elliott", y: 2005, id: "na7l3spS_SI" },
+        { n: "Hot in Herre", a: "Nelly", y: 2002, id: "GeZZr_p6vB8" },
+        { n: "Ride Wit Me", a: "Nelly", y: 2000, id: "RtSDWqMC5KQ" },
+        { n: "Dilemma", a: "Nelly ft. Kelly Rowland", y: 2002, id: "8WYHDfJDPDc" },
+        { n: "Country Grammar", a: "Nelly", y: 2000, id: "Y5qKNlcwa_8" },
+        { n: "Yeah!", a: "Usher", y: 2004, id: "GxBSyx85Kp8" },
+        { n: "Burn", a: "Usher", y: 2004, id: "t5XNWFw5HVw" },
+        { n: "Confessions Part II", a: "Usher", y: 2004, id: "5Sy19X0xxrM" },
+        { n: "My Boo", a: "Usher & Alicia Keys", y: 2004, id: "fPgfEfB4Bik" },
+        { n: "Caught Up", a: "Usher", y: 2004, id: "C-dvTjK_07c" },
+        { n: "U Remind Me", a: "Usher", y: 2001, id: "Cc_K7S8x3o" },
+        { n: "U Got It Bad", a: "Usher", y: 2001, id: "x6QY_187q_w" },
+        { n: "Nice & Slow", a: "Usher", y: 1997, id: "I5q1W_X_1o" },
+        { n: "My Way", a: "Usher", y: 1997, id: "nQJACVmankY" },
+        { n: "You Make Me Wanna...", a: "Usher", y: 1997, id: "b-I2s5zRbHg" },
+        { n: "Pop", a: "NSYNC", y: 2001, id: "TWZKw_MgUPI" },
+        { n: "Bye Bye Bye", a: "NSYNC", y: 2000, id: "Eo-KmOd3i7s" },
+        { n: "It's Gonna Be Me", a: "NSYNC", y: 2000, id: "GQMlWwIXg3M" },
+        { n: "Tearin' Up My Heart", a: "NSYNC", y: 1997, id: "_ZcMq_8J_bM" },
+        { n: "I Want You Back", a: "NSYNC", y: 1996, id: "is6gtthLGnk" },
+        { n: "Everybody (Backstreet's Back)", a: "Backstreet Boys", y: 1997, id: "6M6samPEMpM" },
+        { n: "I Want It That Way", a: "Backstreet Boys", y: 1999, id: "4fndeDfaWCg" },
+        { n: "As Long As You Love Me", a: "Backstreet Boys", y: 1997, id: "0Gl2QnHNpkA" },
+        { n: "Quit Playing Games (With My Heart)", a: "Backstreet Boys", y: 1996, id: "Ug88HO2mg44" },
+        { n: "Larger Than Life", a: "Backstreet Boys", y: 1999, id: "MEb2CecR11k" },
+        { n: "Show Me the Meaning of Being Lonely", a: "Backstreet Boys", y: 1999, id: "aBt8fN7mJNg" },
+        { n: "Shape of My Heart", a: "Backstreet Boys", y: 2000, id: "OT5msu-dap8" },
+        { n: "The Call", a: "Backstreet Boys", y: 2000, id: "I6p0q1z_5gM" },
+        { n: "More Than That", a: "Backstreet Boys", y: 2000, id: "Gq1F6X_7gYk" },
+        { n: "Incomplete", a: "Backstreet Boys", y: 2005, id: "WVe80iZtlYU" },
+        { n: "Wannabe", a: "Spice Girls", y: 1996, id: "gJLIiF15wjQ" },
+        { n: "Say You'll Be There", a: "Spice Girls", y: 1996, id: "9ro0FW9Qt-4" },
+        { n: "2 Become 1", a: "Spice Girls", y: 1996, id: "FA5jsa1lR9c" },
+        { n: "Spice Up Your Life", a: "Spice Girls", y: 1997, id: "9wfpXI5PKlw" },
+        { n: "Stop", a: "Spice Girls", y: 1997, id: "5JD6EJSTEn8" },
+        { n: "Who Do You Think You Are", a: "Spice Girls", y: 1996, id: "-YriinrRGug" },
+        { n: "Viva Forever", a: "Spice Girls", y: 1997, id: "3wkuqRFXNvI" },
+        { n: "Too Much", a: "Spice Girls", y: 1997, id: "_4VoZ6afztc" },
+        { n: "Goodbye", a: "Spice Girls", y: 1998, id: "eegDtyrSUZw" },
+        { n: "Holler", a: "Spice Girls", y: 2000, id: "Yw5R7s2Xq_c" },
+        { n: "Baby One More Time", a: "Britney Spears", y: 1998, id: "C-u5WLJ9Yk4" },
+        { n: "Oops!... I Did It Again", a: "Britney Spears", y: 2000, id: "C-u5WLJ9Yk4" },
+        { n: "Crazy", a: "Britney Spears", y: 1999, id: "Q4VK9_CfOLQ" },
+        { n: "Stronger", a: "Britney Spears", y: 2000, id: "AJWtLf4-WWs" },
+        { n: "Lucky", a: "Britney Spears", y: 2000, id: "4vvBAONkYwI" },
+        { n: "I'm a Slave 4 U", a: "Britney Spears", y: 2001, id: "Mzeb3mp-K1Y" },
+        { n: "Toxic", a: "Britney Spears", y: 2003, id: "LOZuxwVk7TU" },
+        { n: "Everytime", a: "Britney Spears", y: 2003, id: "8YzabSdk7ZA" },
+        { n: "Gimme More", a: "Britney Spears", y: 2007, id: "elueA2rofoo" },
+        { n: "Piece of Me", a: "Britney Spears", y: 2007, id: "u4FF6MpcsRw" },
+        { n: "Womanizer", a: "Britney Spears", y: 2008, id: "rMqayQ-U74s" },
+        { n: "Circus", a: "Britney Spears", y: 2008, id: "lVhJ_A8XUgc" },
+        { n: "If U Seek Amy", a: "Britney Spears", y: 2008, id: "0aEnnH6t8Ts" },
+        { n: "3", a: "Britney Spears", y: 2009, id: "oTs6oQx1WQI" },
+        { n: "Hold It Against Me", a: "Britney Spears", y: 2011, id: "-Edv8Onsrgg" },
+        { n: "Till The World Ends", a: "Britney Spears", y: 2011, id: "qzU9OrZlKb8" },
+        { n: "I Wanna Go", a: "Britney Spears", y: 2011, id: "T-sxSd1uwoU" },
+        { n: "Work Bitch", a: "Britney Spears", y: 2013, id: "pt8VYOfr8To" },
+        
         // --- 1990s ADDITIONAL HITS ---
         { n: "Smells Like Teen Spirit", a: "Nirvana", y: 1991, id: "hTWKbfoikeg" },
         { n: "Come As You Are", a: "Nirvana", y: 1991, id: "vabnZ9-ex7o" },
@@ -453,14 +661,9 @@
         { n: "I Will Always Love You", a: "Whitney Houston", y: 1992, id: "3JWTaaS7LdU" },
         { n: "Creep", a: "Radiohead", y: 1992, id: "XFkzRNyygfk" },
         { n: "Karma Police", a: "Radiohead", y: 1997, id: "IBH97ma9YiI" },
-        { n: "Baby One More Time", a: "Britney Spears", y: 1998, id: "C-u5WLJ9Yk4" },
-        { n: "Oops!... I Did It Again", a: "Britney Spears", y: 2000, id: "C-u5WLJ9Yk4" },
-        { n: "I Want It That Way", a: "Backstreet Boys", y: 1999, id: "4fndeDfaWCg" },
-        { n: "Everybody", a: "Backstreet Boys", y: 1997, id: "6M6samPEMpM" },
         { n: "No Scrubs", a: "TLC", y: 1999, id: "FrLequ6dUdM" },
         { n: "Waterfalls", a: "TLC", y: 1995, id: "8WEtxJ4-sh4" },
         { n: "Say My Name", a: "Destiny's Child", y: 1999, id: "sQgd6MccwZc" },
-        { n: "Wannabe", a: "Spice Girls", y: 1996, id: "gJLIiF15wjQ" },
         { n: "Hallelujah", a: "Jeff Buckley", y: 1994, id: "y8AWFf7EAc4" },
         { n: "Californication", a: "Red Hot Chili Peppers", y: 1999, id: "YlUKcNNmywk" },
         { n: "Under The Bridge", a: "Red Hot Chili Peppers", y: 1991, id: "lwlogyj7nFE" },
@@ -485,6 +688,48 @@
         { n: "Semi-Charmed Life", a: "Third Eye Blind", y: 1997, id: "beINamVRGy4" },
         { n: "Smooth", a: "Santana ft. Rob Thomas", y: 1999, id: "6Whgn_iE5uc" },
         { n: "Genie in a Bottle", a: "Christina Aguilera", y: 1999, id: "kIDWgqDBNXA" },
+        { n: "Truly Madly Deeply", a: "Savage Garden", y: 1997, id: "WQnAxOQxQIU" },
+        { n: "Drops of Jupiter", a: "Train", y: 2001, id: "7Xf-Lesrkuc" },
+        { n: "I Don't Want to Miss a Thing", a: "Aerosmith", y: 1998, id: "JkK8g6FMEXE" },
+        { n: "My Heart Will Go On", a: "Celine Dion", y: 1997, id: "3gK_2XdjOdY" },
+        { n: "Livin' la Vida Loca", a: "Ricky Martin", y: 1999, id: "p47fEXGabaY" },
+        { n: "Mambo No. 5", a: "Lou Bega", y: 1999, id: "EK_LN3XEcnw" },
+        { n: "Blue (Da Ba Dee)", a: "Eiffel 65", y: 1998, id: "68ugkg9RePc" },
+        { n: "What Is Love", a: "Haddaway", y: 1993, id: "HEXWRTEbj1I" },
+        { n: "U Can't Touch This", a: "MC Hammer", y: 1990, id: "otCpCn0l4Wo" },
+        { n: "Ice Ice Baby", a: "Vanilla Ice", y: 1990, id: "rog8ou-ZepE" },
+        { n: "Baby Got Back", a: "Sir Mix-A-Lot", y: 1992, id: "_JphDdMV2sU" },
+        { n: "Macarena", a: "Los Del Rio", y: 1993, id: "GwuyXy5yFxo" },
+        { n: "All Star", a: "Smash Mouth", y: 1999, id: "L_jWHffIx5E" },
+        { n: "Scar Tissue", a: "Red Hot Chili Peppers", y: 1999, id: "mzJj5-lubeM" },
+        { n: "Otherside", a: "Red Hot Chili Peppers", y: 1999, id: "rn_YodiJO6k" },
+        { n: "Everlong", a: "Foo Fighters", y: 1997, id: "eBG7P-K-r1Y" },
+        { n: "Heart-Shaped Box", a: "Nirvana", y: 1993, id: "n6P0SitRwy8" },
+        { n: "Interstate Love Song", a: "Stone Temple Pilots", y: 1994, id: "yjJL9DGU7Gg" },
+        { n: "Rooster", a: "Alice In Chains", y: 1992, id: "uAE6Il6OTcs" },
+        { n: "Killing In The Name", a: "Rage Against The Machine", y: 1992, id: "bWXazVhlyxQ" },
+        { n: "Sabotage", a: "Beastie Boys", y: 1994, id: "z5rRZdiu1UE" },
+        { n: "Loser", a: "Beck", y: 1994, id: "YgSPaXgAdzE" },
+        { n: "Song 2", a: "Blur", y: 1997, id: "SSbBvKaM6sk" },
+        { n: "Zombie", a: "The Cranberries", y: 1994, id: "6Ejga4kJUts" },
+        { n: "Linger", a: "The Cranberries", y: 1993, id: "G6Kspj3OO0s" },
+        { n: "What's Up?", a: "4 Non Blondes", y: 1993, id: "6NXnxTNIWkc" },
+        { n: "No Rain", a: "Blind Melon", y: 1992, id: "3qVPNONdF58" },
+        { n: "Two Princes", a: "Spin Doctors", y: 1991, id: "wsdy_rct6uo" },
+        { n: "Breakfast At Tiffany's", a: "Deep Blue Something", y: 1995, id: "1ClCpfeIELw" },
+        { n: "Only Wanna Be With You", a: "Hootie & The Blowfish", y: 1994, id: "Ln6WQbRHgXs" },
+        { n: "Slide", a: "Goo Goo Dolls", y: 1998, id: "yP4qdefD24E" },
+        { n: "3AM", a: "Matchbox Twenty", y: 1996, id: "C-Naa1HXeDQ" },
+        { n: "Jumper", a: "Third Eye Blind", y: 1997, id: "gRYZijLZR-Q" },
+        { n: "The Way", a: "Fastball", y: 1998, id: "b0wfu3tOrtQ" },
+        { n: "Closing Time", a: "Semisonic", y: 1998, id: "xGytDsqkQY8" },
+        { n: "One Headlight", a: "The Wallflowers", y: 1996, id: "Zzyfcys1aLM" },
+        { n: "Save Tonight", a: "Eagle-Eye Cherry", y: 1997, id: "Nntd2fgMUYw" },
+        { n: "Thank You", a: "Dido", y: 1998, id: "1TO48Cnl66w" },
+        { n: "Breathless", a: "The Corrs", y: 2000, id: "v3FqK89P_gw" },
+        { n: "Man! I Feel Like A Woman!", a: "Shania Twain", y: 1997, id: "ZJL4UGSbeFg" },
+        { n: "That Don't Impress Me Much", a: "Shania Twain", y: 1997, id: "mqFLXayD6e8" },
+        { n: "Kiss Me", a: "Sixpence None The Richer", y: 1997, id: "8N-qO3sPMRE" },
 
         // --- 2000s ADDITIONAL HITS ---
         { n: "Lose Yourself", a: "Eminem", y: 2002, id: "_Yhyp-_hX2s" },
@@ -531,6 +776,10 @@
         { n: "Where Is the Love?", a: "The Black Eyed Peas", y: 2003, id: "WpYeekQkAdc" },
         { n: "Lose Control", a: "Missy Elliott", y: 2005, id: "na7l3spS_SI" },
         { n: "Get Ur Freak On", a: "Missy Elliott", y: 2001, id: "FPoKiGQzbSQ" },
+        { n: "Hey, Soul Sister", a: "Train", y: 2009, id: "kVpv8-5XWOI" },
+        { n: "I'm Yours", a: "Jason Mraz", y: 2008, id: "EkHTsc9PU2A" },
+        { n: "The Pretender", a: "Foo Fighters", y: 2007, id: "SBjQ9tuuTJQ" },
+        { n: "White Flag", a: "Dido", y: 2003, id: "j-fWDrZSiQw" },
 
         // --- 2010s & 2020s ADDITIONAL HITS ---
         { n: "Rolling in the Deep", a: "Adele", y: 2011, id: "rYEDA3JcQqw" },
@@ -607,21 +856,65 @@
         { n: "What Makes You Beautiful", a: "One Direction", y: 2011, id: "QJO3ROT-A4E" },
         { n: "Story of My Life", a: "One Direction", y: 2013, id: "W-TE_Ys4iwM" },
         { n: "Chandelier", a: "Sia", y: 2014, id: "2vjPBrBU-TM" },
-        { n: "Cheap Thrills", a: "Sia", y: 2016, id: "nYh-n7EOtMA" }
+        { n: "Cheap Thrills", a: "Sia", y: 2016, id: "nYh-n7EOtMA" },
+        
+        // --- NEWLY ADDED FROM REQUESTS ---
+        { n: "The Final Countdown", a: "Europe", y: 1986, id: "9jK-NcRmVcw" },
+        { n: "Footloose", a: "Kenny Loggins", y: 1984, id: "ltrZd3ve5YY" },
+        { n: "Don't You Want Me", a: "The Human League", y: 1981, id: "uPudE8nDog0" },
+        { n: "I Love Rock 'N Roll", a: "Joan Jett & The Blackhearts", y: 1981, id: "iC8oP4Z_xPw" },
+        { n: "Love Is A Battlefield", a: "Pat Benatar", y: 1983, id: "IGVZOLV9SPo" },
+        { n: "Self Esteem", a: "The Offspring", y: 1994, id: "eeWjzBHUdsW" },
+        { n: "Ironic", a: "Alanis Morissette", y: 1996, id: "Jne9t8sHpUc" },
+        { n: "If You Had My Love", a: "Jennifer Lopez", y: 1999, id: "lYfkl-HXfuU" },
+        { n: "Take Me Out", a: "Franz Ferdinand", y: 2004, id: "GhCXAiNz9Jo" },
+        { n: "Float On", a: "Modest Mouse", y: 2004, id: "CTAud5O7Qqk" },
+        { n: "Feel Good Inc.", a: "Gorillaz", y: 2005, id: "HyHNuVaZJ-k" },
+        { n: "Sex on Fire", a: "Kings of Leon", y: 2008, id: "RF0HhrwIwp0" },
+        { n: "Kids", a: "MGMT", y: 2008, id: "fe4EK4HSPkI" },
+        { n: "Pumped Up Kicks", a: "Foster The People", y: 2010, id: "SDTZ7iX4vTQ" },
+        { n: "We Are Young", a: "Fun. ft. Janelle Monáe", y: 2011, id: "Sv6dMFF_yts" },
+        { n: "Get Lucky", a: "Daft Punk ft. Pharrell Williams", y: 2013, id: "5NV6Rdv1a3I" },
+        { n: "Blurred Lines", a: "Robin Thicke", y: 2013, id: "yyDUC1LUXSU" },
+        { n: "Take Me To Church", a: "Hozier", y: 2013, id: "PVjiKRfCc0" },
+        { n: "See You Again", a: "Wiz Khalifa ft. Charlie Puth", y: 2015, id: "RgKAFK5djSk" },
+        { n: "Closer", a: "The Chainsmokers ft. Halsey", y: 2016, id: "PT2_F-1esPk" },
+        { n: "Havana", a: "Camila Cabello", y: 2017, id: "HCjNJDNzw8Y" },
+        { n: "Rockstar", a: "Post Malone ft. 21 Savage", y: 2017, id: "UceaB4D0jpo" },
+        { n: "I Like It", a: "Cardi B", y: 2018, id: "xTlNMmZKwpA" },
+        { n: "Girls Like You", a: "Maroon 5 ft. Cardi B", y: 2018, id: "aJOTlE1K90k" },
+        { n: "Sicko Mode", a: "Travis Scott", y: 2018, id: "6ONRf7h3Mdk" },
+        { n: "The Box", a: "Roddy Ricch", y: 2019, id: "UNZqm3dxd2w" },
+        { n: "Mood", a: "24kGoldn ft. Iann Dior", y: 2020, id: "GrAchTdepsU" },
+        { n: "Leave The Door Open", a: "Silk Sonic", y: 2021, id: "adLGHcj_fmA" },
+        { n: "About Damn Time", a: "Lizzo", y: 2022, id: "IXXxciRUMzE" },
+        { n: "Bad Habit", a: "Steve Lacy", y: 2022, id: "VF-FGf_ZZiI" },
+        { n: "Unholy", a: "Sam Smith & Kim Petras", y: 2022, id: "Uq9gPaALYW8" },
+        { n: "Kill Bill", a: "SZA", y: 2022, id: "MwwdKmawDxx" },
+        { n: "Creepin'", a: "Metro Boomin", y: 2022, id: "61pXCKBCNIk" },
+        { n: "Boy's a liar Pt. 2", a: "PinkPantheress & Ice Spice", y: 2023, id: "aftv9F2KFn4" },
+        { n: "Last Night", a: "Morgan Wallen", y: 2023, id: "b1_RKu-ESCY" },
+        { n: "Fast Car", a: "Luke Combs", y: 2023, id: "Fr7SYpXlVew" },
+        { n: "Calm Down", a: "Rema & Selena Gomez", y: 2022, id: "WcIcVapfqXw" },
+        { n: "I'm Good (Blue)", a: "David Guetta & Bebe Rexha", y: 2022, id: "90RLzVUuXe4" },
+        { n: "I Ain't Worried", a: "OneRepublic", y: 2022, id: "mNEUkkoUoIA" },
+        { n: "Made You Look", a: "Meghan Trainor", y: 2022, id: "1zO9Q_6a_6Q" },
+        { n: "Golden Hour", a: "JVKE", y: 2022, id: "P3cffdsEXXw" },
+        { n: "Until I Found You", a: "Stephen Sanchez", y: 2021, id: "GxldQ9eX2wo" },
+        { n: "Running Up That Hill", a: "Kate Bush", y: 1985, id: "wp43OdtAAkM" }
     ];
 
     let players = [];
     let cur = 0;
     let deck = [];
     let currentSong = null;
-    let currentModeText = "All Time"; // default
+    let currentModeText = "All Time"; 
     
-    // --- UI EVENT LISTENERS FOR MUTUAL EXCLUSIVITY ---
+    // --- UI EVENT LISTENERS ---
     document.addEventListener('DOMContentLoaded', () => {
         const decadeInput = document.getElementById('decadeFilter');
         const artistInput = document.getElementById('artistFilter');
 
-        // When Artist is typed, reset Decade
         artistInput.addEventListener('input', function() {
             if (this.value.trim() !== "") {
                 decadeInput.value = 'all';
@@ -629,7 +922,6 @@
             }
         });
 
-        // When Decade is changed, clear Artist
         decadeInput.addEventListener('change', function() {
             if (this.value !== 'all') {
                 artistInput.value = '';
@@ -644,7 +936,6 @@
             players: players,
             cur: cur,
             deck: deck,
-            // Don't save large playlist, just regenerate it
             gameStarted: !document.getElementById('game').classList.contains('hidden'),
             modeText: currentModeText
         };
@@ -672,7 +963,6 @@
                 document.getElementById('game').classList.remove('hidden');
                 document.getElementById('player-wrapper').classList.add('active');
                 
-                // Set the mode text
                 document.getElementById('modeInfo').innerText = `Game Mode: ${currentModeText}`;
                 
                 updateBoard();
@@ -683,7 +973,6 @@
                 document.getElementById('curtain').style.display = 'flex';
                 updateDeckInfo();
                 
-                // IMPORTANT: If refreshing, reshuffle the remaining deck to ensure variety
                 if (deck.length > 0) {
                     deck = shuffle(deck);
                 }
@@ -769,7 +1058,6 @@
             return;
         }
 
-        // Set Mode Text
         const decade = document.getElementById('decadeFilter').value;
         const artist = document.getElementById('artistFilter').value;
         if (artist) {
@@ -780,7 +1068,7 @@
             currentModeText = "All Time";
         }
 
-        // Shuffle and Limit to Top 100 random picks from the filtered pool
+        // Shuffle and limit deck to 100 max
         deck = shuffle(finalPool).slice(0, 100);
         
         document.getElementById('setup').classList.add('hidden');
@@ -810,7 +1098,6 @@
             return;
         }
 
-        // Reset UI
         document.getElementById('results').classList.add('hidden');
         document.getElementById('controls').classList.add('hidden');
         document.getElementById('curtain').style.display = 'flex'; 
@@ -818,11 +1105,9 @@
         
         if(player && player.stopVideo) player.stopVideo();
 
-        // Reshuffle if empty using current filters logic (implicitly full reset if we don't store filter state)
+        // If deck is empty, reshuffle based on original filter (using full pool again)
         if(deck.length === 0) {
-             // Fallback to full list shuffle if deck runs out to keep game going
-             // (Simple reset for infinite play)
-            deck = shuffle([...playlist]); 
+             deck = shuffle(getFilteredSongs()).slice(0, 100); 
         }
         
         currentSong = deck.pop();
@@ -867,12 +1152,9 @@
         if(checks >= 2) players[cur].score++;
         
         if(players[cur].score >= 10) {
-            // Show Winner Screen
-            document.getElementById('game').classList.add('hidden'); // Hide game board
-            document.getElementById('winScreen').classList.remove('hidden'); // Show winner
+            document.getElementById('game').classList.add('hidden');
+            document.getElementById('winScreen').classList.remove('hidden');
             document.getElementById('winnerName').innerText = players[cur].name + "!";
-            
-            // Clear save so next load is fresh
             localStorage.removeItem(STORAGE_KEY); 
             return;
         }
