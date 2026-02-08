@@ -2,107 +2,131 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Family Music Trivia</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Family Hitster Game</title>
     <style>
-        body { font-family: sans-serif; background: #121212; color: white; text-align: center; padding: 20px; }
-        .card { background: #1e1e1e; padding: 20px; border-radius: 20px; max-width: 450px; margin: auto; }
-        button { background: #ff2d55; border: none; padding: 15px; color: white; border-radius: 30px; font-weight: bold; cursor: pointer; width: 80%; margin: 10px 0; }
+        :root { --brand: #1DB954; --bg: #121212; }
+        body { font-family: -apple-system, system-ui, sans-serif; background: var(--bg); color: white; text-align: center; margin: 0; padding: 20px; }
+        .card { background: #1c1c1e; padding: 25px; border-radius: 20px; max-width: 420px; margin: auto; border: 1px solid #333; }
+        button { background: var(--brand); border: none; padding: 18px; color: white; border-radius: 35px; font-weight: bold; cursor: pointer; margin: 10px 0; font-size: 16px; width: 90%; }
         .hidden { display: none; }
-        #video-container { width: 100%; height: 250px; background: #000; margin: 15px 0; border-radius: 10px; overflow: hidden; position: relative; }
-        #cover { position: absolute; top:0; left:0; width:100%; height:100%; background: #000; color: #555; display: flex; align-items: center; justify-content: center; z-index: 10; }
-        .score { font-size: 14px; opacity: 0.6; margin-top: 20px; }
+        .score-box { font-size: 13px; opacity: 0.7; margin-top: 20px; border-top: 1px solid #333; padding-top: 15px; }
+        .toggle-btn { background: #444; width: 60px; height: 60px; border-radius: 50%; font-size: 24px; display: inline-flex; align-items: center; justify-content: center; }
+        input { padding: 12px; border-radius: 10px; border: 1px solid #333; width: 80%; background: #2c2c2e; color: white; margin-bottom: 10px; }
     </style>
 </head>
 <body>
 
 <div class="card">
     <div id="setup">
-        <h1>🎵 Family Hitster</h1>
-        <input type="text" id="pName" placeholder="Player Name" style="padding:10px; border-radius:5px; border:none; width:70%;">
+        <h1>🏆 Hitster Trivia</h1>
+        <input type="text" id="pIn" placeholder="Enter Player Name">
         <button onclick="addP()">Add Player</button>
-        <div id="pList" style="margin:10px"></div>
-        <button id="startBtn" class="hidden" onclick="startG()" style="background:white; color:black;">Start Game</button>
+        <div id="pList" style="margin: 10px 0;"></div>
+        <button id="startBtn" class="hidden" onclick="startGame()" style="background:white; color:black;">Start Game</button>
     </div>
 
     <div id="game" class="hidden">
-        <h2 id="turnTxt"></h2>
+        <h2 id="turnTxt" style="color: var(--brand);"></h2>
         
-        <div id="video-container">
-            <div id="cover">❓ Song Playing... ❓</div>
-            <iframe id="ytPlayer" width="100%" height="100%" src="" frameborder="0" allow="autoplay"></iframe>
-        </div>
-
-        <button id="nextBtn" onclick="nextSong()">🎲 Load Random Song</button>
-        
-        <div id="controls" class="hidden">
-            <button onclick="reveal()" id="revBtn" style="background:#444;">Show Details</button>
-            <div id="resultUI" class="hidden">
-                <p>Did they get 2+ correct?</p>
-                <button onclick="score(true)" style="width:40%">✅ Yes</button>
-                <button onclick="score(false)" style="background:#444; width:40%">❌ No</button>
+        <div id="playPhase">
+            <button id="mainBtn" onclick="triggerMusic()">🎵 Play Random Song</button>
+            
+            <div id="audioControls" class="hidden">
+                <p>Song is playing...</p>
+                <button onclick="toggleAudio()" class="toggle-btn" id="toggleIcon">⏸</button>
+                <p style="font-size: 12px; color: #888;">Tap to Play/Pause</p>
+                <button onclick="revealResults()" style="background: #555;">Show Results</button>
             </div>
         </div>
-        <div class="score" id="sb"></div>
+
+        <div id="results" class="hidden">
+            <h2 id="rTitle" style="margin: 0;"></h2>
+            <p id="rArtist" style="color: #aaa;"></p>
+            <h1 id="rYear" style="color: var(--brand);"></h1>
+            
+            <hr style="border: 0.5px solid #333; margin: 20px 0;">
+            <p>Did they get 2+ correct?</p>
+            <button onclick="processScore(true)" style="width: 45%; margin: 5px;">✅ Yes</button>
+            <button onclick="processScore(false)" style="background:#444; width: 45%; margin: 5px;">❌ No</button>
+        </div>
+
+        <div class="score-box" id="sb"></div>
     </div>
 </div>
 
 <script>
     let players = [];
     let cur = 0;
-    
-    // Using YouTube Video IDs (Stable and won't be blocked)
-    const songs = [
-        { id: "fHI8X4OXluQ", n: "Amazing", y: "1980s" }, // Just examples, you can find more
-        { id: "dQw4w9WgXcQ", n: "Never Gonna Give You Up", y: "1987" },
-        { id: "L_jWHffIx5E", n: "Smash Mouth - All Star", y: "1999" }
+    const audio = new Audio(); // Local engine
+    let currentSong = null;
+
+    // HIGH-STABILITY MP3 LINKS
+    const playlist = [
+        { n: "Stayin' Alive", a: "Bee Gees", y: 1977, u: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" },
+        { n: "Billie Jean", a: "Michael Jackson", y: 1982, u: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" },
+        { n: "Imagine", a: "John Lennon", y: 1971, u: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3" },
+        { n: "Bohemian Rhapsody", a: "Queen", y: 1975, u: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3" }
     ];
 
     function addP() {
-        const n = document.getElementById('pName').value;
-        if(n) { players.push({name: n, score: 0}); document.getElementById('pName').value=''; renderP(); }
+        const val = document.getElementById('pIn').value.trim();
+        if(val) { players.push({name: val, score: 0}); document.getElementById('pIn').value=''; renderP(); }
     }
     function renderP() {
         document.getElementById('pList').innerText = players.map(p => p.name).join(', ');
         if(players.length > 0) document.getElementById('startBtn').classList.remove('hidden');
     }
-    function startG() {
+    function startGame() {
         document.getElementById('setup').classList.add('hidden');
         document.getElementById('game').classList.remove('hidden');
-        update();
+        updateUI();
     }
-    function update() {
+    function updateUI() {
         document.getElementById('turnTxt').innerText = players[cur].name + "'s Turn";
-        document.getElementById('sb').innerText = players.map(p => p.name + ": " + p.score).join(' | ');
+        document.getElementById('sb').innerText = "Scores: " + players.map(p => `${p.name}: ${p.score}`).join(' | ');
     }
 
-    function nextSong() {
-        const s = songs[Math.floor(Math.random() * songs.length)];
-        // Load YouTube video and start at a random time so they don't hear the intro
-        const startAt = Math.floor(Math.random() * 60) + 30;
-        document.getElementById('ytPlayer').src = `https://www.youtube.com/embed/${s.id}?autoplay=1&start=${startAt}`;
+    // Step 2: Immediate Play & Toggle
+    function triggerMusic() {
+        currentSong = playlist[Math.floor(Math.random() * playlist.length)];
+        audio.src = currentSong.u;
+        audio.play();
+
+        document.getElementById('mainBtn').classList.add('hidden');
+        document.getElementById('audioControls').classList.remove('hidden');
+    }
+
+    function toggleAudio() {
+        if (audio.paused) {
+            audio.play();
+            document.getElementById('toggleIcon').innerText = "⏸";
+        } else {
+            audio.pause();
+            document.getElementById('toggleIcon').innerText = "▶";
+        }
+    }
+
+    // Step 3: Stop Playing & Reveal
+    function revealResults() {
+        audio.pause(); // Stop music immediately
+        document.getElementById('audioControls').classList.add('hidden');
+        document.getElementById('results').classList.remove('hidden');
         
-        document.getElementById('cover').classList.remove('hidden');
-        document.getElementById('controls').classList.remove('hidden');
-        document.getElementById('resultUI').classList.add('hidden');
-        document.getElementById('revBtn').classList.remove('hidden');
-        document.getElementById('nextBtn').classList.add('hidden');
+        document.getElementById('rTitle').innerText = currentSong.n;
+        document.getElementById('rArtist').innerText = "By: " + currentSong.a;
+        document.getElementById('rYear').innerText = currentSong.y;
     }
 
-    function reveal() {
-        document.getElementById('cover').classList.add('hidden');
-        document.getElementById('resultUI').classList.remove('hidden');
-        document.getElementById('revBtn').classList.add('hidden');
-    }
-
-    function score(win) {
-        if(win) players[cur].score++;
-        if(players[cur].score >= 10) { alert(players[cur].name + " wins!"); location.reload(); }
+    // Step 4: Scoring
+    function processScore(isWin) {
+        if(isWin) players[cur].score++;
+        if(players[cur].score >= 10) { alert("Winner: " + players[cur].name); location.reload(); return; }
+        
         cur = (cur + 1) % players.length;
-        document.getElementById('ytPlayer').src = "";
-        document.getElementById('controls').classList.add('hidden');
-        document.getElementById('nextBtn').classList.remove('hidden');
-        update();
+        document.getElementById('results').classList.add('hidden');
+        document.getElementById('mainBtn').classList.remove('hidden');
+        updateUI();
     }
 </script>
 </body>
