@@ -188,11 +188,19 @@
         <div id="sb" style="margin-top: 20px; padding-top: 15px; border-top: 1px solid #333; font-size: 14px; color: #888;"></div>
         <button onclick="confirmReset()" class="danger">Reset Game</button>
     </div>
+
+    <!-- WINNER SCREEN (Hidden by default) -->
+    <div id="winScreen" class="hidden">
+        <h1 style="font-size: 60px; margin-bottom: 10px;">🏆</h1>
+        <h2 class="accent" id="winnerName" style="margin-top: 0;"></h2>
+        <p>is the winner!</p>
+        <button onclick="location.reload()" style="margin-top: 30px;">Start New Game</button>
+    </div>
 </div>
 
 <script>
     // --- STORAGE KEY ---
-    const STORAGE_KEY = 'family_hitster_save_v9';
+    const STORAGE_KEY = 'family_hitster_save_v10';
 
     // --- YOUTUBE API SETUP ---
     var tag = document.createElement('script');
@@ -550,11 +558,12 @@
     let currentSong = null;
     let currentModeText = "All Time"; // default
     
-    // --- UI EVENT LISTENERS ---
+    // --- UI EVENT LISTENERS FOR MUTUAL EXCLUSIVITY ---
     document.addEventListener('DOMContentLoaded', () => {
         const decadeInput = document.getElementById('decadeFilter');
         const artistInput = document.getElementById('artistFilter');
 
+        // When Artist is typed, reset Decade
         artistInput.addEventListener('input', function() {
             if (this.value.trim() !== "") {
                 decadeInput.value = 'all';
@@ -562,6 +571,7 @@
             }
         });
 
+        // When Decade is changed, clear Artist
         decadeInput.addEventListener('change', function() {
             if (this.value !== 'all') {
                 artistInput.value = '';
@@ -576,6 +586,7 @@
             players: players,
             cur: cur,
             deck: deck,
+            // Don't save large playlist, just regenerate it
             gameStarted: !document.getElementById('game').classList.contains('hidden'),
             modeText: currentModeText
         };
@@ -603,16 +614,18 @@
                 document.getElementById('game').classList.remove('hidden');
                 document.getElementById('player-wrapper').classList.add('active');
                 
+                // Set the mode text
                 document.getElementById('modeInfo').innerText = `Game Mode: ${currentModeText}`;
                 
                 updateBoard();
+                
                 document.getElementById('results').classList.add('hidden');
                 document.getElementById('controls').classList.add('hidden');
                 document.getElementById('loadBtn').classList.remove('hidden');
                 document.getElementById('curtain').style.display = 'flex';
                 updateDeckInfo();
                 
-                // Reshuffle on reload to ensure randomness
+                // IMPORTANT: If refreshing, reshuffle the remaining deck to ensure variety
                 if (deck.length > 0) {
                     deck = shuffle(deck);
                 }
@@ -620,7 +633,7 @@
         } catch(e) { console.error("Load Error", e); }
     }
 
-    // --- LOGIC ---
+    // --- GAME LOGIC ---
 
     function populateArtistList() {
         const artists = [...new Set(playlist.map(s => s.a))].sort();
@@ -739,6 +752,7 @@
             return;
         }
 
+        // Reset UI
         document.getElementById('results').classList.add('hidden');
         document.getElementById('controls').classList.add('hidden');
         document.getElementById('curtain').style.display = 'flex'; 
@@ -746,9 +760,11 @@
         
         if(player && player.stopVideo) player.stopVideo();
 
+        // Reshuffle if empty using current filters logic (implicitly full reset if we don't store filter state)
         if(deck.length === 0) {
-            // Deck empty? Reshuffle full filtered list to keep playing infinitely
-            deck = shuffle(getFilteredSongs()).slice(0, 100); 
+             // Fallback to full list shuffle if deck runs out to keep game going
+             // (Simple reset for infinite play)
+            deck = shuffle([...playlist]); 
         }
         
         currentSong = deck.pop();
@@ -793,9 +809,13 @@
         if(checks >= 2) players[cur].score++;
         
         if(players[cur].score >= 10) {
-            alert(players[cur].name + " WINS!");
+            // Show Winner Screen
+            document.getElementById('game').classList.add('hidden'); // Hide game board
+            document.getElementById('winScreen').classList.remove('hidden'); // Show winner
+            document.getElementById('winnerName').innerText = players[cur].name + "!";
+            
+            // Clear save so next load is fresh
             localStorage.removeItem(STORAGE_KEY); 
-            location.reload();
             return;
         }
 
