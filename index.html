@@ -3,122 +3,107 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Family Hitster Game</title>
+    <title>Family Music Game</title>
     <style>
-        :root { --accent: #ff2d55; --bg: #121212; --card: #1c1c1e; }
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: white; text-align: center; padding: 20px; }
-        .card { background: var(--card); padding: 30px; border-radius: 20px; max-width: 450px; margin: 0 auto; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        button { background: var(--accent); border: none; padding: 15px 30px; color: white; border-radius: 30px; font-weight: bold; cursor: pointer; margin: 10px; font-size: 16px; }
-        button:disabled { background: #444; opacity: 0.5; }
-        input { padding: 12px; border-radius: 10px; border: none; width: 80%; margin-bottom: 10px; background: #2c2c2e; color: white; }
+        body { font-family: sans-serif; background: #121212; color: white; text-align: center; padding: 20px; }
+        .card { background: #1e1e1e; padding: 25px; border-radius: 15px; max-width: 400px; margin: auto; border: 1px solid #333; }
+        button { background: #ff2d55; border: none; padding: 12px 25px; color: white; border-radius: 20px; font-weight: bold; cursor: pointer; margin: 10px; }
         .hidden { display: none; }
-        .status { color: #888; font-size: 12px; margin-top: 10px; }
-        .results { background: #2c2c2e; border-radius: 15px; padding: 20px; margin-top: 20px; }
-        .checkbox-row { display: block; text-align: left; margin: 10px 40px; font-size: 18px; }
+        .score-board { font-size: 14px; margin-top: 20px; color: #888; }
+        #debug { font-size: 10px; color: #444; margin-top: 10px; }
     </style>
 </head>
 <body>
 
 <div class="card">
     <div id="setup">
-        <h1>🎵 Music Trivia</h1>
-        <input type="text" id="nameInput" placeholder="Enter Player Name">
-        <br>
-        <button onclick="addPlayer()">Add Player</button>
-        <div id="playerList" style="margin: 15px 0;"></div>
+        <h2>Register Players</h2>
+        <input type="text" id="nameIn" placeholder="Name" style="padding:10px; border-radius:5px; border:none;">
+        <button onclick="addP()">Add</button>
+        <div id="pList" style="margin:10px;"></div>
         <button id="startBtn" class="hidden" onclick="startGame()">Start Game</button>
     </div>
 
     <div id="game" class="hidden">
-        <h2 id="turnDisplay" style="color: var(--accent);"></h2>
+        <h3 id="turnTxt"></h3>
+        <p style="font-size: 12px; color: #888;">Make sure your volume is UP</p>
         
-        <button id="playBtn" onclick="playSong()">🔊 Play Song</button>
-        <div id="audioStatus" class="status"></div>
+        <button id="mainBtn" onclick="handleMusic()">🔊 Play New Song</button>
         
-        <audio id="musicPlayer" controls style="width: 100%; margin-top: 10px; filter: invert(1);"></audio>
-
-        <div id="gameUI" class="hidden">
-            <button onclick="revealInfo()" id="revealBtn" style="background: #555;">Show Results</button>
+        <div id="controls" class="hidden">
+            <audio id="player" controls style="width: 100%; filter: invert(1); margin-bottom: 10px;"></audio>
+            <button onclick="reveal()" id="revBtn" style="background:#444;">Show Details</button>
             
-            <div id="info" class="hidden results">
-                <h3 id="rTitle"></h3>
-                <p id="rArtist"></p>
-                <h1 id="rYear" style="color: var(--accent);"></h1>
-                <hr>
-                <label class="checkbox-row"><input type="checkbox" class="sc"> Song Name</label>
-                <label class="checkbox-row"><input type="checkbox" class="sc"> Performer</label>
-                <label class="checkbox-row"><input type="checkbox" class="sc"> Release Year</label>
-                <button onclick="nextTurn()">Submit</button>
+            <div id="results" class="hidden" style="background:#282828; padding:15px; border-radius:10px;">
+                <h2 id="songN" style="margin:0;"></h2>
+                <p id="songA" style="color:#ff2d55;"></p>
+                <h1 id="songY"></h1>
+                <p>2+ Correct?</p>
+                <button onclick="endTurn(true)">✅ Yes</button>
+                <button onclick="endTurn(false)" style="background:#444;">❌ No</button>
             </div>
         </div>
-        <div id="scores" style="margin-top:20px; font-size: 14px; opacity:0.7;"></div>
+
+        <div class="score-board" id="sb"></div>
     </div>
 </div>
 
 <script>
     let players = [];
-    let curIdx = 0;
-    const audio = document.getElementById('musicPlayer');
-
-    // Apple Music Preview Links (More stable than Spotify)
+    let cur = 0;
     const playlist = [
-        { n: "Flowers", a: "Miley Cyrus", y: 2023, s: "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview126/v4/05/29/49/0529497e-6f8e-8a30-891d-55615d86f78f/mzaf_10795499252438834925.plus.aac.p.m4a" },
-        { n: "Blinding Lights", a: "The Weeknd", y: 2019, s: "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview115/v4/64/7b/0d/647b0d71-9878-3860-264b-6101c51a90bc/mzaf_1603504380963321523.plus.aac.p.m4a" },
-        { n: "As It Was", a: "Harry Styles", y: 2022, s: "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview126/v4/8e/3c/69/8e3c690d-27b2-3286-9818-8097d76c348f/mzaf_14930165507727181679.plus.aac.p.m4a" },
-        { n: "Bohemian Rhapsody", a: "Queen", y: 1975, s: "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview125/v4/36/3b/b1/363bb126-724d-6191-2092-48868f04f216/mzaf_14002622765275828471.plus.aac.p.m4a" },
-        { n: "Stayin' Alive", a: "Bee Gees", y: 1977, s: "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview125/v4/71/8f/3e/718f3e2b-7c15-0951-e350-023a102714c6/mzaf_13501725732168923058.plus.aac.p.m4a" }
+        { n: "Flowers", a: "Miley Cyrus", y: 2023, u: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" }, // Generic test link 1
+        { n: "Blinding Lights", a: "The Weeknd", y: 2019, u: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" }, // Generic test link 2
+        { n: "Stayin' Alive", a: "Bee Gees", y: 1977, u: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3" }
     ];
 
-    function addPlayer() {
-        const n = document.getElementById('nameInput').value.trim();
-        if (n) { players.push({ name: n, score: 0 }); document.getElementById('nameInput').value = ""; render(); }
+    function addP() {
+        const val = document.getElementById('nameIn').value;
+        if(val) { players.push({name: val, score: 0}); document.getElementById('nameIn').value=''; renderP(); }
     }
-
-    function render() {
-        document.getElementById('playerList').innerHTML = players.map(p => `<span style="margin:5px">${p.name}</span>`).join('');
-        if (players.length > 0) document.getElementById('startBtn').classList.remove('hidden');
+    function renderP() {
+        document.getElementById('pList').innerText = players.map(p => p.name).join(', ');
+        if(players.length > 0) document.getElementById('startBtn').classList.remove('hidden');
     }
-
     function startGame() {
         document.getElementById('setup').classList.add('hidden');
         document.getElementById('game').classList.remove('hidden');
-        update();
+        updateUI();
+    }
+    function updateUI() {
+        document.getElementById('turnTxt').innerText = players[cur].name + "'s Turn";
+        document.getElementById('sb').innerText = players.map(p => p.name + ": " + p.score).join(' | ');
+    }
+    
+    function handleMusic() {
+        const p = document.getElementById('player');
+        const s = playlist[Math.floor(Math.random() * playlist.length)];
+        window.activeS = s;
+        
+        p.src = s.u;
+        p.play(); // Triggered by user click
+        
+        document.getElementById('mainBtn').classList.add('hidden');
+        document.getElementById('controls').classList.remove('hidden');
+        document.getElementById('results').classList.add('hidden');
+        document.getElementById('revBtn').classList.remove('hidden');
     }
 
-    function update() {
-        document.getElementById('turnDisplay').innerText = `${players[curIdx].name}'s Turn`;
-        document.getElementById('scores').innerHTML = players.map(p => `${p.name}: ${p.score}`).join(' | ');
+    function reveal() {
+        document.getElementById('songN').innerText = window.activeS.n;
+        document.getElementById('songA').innerText = window.activeS.a;
+        document.getElementById('songY').innerText = window.activeS.y;
+        document.getElementById('results').classList.remove('hidden');
+        document.getElementById('revBtn').classList.add('hidden');
     }
 
-    function playSong() {
-        const song = playlist[Math.floor(Math.random() * playlist.length)];
-        window.currentSong = song;
-        audio.src = song.s;
-        audio.play().catch(e => {
-            document.getElementById('audioStatus').innerText = "Tap 'Play' on the player bar below.";
-        });
-        document.getElementById('playBtn').disabled = true;
-        document.getElementById('gameUI').classList.remove('hidden');
-        document.getElementById('info').classList.add('hidden');
-        document.getElementById('revealBtn').classList.remove('hidden');
-    }
-
-    function revealInfo() {
-        document.getElementById('rTitle').innerText = window.currentSong.n;
-        document.getElementById('rArtist').innerText = window.currentSong.a;
-        document.getElementById('rYear').innerText = window.currentSong.y;
-        document.getElementById('info').classList.remove('hidden');
-        document.getElementById('revealBtn').classList.add('hidden');
-    }
-
-    function nextTurn() {
-        if (document.querySelectorAll('.sc:checked').length >= 2) players[curIdx].score++;
-        if (players[curIdx].score >= 10) { alert(players[curIdx].name + " WINS!"); location.reload(); }
-        curIdx = (curIdx + 1) % players.length;
-        document.querySelectorAll('.sc').forEach(c => c.checked = false);
-        document.getElementById('gameUI').classList.add('hidden');
-        document.getElementById('playBtn').disabled = false;
-        update();
+    function endTurn(win) {
+        if(win) players[cur].score++;
+        if(players[cur].score >= 10) { alert(players[cur].name + " wins!"); location.reload(); }
+        cur = (cur + 1) % players.length;
+        document.getElementById('controls').classList.add('hidden');
+        document.getElementById('mainBtn').classList.remove('hidden');
+        updateUI();
     }
 </script>
 </body>
