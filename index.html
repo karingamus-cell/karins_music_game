@@ -356,7 +356,7 @@
             <button id="startBtn" class="hidden pink" onclick="startGame()">Rock On</button>
 
             <div class="rules">
-                The objective is simple: Reach 10 points. On your turn, listen and name 2 out of 3 details correctly to gain a point.
+                Reach 10 points. On your turn, listen and name 2 out of 3 details correctly to gain a point.
             </div>
         </div>
 
@@ -387,7 +387,7 @@
                     <label class="checkbox-item"><input type="checkbox" class="sc-check"> Original Year</label>
                 </div>
                 
-                <a id="songLink" href="#" target="_blank" class="song-link">View Source ↗</a>
+                <a id="songLink" href="#" target="_blank" class="song-link">Play song on YouTube ↗</a>
                 
                 <div style="display: flex; gap: 10px; align-items: center; margin-top: 10px;">
                     <button onclick="submitTurn()" class="pink" style="flex: 2;">Continue Journey</button>
@@ -401,16 +401,16 @@
 
         <!-- WIN SCREEN -->
         <div id="winScreen" class="hidden">
-            <h1 style="font-size: 5rem; margin-bottom: 10px;">✧</h1>
-            <h2 id="winnerName" style="font-family: 'Playfair Display', serif; font-size: 3rem; margin: 0;"></h2>
-            <p style="letter-spacing: 3px; text-transform: uppercase; color: var(--primary); margin-top: 15px; font-weight: 700; font-size: 0.8rem;">The Ultimate Hitster</p>
+            <h1 style="font-size: 5rem; margin-bottom: 10px;">👑</h1>
+            <h2 id="winnerName" style="font-family: 'Playfair Display', serif; font-size: 2rem; margin: 0; line-height: 1.4;"></h2>
+            <p style="letter-spacing: 3px; text-transform: uppercase; color: var(--primary); margin-top: 25px; font-weight: 700; font-size: 0.8rem;">The Ultimate Hitster</p>
             <button onclick="location.reload()" class="pink" style="margin-top: 50px;">New Beginning</button>
         </div>
     </div>
 </div>
 
 <script>
-    const STORAGE_KEY = 'hitster_karin_rose_v5_final';
+    const STORAGE_KEY = 'hitster_karin_rose_v8_final';
 
     // YouTube API Load
     var tag = document.createElement('script');
@@ -424,6 +424,7 @@
     let customPlaylistId = null;
     let isPlaylistStarted = false;
     let modalCallback = null;
+    let isResultsScreen = false;
 
     function onYouTubeIframeAPIReady() {
         player = new YT.Player('youtube-player', {
@@ -443,7 +444,7 @@
         const st = document.getElementById('statusText');
         
         if (event.data === YT.PlayerState.PLAYING) {
-            st.innerText = "Playing...";
+            st.innerText = isResultsScreen ? "" : "Playing...";
             btn.innerText = "⏸ Pause";
             rBtn.innerText = "⏸ Pause";
             retryCount = 0;
@@ -451,7 +452,7 @@
         } else if (event.data === YT.PlayerState.PAUSED) {
             btn.innerText = "▶ Play";
             rBtn.innerText = "▶ Resume";
-            st.innerText = "Suspended";
+            if (!isResultsScreen) st.innerText = ""; 
         } else if (event.data === YT.PlayerState.BUFFERING) {
             st.innerText = "Sorry, ads...";
         }
@@ -483,36 +484,43 @@
         { n: "Respect", a: "Aretha Franklin", y: 1967, id: "6FOUqQt3Kg0" },
         { n: "Good Vibrations", a: "The Beach Boys", y: 1966, id: "Eab_beh07HU" },
         { n: "Stand by Me", a: "Ben E. King", y: 1961, id: "hwZNL7QVJjE" },
+        { n: "Satisfaction", a: "The Rolling Stones", y: 1965, id: "nrIPxlFzDi0" },
         // 1970s
         { n: "Bohemian Rhapsody", a: "Queen", y: 1975, id: "fJ9rUzIMcZQ" },
         { n: "Hotel California", a: "Eagles", y: 1976, id: "vced7_ySgV8" },
         { n: "Dreams", a: "Fleetwood Mac", y: 1977, id: "Y3ywicffOj4" },
         { n: "September", a: "Earth, Wind & Fire", y: 1978, id: "Gs069dndIYk" },
+        { n: "Stayin' Alive", a: "Bee Gees", y: 1977, id: "I_izvAbhExY" },
         // 1980s
         { n: "Billie Jean", a: "Michael Jackson", y: 1982, id: "Zi_XLOBDo_Y" },
         { n: "Take On Me", a: "a-ha", y: 1984, id: "djV11Xbc914" },
         { n: "Sweet Child O' Mine", a: "Guns N' Roses", y: 1987, id: "1w7OgIMMRc4" },
         { n: "Purple Rain", a: "Prince", y: 1984, id: "TvnYmWpD_T8" },
+        { n: "Livin' on a Prayer", a: "Bon Jovi", y: 1986, id: "lDK99Y4qsEk" },
         // 1990s
         { n: "Smells Like Teen Spirit", a: "Nirvana", y: 1991, id: "hTWKbfoikeg" },
         { n: "Wonderwall", a: "Oasis", y: 1995, id: "6hzrDeceEKc" },
         { n: "Losing My Religion", a: "R.E.M.", y: 1991, id: "xwtdhWltSIg" },
         { n: "No Scrubs", a: "TLC", y: 1999, id: "FrLequ6dUdM" },
+        { n: "Baby One More Time", a: "Britney Spears", y: 1998, id: "C-u5WLJ9Yk4" },
         // 2000s
         { n: "Mr. Brightside", a: "The Killers", y: 2003, id: "gGdGFtwCNBE" },
         { n: "Toxic", a: "Britney Spears", y: 2003, id: "LOZuxwVk7TU" },
         { n: "Hey Ya!", a: "Outkast", y: 2003, id: "PWgvGjAhvIw" },
         { n: "Poker Face", a: "Lady Gaga", y: 2008, id: "bESGLojNYSo" },
+        { n: "Lose Yourself", a: "Eminem", y: 2002, id: "_Yhyp-_hX2s" },
         // 2010s
         { n: "Rolling in the Deep", a: "Adele", y: 2011, id: "rYEDA3JcQqw" },
         { n: "Uptown Funk", a: "Bruno Mars", y: 2014, id: "OPf0YbXqDm0" },
         { n: "Shape of You", a: "Ed Sheeran", y: 2017, id: "JGwWNGJdvx8" },
         { n: "Bad Guy", a: "Billie Eilish", y: 2019, id: "DyDfgMOUjCI" },
+        { n: "Blinding Lights", a: "The Weeknd", y: 2019, id: "4NRXx6U8ABQ" },
         // 2020s
         { n: "Flowers", a: "Miley Cyrus", y: 2023, id: "G7KNmW9a75Y" },
         { n: "As It Was", a: "Harry Styles", y: 2022, id: "H5v3kku4y6Q" },
         { n: "Anti-Hero", a: "Taylor Swift", y: 2022, id: "b1kbLwvqugk" },
-        { n: "Espresso", a: "Sabrina Carpenter", y: 2024, id: "ep2f_eHnQfI" }
+        { n: "Espresso", a: "Sabrina Carpenter", y: 2024, id: "ep2f_eHnQfI" },
+        { n: "Vampire", a: "Olivia Rodrigo", y: 2023, id: "RlPNh_PBZb4" }
     ];
 
     let players = [];
@@ -653,16 +661,24 @@
 
     function playRandomSong() {
         if(!isPlayerReady) return;
+        isResultsScreen = false;
         document.getElementById('results').classList.add('hidden');
         document.getElementById('statusText').innerText = "Sorry, ads...";
         if(player && player.stopVideo) player.stopVideo();
 
         if (customPlaylistId) {
             if (!isPlaylistStarted) {
+                player.setLoop(true);
+                player.setShuffle(true);
                 player.cuePlaylist({ list: customPlaylistId, listType: 'playlist', index: 0, startSeconds: 45 });
-                setTimeout(() => { player.playVideo(); player.setShuffle(true); player.nextVideo(); }, 500);
+                setTimeout(() => { 
+                    player.playVideo(); 
+                    setTimeout(() => player.nextVideo(), 800);
+                }, 1200);
                 isPlaylistStarted = true;
-            } else { player.nextVideo(); }
+            } else { 
+                player.nextVideo(); 
+            }
             document.getElementById('loadBtn').classList.add('hidden');
             document.getElementById('controls').classList.remove('hidden');
             document.getElementById('pauseBtn').innerText = "▶ Play";
@@ -680,6 +696,7 @@
     function toggleAudio() { player.getPlayerState() === YT.PlayerState.PLAYING ? player.pauseVideo() : player.playVideo(); }
 
     function showResults() {
+        isResultsScreen = true;
         player.pauseVideo();
         document.getElementById('controls').classList.add('hidden');
         document.getElementById('results').classList.remove('hidden');
@@ -707,16 +724,20 @@
 
     function submitTurn() {
         if(document.querySelectorAll('.sc-check:checked').length >= 2) players[cur].score++;
+        
         if(players[cur].score >= 10) {
             document.getElementById('game').classList.add('hidden');
             document.getElementById('winScreen').classList.remove('hidden');
-            document.getElementById('winnerName').innerText = players[cur].name;
+            document.getElementById('winnerName').innerText = `Congratulations ${players[cur].name}! You are a queen!`;
             localStorage.removeItem(STORAGE_KEY); 
             return;
         }
+
         document.querySelectorAll('.sc-check').forEach(c => c.checked = false);
         cur = (cur + 1) % players.length;
+        
         if (!customPlaylistId) player.stopVideo();
+        isResultsScreen = false;
         document.getElementById('results').classList.add('hidden');
         document.getElementById('loadBtn').classList.remove('hidden');
         currentSong = null; 
