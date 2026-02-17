@@ -25,7 +25,6 @@
         .hidden { display: none !important; }
         
         /* VIDEO PLAYER - MOVED OFF-SCREEN */
-        /* Keeping it 200x200 ensures YouTube doesn't think it's hidden/broken */
         #player-wrapper {
             position: absolute;
             left: -9999px;
@@ -68,6 +67,23 @@
             border: 1px solid #444;
         }
 
+        /* CUSTOM MODAL */
+        #modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85);
+            display: flex; align-items: center; justify-content: center;
+            z-index: 1000;
+        }
+        .modal-box {
+            background: #181818;
+            padding: 30px;
+            border-radius: 20px;
+            border: 1px solid #333;
+            max-width: 300px;
+            width: 80%;
+        }
+
         .rules-box {
             margin-top: 25px;
             padding-top: 15px;
@@ -84,6 +100,16 @@
     <div id="youtube-player"></div>
 </div>
 
+<!-- Custom Confirmation Modal -->
+<div id="modal-overlay" class="hidden">
+    <div class="modal-box">
+        <h3 id="modal-title">Reset Game?</h3>
+        <p id="modal-body" style="color: #888; font-size: 14px;">All scores and progress will be lost.</p>
+        <button onclick="confirmModalAction()">Yes, Reset</button>
+        <button onclick="closeModal()" class="secondary">Cancel</button>
+    </div>
+</div>
+
 <div class="card">
     <div id="setup">
         <h1>🎵 Family <span class="accent">Hitster</span></h1>
@@ -93,7 +119,7 @@
         <div id="pList" style="margin: 15px 0;"></div>
         
         <div class="filter-box">
-            <p style="color:#888; margin-bottom: 10px;">2. Game Mode (Select One)</p>
+            <p style="color:#888; margin-bottom: 10px;">2. Game Mode</p>
             
             <label class="filter-label">Filter by Decade:</label>
             <select id="decadeFilter">
@@ -112,7 +138,14 @@
             <input type="text" id="artistFilter" list="artistList" placeholder="e.g. Queen (Resets decade)" style="width: 85%;">
             <datalist id="artistList"></datalist>
 
-            <div style="margin-top: 10px; display: flex; align-items: center; justify-content: space-between;">
+            <div style="text-align: center; color: #555; margin: 10px 0; font-size: 12px;">— OR —</div>
+
+            <label class="filter-label">Custom YouTube Playlist:</label>
+            <input type="text" id="customUrl" placeholder="Paste Playlist URL here" style="width: 85%;">
+            <button id="applyCustomBtn" onclick="applyCustomPlaylist()" class="small-btn hidden">Apply Playlist</button>
+            <div id="customStatus" style="font-size: 12px; margin-top: 5px; color: #888;"></div>
+
+            <div style="margin-top: 20px; display: flex; align-items: center; justify-content: space-between;">
                 <button onclick="checkFilters()" class="small-btn">Apply & Check</button>
                 <span id="filterCount"></span>
             </div>
@@ -157,7 +190,7 @@
         </div>
 
         <div id="sb" style="margin-top: 20px; padding-top: 15px; border-top: 1px solid #333; font-size: 14px; color: #888;"></div>
-        <button onclick="confirmReset()" class="danger">Reset Game</button>
+        <button onclick="triggerReset()" class="danger">Reset Game</button>
     </div>
 
     <div id="winScreen" class="hidden">
@@ -169,7 +202,7 @@
 </div>
 
 <script>
-    const STORAGE_KEY = 'family_hitster_save_v19';
+    const STORAGE_KEY = 'family_hitster_save_v21';
 
     var tag = document.createElement('script');
     tag.src = "https://www.youtube.com/iframe_api";
@@ -179,6 +212,9 @@
     let player;
     let isPlayerReady = false;
     let retryCount = 0;
+    let customPlaylistId = null;
+    let isPlaylistStarted = false;
+    let modalCallback = null;
 
     function onYouTubeIframeAPIReady() {
         player = new YT.Player('youtube-player', {
@@ -212,18 +248,18 @@
             document.getElementById('statusText').innerText = "🎵 Now Playing...";
             btn.innerText = "⏸ Pause";
             retryCount = 0;
-        } else if (event.data === YT.PlayerState.PAUSED || event.data === YT.PlayerState.ENDED) {
+            if (player.getCurrentTime() < 10) player.seekTo(40);
+        } else if (event.data === YT.PlayerState.PAUSED) {
             btn.innerText = "▶ Play";
-            if (event.data === YT.PlayerState.PAUSED) {
-                document.getElementById('statusText').innerText = "Paused";
-            }
+            document.getElementById('statusText').innerText = "Paused";
         } else if (event.data === YT.PlayerState.BUFFERING) {
             document.getElementById('statusText').innerText = "Buffering...";
+        } else if (event.data === YT.PlayerState.ENDED) {
+            btn.innerText = "▶ Play Again";
         }
     }
 
     function onPlayerError(event) {
-        console.log("Video Error: " + event.data);
         if (retryCount < 3) {
             retryCount++;
             document.getElementById('statusText').innerText = "Issue with song. Trying next...";
@@ -233,6 +269,21 @@
             document.getElementById('loadBtn').classList.remove('hidden');
             retryCount = 0;
         }
+    }
+
+    // Modal System
+    function openModal(title, body, callback) {
+        document.getElementById('modal-title').innerText = title;
+        document.getElementById('modal-body').innerText = body;
+        document.getElementById('modal-overlay').classList.remove('hidden');
+        modalCallback = callback;
+    }
+    function closeModal() {
+        document.getElementById('modal-overlay').classList.add('hidden');
+    }
+    function confirmModalAction() {
+        if (modalCallback) modalCallback();
+        closeModal();
     }
 
     const playlist = [
@@ -245,33 +296,16 @@
         { n: "I Knew You Were Trouble", a: "Taylor Swift", y: 2012, id: "vNoKguSdy4Y" },
         { n: "22", a: "Taylor Swift", y: 2012, id: "AgFeZr5ptV8" },
         { n: "Look What You Made Me Do", a: "Taylor Swift", y: 2017, id: "3tmd-ClpJxA" },
-        { n: "Wildest Dreams", a: "Taylor Swift", y: 2014, id: "IdneKLhsWOQ" },
-        { n: "Style", a: "Taylor Swift", y: 2014, id: "-CmadmM5cOk" },
-        { n: "Bad Blood", a: "Taylor Swift", y: 2014, id: "QcIy9NiNbmo" },
         { n: "Billie Jean", a: "Michael Jackson", y: 1982, id: "Zi_XLOBDo_Y" },
         { n: "Thriller", a: "Michael Jackson", y: 1982, id: "sOnqjkJTMaA" },
         { n: "Beat It", a: "Michael Jackson", y: 1982, id: "oRdxUFDoQe0" },
-        { n: "Smooth Criminal", a: "Michael Jackson", y: 1987, id: "h_D3VFfhvs4" },
         { n: "Bohemian Rhapsody", a: "Queen", y: 1975, id: "fJ9rUzIMcZQ" },
         { n: "Don't Stop Me Now", a: "Queen", y: 1978, id: "HgzGwKwLmgM" },
-        { n: "Another One Bites the Dust", a: "Queen", y: 1980, id: "rY0WxgSXdEE" },
-        { n: "Under Pressure", a: "Queen & David Bowie", y: 1981, id: "a01QQZyl-_I" },
-        { n: "We Will Rock You", a: "Queen", y: 1977, id: "-tJYN-eG1zk" },
-        { n: "Imagine", a: "John Lennon", y: 1971, id: "YkgkThdzX-8" },
-        { n: "Hey Jude", a: "The Beatles", y: 1968, id: "A_MjCqQoLLA" },
-        { n: "Yesterday", a: "The Beatles", y: 1965, id: "wXTJBr9tt8Q" },
+        { n: "Under Pressure", a: "David Bowie & Queen", y: 1981, id: "a01QQZyl-_I" },
         { n: "Dancing Queen", a: "ABBA", y: 1976, id: "xFrGuyw1V8s" },
         { n: "Stayin' Alive", a: "Bee Gees", y: 1977, id: "I_izvAbhExY" },
-        { n: "Hotel California", a: "Eagles", y: 1976, id: "09839DpTctU" },
-        { n: "Sweet Child O' Mine", a: "Guns N' Roses", y: 1987, id: "1w7OgIMMRc4" },
-        { n: "Livin' on a Prayer", a: "Bon Jovi", y: 1986, id: "lDK9QqIzhwk" },
-        { n: "Take on Me", a: "a-ha", y: 1985, id: "djV11Xbc914" },
-        { n: "Smells Like Teen Spirit", a: "Nirvana", y: 1991, id: "hTWKbfoikeg" },
-        { n: "Wonderwall", a: "Oasis", y: 1995, id: "6hzrDeceEKc" },
-        { n: "Lose Yourself", a: "Eminem", y: 2002, id: "_Yhyp-_hX2s" },
-        { n: "Mr. Brightside", a: "The Killers", y: 2004, id: "gGdGFtwCNBE" },
         { n: "Rolling in the Deep", a: "Adele", y: 2011, id: "rYEDA3JcQqw" },
-        { n: "Uptown Funk", a: "Mark Ronson ft. Bruno Mars", y: 2014, id: "OPf0YbXqDm0" },
+        { n: "Uptown Funk", a: "Bruno Mars", y: 2014, id: "OPf0YbXqDm0" },
         { n: "Blinding Lights", a: "The Weeknd", y: 2019, id: "4NRXx6U8ABQ" }
     ];
 
@@ -284,10 +318,13 @@
     document.addEventListener('DOMContentLoaded', () => {
         const decadeInput = document.getElementById('decadeFilter');
         const artistInput = document.getElementById('artistFilter');
+        const customUrlInput = document.getElementById('customUrl');
 
         artistInput.addEventListener('input', function() {
             if (this.value.trim() !== "") {
                 decadeInput.value = 'all';
+                customUrlInput.value = '';
+                customPlaylistId = null;
                 checkFilters();
             }
         });
@@ -295,10 +332,35 @@
         decadeInput.addEventListener('change', function() {
             if (this.value !== 'all') {
                 artistInput.value = '';
+                customUrlInput.value = '';
+                customPlaylistId = null;
                 checkFilters();
             }
         });
+
+        customUrlInput.addEventListener('input', function() {
+            const btn = document.getElementById('applyCustomBtn');
+            if (this.value.trim().includes('list=')) {
+                btn.classList.remove('hidden');
+            } else {
+                btn.classList.add('hidden');
+                customPlaylistId = null;
+            }
+        });
     });
+
+    function applyCustomPlaylist() {
+        const url = document.getElementById('customUrl').value;
+        const match = url.match(/[&?]list=([^&]+)/);
+        if (match && match[1]) {
+            customPlaylistId = match[1];
+            document.getElementById('customStatus').innerText = "Playlist detected!";
+            document.getElementById('customStatus').style.color = "#1DB954";
+            document.getElementById('decadeFilter').value = 'all';
+            document.getElementById('artistFilter').value = '';
+            document.getElementById('startBtn').classList.remove('hidden');
+        }
+    }
 
     function saveState() {
         const state = {
@@ -306,11 +368,12 @@
             cur: cur,
             deck: deck,
             gameStarted: !document.getElementById('game').classList.contains('hidden'),
-            modeText: currentModeText
+            modeText: currentModeText,
+            customPlaylistId: customPlaylistId
         };
         try {
             localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-        } catch(e) { console.error("Storage failed", e); }
+        } catch(e) {}
     }
 
     function loadState() {
@@ -324,6 +387,7 @@
             cur = state.cur || 0;
             deck = state.deck || [];
             currentModeText = state.modeText || "All Time";
+            customPlaylistId = state.customPlaylistId || null;
             
             if(players.length > 0) renderPlayers();
 
@@ -335,7 +399,7 @@
                 updateDeckInfo();
                 if (deck.length > 0) deck = shuffle(deck);
             }
-        } catch(e) { console.error("Load Error", e); }
+        } catch(e) {}
     }
 
     function populateArtistList() {
@@ -371,21 +435,20 @@
     }
 
     function checkFilters() {
+        if (customPlaylistId) {
+            document.getElementById('filterCount').innerText = "Playlist Ready";
+            document.getElementById('filterCount').style.color = "#1DB954";
+            return;
+        }
         const matches = getFilteredSongs();
         const msg = document.getElementById('filterCount');
-        if (matches.length === 0) {
-            msg.innerText = "0 matches found.";
-            msg.style.color = "#e74c3c";
-        } else {
-            msg.innerText = `${matches.length} songs found.`;
-            msg.style.color = "#1DB954";
-        }
+        msg.innerText = matches.length === 0 ? "0 matches" : `${matches.length} songs`;
+        msg.style.color = matches.length === 0 ? "#e74c3c" : "#1DB954";
     }
 
     function getFilteredSongs() {
         const decade = document.getElementById('decadeFilter').value;
         const artist = document.getElementById('artistFilter').value.toLowerCase().trim();
-        
         return playlist.filter(song => {
             if (artist) return song.a.toLowerCase().includes(artist);
             if (decade !== 'all') {
@@ -402,20 +465,19 @@
     }
 
     function startGame() {
-        if(!isPlayerReady) { alert("YouTube player loading... please wait."); return; }
+        if(!isPlayerReady) return;
         
-        let finalPool = getFilteredSongs();
-        if (finalPool.length === 0) {
-            alert("No matching songs found! Please reset filters.");
-            return;
+        if (customPlaylistId) {
+            currentModeText = "Custom Playlist";
+        } else {
+            let finalPool = getFilteredSongs();
+            if (finalPool.length === 0) return;
+            const decade = document.getElementById('decadeFilter').value;
+            const artist = document.getElementById('artistFilter').value;
+            currentModeText = artist ? `Artist - ${artist}` : (decade !== 'all' ? `Decade - ${decade}` : "All Time");
+            deck = shuffle(finalPool).slice(0, 100);
         }
 
-        const decade = document.getElementById('decadeFilter').value;
-        const artist = document.getElementById('artistFilter').value;
-        currentModeText = artist ? `Artist - ${artist}` : (decade !== 'all' ? `Decade - ${decade}` : "All Time");
-
-        deck = shuffle(finalPool).slice(0, 100);
-        
         document.getElementById('setup').classList.add('hidden');
         document.getElementById('game').classList.remove('hidden');
         document.getElementById('modeInfo').innerText = `Game Mode: ${currentModeText}`;
@@ -426,7 +488,7 @@
     }
 
     function updateDeckInfo() {
-        document.getElementById('deckInfo').innerText = `Songs in Deck: ${deck.length}`;
+        document.getElementById('deckInfo').innerText = customPlaylistId ? `YouTube Source` : `Songs Left: ${deck.length}`;
     }
 
     function updateBoard() {
@@ -443,24 +505,40 @@
         
         if(player && player.stopVideo) player.stopVideo();
 
-        if(deck.length === 0) deck = shuffle(getFilteredSongs()).slice(0, 100); 
-        
-        currentSong = deck.pop();
-        updateDeckInfo();
-        saveState(); 
+        if (customPlaylistId) {
+            if (!isPlaylistStarted) {
+                // First load
+                player.cuePlaylist({
+                    list: customPlaylistId,
+                    listType: 'playlist',
+                    index: 0,
+                    startSeconds: 40,
+                    suggestedQuality: 'small'
+                });
+                // Wait briefly for cueing then play & shuffle
+                setTimeout(() => {
+                    player.playVideo();
+                    player.setShuffle(true);
+                    player.nextVideo();
+                }, 500);
+                isPlaylistStarted = true;
+            } else {
+                player.nextVideo();
+            }
+            document.getElementById('loadBtn').classList.add('hidden');
+            document.getElementById('controls').classList.remove('hidden');
+            document.getElementById('pauseBtn').innerText = "▶ Play";
+        } else {
+            if(deck.length === 0) deck = shuffle(getFilteredSongs()).slice(0, 100); 
+            currentSong = deck.pop();
+            updateDeckInfo();
+            saveState(); 
 
-        if(player && player.loadVideoById) {
-            player.unMute();
-            player.setVolume(100);
-            
-            // Attempt autoplay
             player.loadVideoById({
                 videoId: currentSong.id, 
                 startSeconds: 40,
                 suggestedQuality: 'small'
             });
-            
-            // Show standard buttons immediately
             document.getElementById('loadBtn').classList.add('hidden');
             document.getElementById('controls').classList.remove('hidden');
             document.getElementById('pauseBtn').innerText = "▶ Play";
@@ -482,9 +560,29 @@
         document.getElementById('results').classList.remove('hidden');
         document.getElementById('statusText').innerText = "";
         
-        document.getElementById('resTitle').innerText = currentSong.n;
-        document.getElementById('resArtist').innerText = "By: " + currentSong.a;
-        document.getElementById('resYear').innerText = currentSong.y;
+        if (customPlaylistId) {
+            const data = player.getVideoData();
+            const fullTitle = data.title || "Unknown Title";
+            let artist = data.author || "Various";
+            let songName = fullTitle;
+            let year = "---";
+
+            if (fullTitle.includes(" - ")) {
+                const parts = fullTitle.split(" - ");
+                artist = parts[0].trim();
+                songName = parts[1].trim();
+            }
+            const yearMatch = fullTitle.match(/\b(19|20)\d{2}\b/);
+            if (yearMatch) year = yearMatch[0];
+
+            document.getElementById('resTitle').innerText = songName;
+            document.getElementById('resArtist').innerText = "By: " + artist;
+            document.getElementById('resYear').innerText = year;
+        } else {
+            document.getElementById('resTitle').innerText = currentSong.n;
+            document.getElementById('resArtist').innerText = "By: " + currentSong.a;
+            document.getElementById('resYear').innerText = currentSong.y;
+        }
     }
 
     function submitTurn() {
@@ -502,7 +600,7 @@
         document.querySelectorAll('.sc-check').forEach(c => c.checked = false);
         cur = (cur + 1) % players.length;
         
-        player.stopVideo();
+        if (!customPlaylistId) player.stopVideo();
         document.getElementById('results').classList.add('hidden');
         document.getElementById('loadBtn').classList.remove('hidden');
         document.getElementById('statusText').innerText = "";
@@ -511,11 +609,11 @@
         saveState(); 
     }
 
-    function confirmReset() {
-        if(confirm("Restart game?")) {
+    function triggerReset() {
+        openModal("Reset Game?", "Scores and current deck will be cleared.", () => {
             localStorage.removeItem(STORAGE_KEY);
             location.reload();
-        }
+        });
     }
 
     loadState();
