@@ -434,9 +434,8 @@
 </div>
 
 <script>
-    const STORAGE_KEY = 'hitster_karin_rose_v12_clean';
+    const STORAGE_KEY = 'hitster_karin_rose_v13_yearfix';
 
-    // YouTube API Load
     var tag = document.createElement('script');
     tag.src = "https://www.youtube.com/iframe_api";
     var firstScriptTag = document.getElementsByTagName('script')[0];
@@ -509,42 +508,55 @@
         { n: "Good Vibrations", a: "The Beach Boys", y: 1966, id: "Eab_beh07HU" },
         { n: "Stand by Me", a: "Ben E. King", y: 1961, id: "hwZNL7QVJjE" },
         { n: "Satisfaction", a: "The Rolling Stones", y: 1965, id: "nrIPxlFzDi0" },
+        { n: "Like a Rolling Stone", a: "Bob Dylan", y: 1965, id: "4F0yzXW63_A" },
+        { n: "Yesterday", a: "The Beatles", y: 1965, id: "wM0id6UXK20" },
         // 1970s
         { n: "Bohemian Rhapsody", a: "Queen", y: 1975, id: "fJ9rUzIMcZQ" },
         { n: "Hotel California", a: "Eagles", y: 1976, id: "vced7_ySgV8" },
         { n: "Dreams", a: "Fleetwood Mac", y: 1977, id: "Y3ywicffOj4" },
         { n: "September", a: "Earth, Wind & Fire", y: 1978, id: "Gs069dndIYk" },
         { n: "Stayin' Alive", a: "Bee Gees", y: 1977, id: "I_izvAbhExY" },
+        { n: "Dancing Queen", a: "ABBA", y: 1976, id: "xFrGuyw1V8s" },
+        { n: "Imagine", a: "John Lennon", y: 1971, id: "YkgkThdzX-8" },
         // 1980s
         { n: "Billie Jean", a: "Michael Jackson", y: 1982, id: "Zi_XLOBDo_Y" },
         { n: "Take On Me", a: "a-ha", y: 1984, id: "djV11Xbc914" },
         { n: "Sweet Child O' Mine", a: "Guns N' Roses", y: 1987, id: "1w7OgIMMRc4" },
         { n: "Purple Rain", a: "Prince", y: 1984, id: "TvnYmWpD_T8" },
         { n: "Livin' on a Prayer", a: "Bon Jovi", y: 1986, id: "lDK99Y4qsEk" },
+        { n: "Material Girl", a: "Madonna", y: 1984, id: "69wBH6gz9Hs" },
+        { n: "Thriller", a: "Michael Jackson", y: 1982, id: "sOnqjkJTMaA" },
         // 1990s
         { n: "Smells Like Teen Spirit", a: "Nirvana", y: 1991, id: "hTWKbfoikeg" },
         { n: "Wonderwall", a: "Oasis", y: 1995, id: "6hzrDeceEKc" },
         { n: "Losing My Religion", a: "R.E.M.", y: 1991, id: "xwtdhWltSIg" },
         { n: "No Scrubs", a: "TLC", y: 1999, id: "FrLequ6dUdM" },
         { n: "Baby One More Time", a: "Britney Spears", y: 1998, id: "C-u5WLJ9Yk4" },
+        { n: "Wannabe", a: "Spice Girls", y: 1996, id: "gJLIiF15wjQ" },
+        { n: "One", a: "U2", y: 1991, id: "ftjEcrrf7r0" },
         // 2000s
         { n: "Mr. Brightside", a: "The Killers", y: 2003, id: "gGdGFtwCNBE" },
         { n: "Toxic", a: "Britney Spears", y: 2003, id: "LOZuxwVk7TU" },
         { n: "Hey Ya!", a: "Outkast", y: 2003, id: "PWgvGjAhvIw" },
         { n: "Poker Face", a: "Lady Gaga", y: 2008, id: "bESGLojNYSo" },
         { n: "Lose Yourself", a: "Eminem", y: 2002, id: "_Yhyp-_hX2s" },
+        { n: "Yellow", a: "Coldplay", y: 2000, id: "yKNxeF4KMsY" },
+        { n: "Crazy in Love", a: "Beyonce", y: 2003, id: "ViwtNuzbvyo" },
         // 2010s
         { n: "Rolling in the Deep", a: "Adele", y: 2011, id: "rYEDA3JcQqw" },
         { n: "Uptown Funk", a: "Bruno Mars", y: 2014, id: "OPf0YbXqDm0" },
         { n: "Shape of You", a: "Ed Sheeran", y: 2017, id: "JGwWNGJdvx8" },
         { n: "Bad Guy", a: "Billie Eilish", y: 2019, id: "DyDfgMOUjCI" },
         { n: "Blinding Lights", a: "The Weeknd", y: 2019, id: "4NRXx6U8ABQ" },
+        { n: "Happy", a: "Pharrell Williams", y: 2013, id: "ZbZSe6N_BXs" },
+        { n: "Hello", a: "Adele", y: 2015, id: "YQHsXMglC9A" },
         // 2020s
         { n: "Flowers", a: "Miley Cyrus", y: 2023, id: "G7KNmW9a75Y" },
         { n: "As It Was", a: "Harry Styles", y: 2022, id: "H5v3kku4y6Q" },
         { n: "Anti-Hero", a: "Taylor Swift", y: 2022, id: "b1kbLwvqugk" },
         { n: "Espresso", a: "Sabrina Carpenter", y: 2024, id: "ep2f_eHnQfI" },
-        { n: "Vampire", a: "Olivia Rodrigo", y: 2023, id: "RlPNh_PBZb4" }
+        { n: "Vampire", a: "Olivia Rodrigo", y: 2023, id: "RlPNh_PBZb4" },
+        { n: "Levitating", a: "Dua Lipa", y: 2020, id: "TUVcZfQe-Kw" }
     ];
 
     let players = [];
@@ -556,7 +568,6 @@
     document.addEventListener('DOMContentLoaded', () => {
         const decIn = document.getElementById('decadeFilter');
         const urlIn = document.getElementById('customUrl');
-        
         decIn.addEventListener('change', () => { if (decIn.value !== 'all') { customPlaylistId = null; checkFilters(); } });
         urlIn.addEventListener('input', () => { 
             if (urlIn.value.includes('list=')) {
@@ -664,9 +675,7 @@
 
     function startGame() {
         if(!isPlayerReady || players.length === 0) return;
-        
         isPlaylistStarted = false; 
-
         if (customPlaylistId) {
             const url = document.getElementById('customUrl').value;
             if (url.includes("Disney")) currentModeText = "Disney Magic";
@@ -705,25 +714,13 @@
             if (!isPlaylistStarted) {
                 player.setShuffle(true);
                 player.setLoop(true);
-                player.loadPlaylist({
-                    list: customPlaylistId,
-                    listType: 'playlist',
-                    index: 0,
-                    startSeconds: 45,
-                    suggestedQuality: 'small'
-                });
-                
-                setTimeout(() => {
+                player.loadPlaylist({ list: customPlaylistId, listType: 'playlist', index: 0, startSeconds: 45 });
+                setTimeout(() => { 
                     player.setShuffle(true);
-                    setTimeout(() => {
-                        player.nextVideo();
-                    }, 500);
+                    setTimeout(() => player.nextVideo(), 500);
                 }, 1000);
-                
                 isPlaylistStarted = true;
-            } else { 
-                player.nextVideo(); 
-            }
+            } else { player.nextVideo(); }
             document.getElementById('loadBtn').classList.add('hidden');
             document.getElementById('controls').classList.remove('hidden');
             document.getElementById('pauseBtn').innerText = "▶ Play";
@@ -748,28 +745,54 @@
         document.getElementById('statusText').innerText = "";
         
         const songLink = document.getElementById('songLink');
+        const resTitle = document.getElementById('resTitle');
+        const resArtist = document.getElementById('resArtist');
+        const resYear = document.getElementById('resYear');
+
         if (customPlaylistId) {
             const data = player.getVideoData();
-            const ft = data.title || "Untitled";
-            let artist = data.author || "Unknown", name = ft, year = "----";
-            if (ft.includes(" - ")) [artist, name] = ft.split(" - ");
+            let ft = data.title || "Untitled";
+            let artist = data.author || "Unknown";
+            let name = ft;
+            let year = "Classics";
+
+            // Clean common YouTube junk
+            ft = ft.replace(/\[.*?\]|\(.*?\)|\bOfficial Video\b|\bOfficial Audio\b|\bLyric Video\b/gi, '').trim();
+
+            // Extract Year
             const ym = ft.match(/\b(19|20)\d{2}\b/);
-            if (ym) year = ym[0];
-            document.getElementById('resTitle').innerText = name.trim();
-            document.getElementById('resArtist').innerText = artist.trim();
-            document.getElementById('resYear').innerText = year;
+            if (ym) {
+                year = ym[0];
+                ft = ft.replace(year, '').trim(); // Remove year from title
+            }
+
+            // Split Artist/Title
+            if (ft.includes(" - ")) {
+                const parts = ft.split(" - ");
+                artist = parts[0].trim();
+                name = parts[1].trim();
+            } else if (ft.includes(": ")) {
+                const parts = ft.split(": ");
+                artist = parts[0].trim();
+                name = parts[1].trim();
+            } else {
+                name = ft;
+            }
+
+            resTitle.innerText = name;
+            resArtist.innerText = artist;
+            resYear.innerText = year;
             songLink.href = player.getVideoUrl();
         } else if (currentSong) {
-            document.getElementById('resTitle').innerText = currentSong.n;
-            document.getElementById('resArtist').innerText = currentSong.a;
-            document.getElementById('resYear').innerText = currentSong.y;
+            resTitle.innerText = currentSong.n;
+            resArtist.innerText = currentSong.a;
+            resYear.innerText = currentSong.y || "----";
             songLink.href = `https://www.youtube.com/watch?v=${currentSong.id}`;
         }
     }
 
     function submitTurn() {
         if(document.querySelectorAll('.sc-check:checked').length >= 2) players[cur].score++;
-        
         if(players[cur].score >= 10) {
             document.getElementById('game').classList.add('hidden');
             document.getElementById('winScreen').classList.remove('hidden');
@@ -777,10 +800,8 @@
             localStorage.removeItem(STORAGE_KEY); 
             return;
         }
-
         document.querySelectorAll('.sc-check').forEach(c => c.checked = false);
         cur = (cur + 1) % players.length;
-        
         if (!customPlaylistId) player.stopVideo();
         isResultsScreen = false;
         document.getElementById('results').classList.add('hidden');
