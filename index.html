@@ -3,174 +3,413 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>🏆 Family Hitster</title>
+    <title>Hitster by Karin</title>
+    <!-- Elegant Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
     <style>
-        :root { --spotify-green: #1DB954; --bg: #121212; --card: #181818; --curtain: #ff69b4; }
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: white; text-align: center; margin: 0; padding: 20px; -webkit-tap-highlight-color: transparent; overflow-x: hidden; }
-        
-        .card { background: var(--card); padding: 25px; border-radius: 20px; max-width: 500px; margin: auto; box-shadow: 0 10px 40px rgba(0,0,0,0.5); border: 1px solid #333; position: relative; z-index: 10; }
-        
-        h1 { margin-bottom: 20px; font-weight: 800; }
-        .accent { color: var(--spotify-green); }
-        
-        button { background: var(--spotify-green); border: none; padding: 16px 25px; color: white; border-radius: 30px; font-weight: bold; cursor: pointer; margin: 10px 0; width: 100%; font-size: 16px; transition: transform 0.1s; }
-        button:active { transform: scale(0.98); }
-        button.secondary { background: #333; }
-        button.danger { background: transparent; border: 1px solid #444; color: #888; width: auto; font-size: 12px; margin-top: 30px; }
-        button.small-btn { padding: 8px 16px; font-size: 14px; width: auto; margin-top: 5px; background: #444; }
-        
-        input, select { width: 85%; padding: 12px; border-radius: 10px; border: 1px solid #444; margin-bottom: 10px; background: #222; color: white; font-size: 16px; }
-        select { width: 92%; cursor: pointer; }
-
-        .hidden { display: none !important; }
-        
-        /* VIDEO PLAYER - MOVED OFF-SCREEN */
-        /* Keeping it 200x200 ensures YouTube doesn't think it's hidden/broken */
-        #player-wrapper {
-            position: absolute;
-            left: -9999px;
-            top: 0;
-            width: 200px;
-            height: 200px;
-            pointer-events: none;
+        :root {
+            --primary: #f4c2c2; /* Soft Pink / Rose Gold */
+            --accent: #a881af; /* Dusty Lavender */
+            --bg-dark: #0f0d11; /* Warm Midnight */
+            --glass: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 182, 193, 0.15);
+            --text-main: #f0e6e6; /* Soft Off-White */
+            --text-muted: #9b8a8a; /* Warm Gray */
         }
-        
-        #youtube-player {
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-dark);
+            background: radial-gradient(circle at center, #1a151b 0%, #0f0d11 100%);
+            color: var(--text-main);
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow-x: hidden;
+            padding: 20px;
+        }
+
+        /* Abstract Background Elements */
+        .bg-glow {
+            position: fixed;
+            width: 50vw;
+            height: 50vw;
+            background: radial-gradient(circle, rgba(244, 194, 194, 0.08) 0%, transparent 70%);
+            top: -15%;
+            right: -10%;
+            z-index: -1;
+            filter: blur(80px);
+        }
+
+        .bg-glow-2 {
+            position: fixed;
+            width: 40vw;
+            height: 40vw;
+            background: radial-gradient(circle, rgba(168, 129, 175, 0.05) 0%, transparent 70%);
+            bottom: -10%;
+            left: -5%;
+            z-index: -1;
+            filter: blur(80px);
+        }
+
+        /* Container & Cards */
+        .container {
             width: 100%;
-            height: 100%;
+            max-width: 550px;
+            perspective: 1000px;
+            z-index: 10;
         }
 
-        .checkbox-group { text-align: left; background: #222; padding: 15px; border-radius: 10px; margin: 15px 0; }
-        .checkbox-group label { display: flex; align-items: center; margin: 10px 0; font-size: 16px; cursor: pointer; }
-        input[type="checkbox"] { width: 22px; height: 22px; margin-right: 15px; accent-color: var(--spotify-green); }
+        .card {
+            background: var(--glass);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid var(--glass-border);
+            border-radius: 40px;
+            padding: 45px;
+            box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.6);
+            animation: float 8s ease-in-out infinite;
+            position: relative;
+        }
 
-        #statusText { font-size: 14px; color: var(--spotify-green); min-height: 20px; margin-bottom: 10px; font-weight: bold; }
-        
-        .score-badge { display: inline-block; background: #333; padding: 5px 10px; border-radius: 10px; margin: 3px; font-size: 12px; }
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
 
-        .filter-box {
-            margin-top: 20px;
-            padding-top: 15px;
-            border-top: 1px solid #333;
+        /* Typography */
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
+            margin: 0 0 10px 0;
+            letter-spacing: -1px;
+            background: linear-gradient(135deg, #fff 0%, var(--primary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 5px;
+            color: var(--primary);
+            margin-bottom: 35px;
+            display: block;
+            font-weight: 600;
+            opacity: 0.8;
+        }
+
+        /* Inputs & Buttons */
+        .input-group {
+            margin-bottom: 25px;
             text-align: left;
         }
-        .filter-label { font-size: 12px; color: #888; margin-bottom: 5px; display: block; font-weight: bold; }
-        #filterCount { font-size: 13px; color: var(--spotify-green); margin-left: 10px; font-weight: bold; }
-        
-        #modeInfo {
-            font-size: 14px;
-            color: #aaa;
-            background: rgba(255, 255, 255, 0.1);
-            padding: 5px 10px;
-            border-radius: 15px;
-            display: inline-block;
-            margin-bottom: 15px;
-            border: 1px solid #444;
+
+        label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+            display: block;
         }
 
-        .rules-box {
-            margin-top: 25px;
-            padding-top: 15px;
-            border-top: 1px solid #333;
-            font-size: 13px;
-            color: #888;
-            line-height: 1.5;
+        input, select {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--glass-border);
+            border-radius: 14px;
+            padding: 14px 18px;
+            color: white;
+            font-size: 0.95rem;
+            transition: all 0.4s ease;
+            outline: none;
         }
+
+        input:focus, select:focus {
+            border-color: var(--primary);
+            background: rgba(244, 194, 194, 0.05);
+            box-shadow: 0 0 20px rgba(244, 194, 194, 0.05);
+        }
+
+        button {
+            background: var(--text-main);
+            color: var(--bg-dark);
+            border: none;
+            border-radius: 100px;
+            padding: 18px 30px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+            width: 100%;
+            font-size: 0.8rem;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.4);
+            background: #fff;
+        }
+
+        button.ghost {
+            background: transparent;
+            border: 1px solid var(--glass-border);
+            color: var(--text-main);
+        }
+
+        button.pink {
+            background: var(--primary);
+            color: #402020;
+        }
+
+        /* Game Elements */
+        .player-tag {
+            background: rgba(244, 194, 194, 0.08);
+            padding: 8px 16px;
+            border-radius: 50px;
+            border: 1px solid var(--glass-border);
+            font-size: 0.75rem;
+            margin: 5px;
+            display: inline-block;
+            transition: 0.3s;
+        }
+
+        #statusText {
+            font-size: 0.85rem;
+            color: var(--primary);
+            font-style: italic;
+            height: 20px;
+            margin: 15px 0;
+            opacity: 0.7;
+        }
+
+        .checkbox-container {
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 24px;
+            padding: 24px;
+            margin: 20px 0;
+            text-align: left;
+            border: 1px solid rgba(255, 255, 255, 0.03);
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            margin: 14px 0;
+            cursor: pointer;
+            user-select: none;
+            font-size: 0.9rem;
+            color: var(--text-main);
+        }
+
+        .checkbox-item input {
+            width: 18px;
+            height: 18px;
+            margin-right: 15px;
+            accent-color: var(--primary);
+            border: 1px solid var(--glass-border);
+        }
+
+        /* Scoreboard Footer */
+        .scoreboard {
+            margin-top: 35px;
+            padding-top: 25px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .score-item {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            letter-spacing: 0.5px;
+        }
+
+        .score-item b { color: var(--primary); font-size: 0.85rem; }
+
+        /* Helpers */
+        .hidden { display: none !important; }
+        #player-wrapper { position: absolute; left: -9999px; }
+
+        /* Modal Overlay */
+        #modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 13, 17, 0.85);
+            backdrop-filter: blur(15px);
+            display: flex; align-items: center; justify-content: center;
+            z-index: 1000;
+        }
+        .modal-box {
+            background: #151218;
+            padding: 45px;
+            border-radius: 35px;
+            border: 1px solid var(--glass-border);
+            max-width: 380px;
+            width: 90%;
+            text-align: center;
+        }
+
+        .song-link {
+            display: inline-block;
+            margin: 20px 0;
+            font-size: 0.75rem;
+            color: var(--primary);
+            text-decoration: none;
+            opacity: 0.6;
+            transition: 0.3s;
+        }
+        .song-link:hover { opacity: 1; transform: scale(1.05); }
+
+        .rules {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            line-height: 1.8;
+            margin-top: 30px;
+            opacity: 0.8;
+        }
+
+        #modeInfo {
+            font-size: 0.65rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+
     </style>
 </head>
 <body>
 
-<div id="player-wrapper">
-    <div id="youtube-player"></div>
+<div class="bg-glow"></div>
+<div class="bg-glow-2"></div>
+<div id="player-wrapper"><div id="youtube-player"></div></div>
+
+<!-- Custom Confirmation Modal -->
+<div id="modal-overlay" class="hidden">
+    <div class="modal-box">
+        <h3 id="modal-title" style="font-family: 'Playfair Display', serif; font-size: 1.8rem; margin-top:0;">Reset Game?</h3>
+        <p id="modal-body" style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 30px;">This will dissolve all progress.</p>
+        <button onclick="confirmModalAction()" class="pink">Confirm Reset</button>
+        <button onclick="closeModal()" class="ghost" style="margin-top: 15px;">Continue Playing</button>
+    </div>
 </div>
 
-<div class="card">
-    <div id="setup">
-        <h1>🎵 Family <span class="accent">Hitster</span></h1>
-        <p style="color:#888;">1. Add players</p>
-        <input type="text" id="pName" placeholder="Enter Player Name" autocomplete="off">
-        <button onclick="addPlayer()">Add Player</button>
-        <div id="pList" style="margin: 15px 0;"></div>
-        
-        <div class="filter-box">
-            <p style="color:#888; margin-bottom: 10px;">2. Game Mode (Select One)</p>
+<div class="container">
+    <div class="card">
+        <!-- SETUP PHASE -->
+        <div id="setup">
+            <h1>Hitster</h1>
+            <span class="subtitle">by Karin</span>
             
-            <label class="filter-label">Filter by Decade:</label>
-            <select id="decadeFilter">
-                <option value="all">🎲 All Time (Default)</option>
-                <option value="60s">60s (1960-1969)</option>
-                <option value="70s">70s (1970-1979)</option>
-                <option value="80s">80s (1980-1989)</option>
-                <option value="90s">90s (1990-1999)</option>
-                <option value="00s">2000s (2000-2009)</option>
-                <option value="10s">2010s+</option>
-            </select>
+            <div class="input-group">
+                <label>Players</label>
+                <div style="display: flex; gap: 12px;">
+                    <input type="text" id="pName" placeholder="Name" autocomplete="off">
+                    <button onclick="addPlayer()" style="width: auto; margin:0; padding: 0 25px; height: 50px;">+</button>
+                </div>
+                <div id="pList" style="margin-top: 20px; min-height: 40px;"></div>
+            </div>
 
-            <div style="text-align: center; color: #555; margin: 10px 0; font-size: 12px;">— OR —</div>
+            <div class="input-group">
+                <label>Game Era</label>
+                <select id="decadeFilter">
+                    <option value="all">Across All Decades</option>
+                    <option value="60s">The 1960s</option>
+                    <option value="70s">The 1970s</option>
+                    <option value="80s">The 1980s</option>
+                    <option value="90s">The 1990s</option>
+                    <option value="00s">The 2000s</option>
+                    <option value="10s">The 2010s</option>
+                    <option value="20s">The 2020s</option>
+                </select>
+            </div>
 
-            <label class="filter-label">Filter by Artist:</label>
-            <input type="text" id="artistFilter" list="artistList" placeholder="e.g. Queen (Resets decade)" style="width: 85%;">
-            <datalist id="artistList"></datalist>
+            <div class="input-group">
+                <label>Focus Artist</label>
+                <input type="text" id="artistFilter" list="artistList" placeholder="e.g. Fleetwood Mac">
+                <datalist id="artistList"></datalist>
+            </div>
 
-            <div style="margin-top: 10px; display: flex; align-items: center; justify-content: space-between;">
-                <button onclick="checkFilters()" class="small-btn">Apply & Check</button>
-                <span id="filterCount"></span>
+            <div class="input-group">
+                <label>Custom Playlist</label>
+                <input type="text" id="customUrl" placeholder="YouTube Link...">
+                <button id="applyCustomBtn" onclick="applyCustomPlaylist()" class="hidden ghost" style="font-size: 0.65rem; padding: 8px; margin-top: 10px;">Connect Playlist</button>
+                <div id="customStatus" style="font-size: 0.65rem; margin-top: 8px; color: var(--primary);"></div>
+            </div>
+
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 25px;">
+                <button onclick="checkFilters()" class="ghost" style="width: auto; font-size: 0.65rem; padding: 10px 20px;">Check Library</button>
+                <span id="filterCount" style="font-size: 0.75rem; font-weight: 600; color: var(--accent);"></span>
+            </div>
+
+            <button id="startBtn" class="hidden pink" onclick="startGame()">Rock On</button>
+
+            <div class="rules">
+                The objective is simple: Reach 10 points. On your turn, listen and name 2 out of 3 details correctly to gain a point.
             </div>
         </div>
 
-        <button id="startBtn" class="hidden" onclick="startGame()" style="background: white; color: black; margin-top: 20px;">Start Game</button>
-
-        <div class="rules-box">
-            <strong style="color: var(--spotify-green);">How to Play:</strong><br>
-            Pick the players and play the songs. If you get 2 out of 3 answers correct, you get a point. First user to reach 10 points is the winner!
-        </div>
-    </div>
-
-    <div id="game" class="hidden">
-        <h2 id="turnTxt" class="accent" style="margin-top: 0; margin-bottom: 5px;"></h2>
-        <div id="modeInfo"></div>
-        <p id="deckInfo" style="font-size: 11px; color: #666; margin-top: -5px; margin-bottom: 15px;"></p>
-        
-        <div id="playPhase">
-            <p id="statusText"></p>
-            <button id="loadBtn" onclick="playRandomSong()">🎲 Load Next Song</button>
+        <!-- GAME PHASE -->
+        <div id="game" class="hidden">
+            <div id="modeInfo"></div>
+            <h2 id="turnTxt" style="font-family: 'Playfair Display', serif; font-size: 2.2rem; margin: 0 0 8px 0;"></h2>
+            <p id="deckInfo" style="font-size: 0.65rem; color: var(--text-muted); margin-bottom: 30px; letter-spacing: 1px;"></p>
             
-            <div id="controls" class="hidden">
-                <button onclick="toggleAudio()" class="secondary" id="pauseBtn" style="width: 48%; display: inline-block;">▶ Play</button>
-                <button onclick="showResults()" style="width: 48%; display: inline-block; background: var(--spotify-green);">2. Show Results</button>
+            <div id="playPhase">
+                <p id="statusText"></p>
+                <button id="loadBtn" onclick="playRandomSong()" class="pink">Next Track</button>
+                
+                <div id="controls" class="hidden" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 15px;">
+                    <button onclick="toggleAudio()" class="ghost" id="pauseBtn" style="margin:0;">▶ Play</button>
+                    <button onclick="showResults()" class="pink" style="margin:0;">Reveal</button>
+                </div>
             </div>
-        </div>
 
-        <div id="results" class="hidden">
-            <h2 id="resTitle" style="margin: 5px 0;"></h2>
-            <p id="resArtist" style="color: #aaa; margin: 0; font-size: 1.2em;"></p>
-            <h1 id="resYear" class="accent" style="margin: 10px 0;"></h1>
-            
-            <div class="checkbox-group">
-                <p style="margin: 0 0 10px 0; color: #aaa; font-size: 14px;">Mark correct answers (2+ for point):</p>
-                <label><input type="checkbox" class="sc-check"> Song Name</label>
-                <label><input type="checkbox" class="sc-check"> Artist</label>
-                <label><input type="checkbox" class="sc-check"> Year</label>
+            <div id="results" class="hidden">
+                <h3 id="resTitle" style="font-family: 'Playfair Display', serif; font-size: 2rem; margin: 15px 0 5px 0;"></h3>
+                <p id="resArtist" style="color: var(--text-muted); margin: 0 0 20px 0; font-size: 1rem;"></p>
+                <div id="resYear" style="font-size: 3.2rem; font-weight: 800; color: var(--primary); margin-bottom: 25px; letter-spacing: -2px;"></div>
+                
+                <div class="checkbox-container">
+                    <label class="checkbox-item"><input type="checkbox" class="sc-check"> Track Name</label>
+                    <label class="checkbox-item"><input type="checkbox" class="sc-check"> Artist Name</label>
+                    <label class="checkbox-item"><input type="checkbox" class="sc-check"> Original Year</label>
+                </div>
+                
+                <a id="songLink" href="#" target="_blank" class="song-link">View Source ↗</a>
+                
+                <button onclick="submitTurn()" class="pink">Continue Journey</button>
             </div>
-            
-            <button onclick="submitTurn()">Confirm & Next Turn</button>
+
+            <div id="sb" class="scoreboard"></div>
+            <button onclick="triggerReset()" class="ghost" style="margin-top: 50px; font-size: 0.6rem; border: none; color: #444; letter-spacing: 2px;">End Session</button>
         </div>
 
-        <div id="sb" style="margin-top: 20px; padding-top: 15px; border-top: 1px solid #333; font-size: 14px; color: #888;"></div>
-        <button onclick="confirmReset()" class="danger">Reset Game</button>
-    </div>
-
-    <div id="winScreen" class="hidden">
-        <h1 style="font-size: 60px; margin-bottom: 10px;">🏆</h1>
-        <h2 class="accent" id="winnerName" style="margin-top: 0;"></h2>
-        <p>is the winner!</p>
-        <button onclick="location.reload()" style="margin-top: 30px;">Start New Game</button>
+        <!-- WIN SCREEN -->
+        <div id="winScreen" class="hidden">
+            <h1 style="font-size: 5rem; margin-bottom: 10px;">✧</h1>
+            <h2 id="winnerName" style="font-family: 'Playfair Display', serif; font-size: 3rem; margin: 0;"></h2>
+            <p style="letter-spacing: 3px; text-transform: uppercase; color: var(--primary); margin-top: 15px; font-weight: 700; font-size: 0.8rem;">The Ultimate Hitster</p>
+            <button onclick="location.reload()" class="pink" style="margin-top: 50px;">New Beginning</button>
+        </div>
     </div>
 </div>
 
 <script>
-    const STORAGE_KEY = 'family_hitster_save_v19';
+    const STORAGE_KEY = 'hitster_karin_rose_v4_playlist_expansion';
 
+    // YouTube API Load
     var tag = document.createElement('script');
     tag.src = "https://www.youtube.com/iframe_api";
     var firstScriptTag = document.getElementsByTagName('script')[0];
@@ -179,179 +418,327 @@
     let player;
     let isPlayerReady = false;
     let retryCount = 0;
+    let customPlaylistId = null;
+    let isPlaylistStarted = false;
+    let modalCallback = null;
 
     function onYouTubeIframeAPIReady() {
         player = new YT.Player('youtube-player', {
-            height: '100%',
-            width: '100%',
-            videoId: '',
-            playerVars: { 
-                'playsinline': 1, 
-                'controls': 0, 
-                'fs': 0, 
-                'rel': 0, 
-                'modestbranding': 1,
-                'autoplay': 1 
-            },
+            height: '100', width: '100', videoId: '',
+            playerVars: { 'playsinline': 1, 'controls': 0, 'rel': 0, 'autoplay': 1 },
             events: {
-                'onReady': onPlayerReady,
+                'onReady': (e) => { isPlayerReady = true; e.target.setVolume(100); },
                 'onStateChange': onPlayerStateChange,
                 'onError': onPlayerError
             }
         });
     }
 
-    function onPlayerReady(event) {
-        isPlayerReady = true;
-        event.target.setVolume(100);
-    }
-
     function onPlayerStateChange(event) {
         const btn = document.getElementById('pauseBtn');
+        const st = document.getElementById('statusText');
         if (event.data === YT.PlayerState.PLAYING) {
-            document.getElementById('statusText').innerText = "🎵 Now Playing...";
+            st.innerText = "◈ Rose noir playing...";
             btn.innerText = "⏸ Pause";
             retryCount = 0;
-        } else if (event.data === YT.PlayerState.PAUSED || event.data === YT.PlayerState.ENDED) {
+            if (player.getCurrentTime() < 5) player.seekTo(45);
+        } else if (event.data === YT.PlayerState.PAUSED) {
             btn.innerText = "▶ Play";
-            if (event.data === YT.PlayerState.PAUSED) {
-                document.getElementById('statusText').innerText = "Paused";
-            }
-        } else if (event.data === YT.PlayerState.BUFFERING) {
-            document.getElementById('statusText').innerText = "Buffering...";
+            st.innerText = "Suspended";
         }
     }
 
     function onPlayerError(event) {
-        console.log("Video Error: " + event.data);
         if (retryCount < 3) {
             retryCount++;
-            document.getElementById('statusText').innerText = "Issue with song. Trying next...";
+            document.getElementById('statusText').innerText = "Static detected. Retrying...";
             setTimeout(playRandomSong, 1500); 
         } else {
-            document.getElementById('statusText').innerText = "Song unavailable. Try another.";
+            document.getElementById('statusText').innerText = "Signal lost.";
             document.getElementById('loadBtn').classList.remove('hidden');
-            retryCount = 0;
         }
     }
 
+    function openModal(title, body, callback) {
+        document.getElementById('modal-title').innerText = title;
+        document.getElementById('modal-body').innerText = body;
+        document.getElementById('modal-overlay').classList.remove('hidden');
+        modalCallback = callback;
+    }
+    function closeModal() { document.getElementById('modal-overlay').classList.add('hidden'); }
+    function confirmModalAction() { if (modalCallback) modalCallback(); closeModal(); }
+
+    // --- EXPANDED SONG POOL (Now incorporating the provided Top 100 Playlist) ---
     const playlist = [
-        { n: "Shake It Off", a: "Taylor Swift", y: 2014, id: "nfWlot6h_JM" },
-        { n: "Love Story", a: "Taylor Swift", y: 2008, id: "8xg3vE8Ie_E" },
-        { n: "Blank Space", a: "Taylor Swift", y: 2014, id: "e-ORhEE9VVg" },
-        { n: "Anti-Hero", a: "Taylor Swift", y: 2022, id: "b1kbLwvqugk" },
-        { n: "Cruel Summer", a: "Taylor Swift", y: 2019, id: "ic8j13piAhQ" },
-        { n: "You Belong With Me", a: "Taylor Swift", y: 2008, id: "VuNIsY6JdUw" },
-        { n: "I Knew You Were Trouble", a: "Taylor Swift", y: 2012, id: "vNoKguSdy4Y" },
-        { n: "22", a: "Taylor Swift", y: 2012, id: "AgFeZr5ptV8" },
-        { n: "Look What You Made Me Do", a: "Taylor Swift", y: 2017, id: "3tmd-ClpJxA" },
-        { n: "Wildest Dreams", a: "Taylor Swift", y: 2014, id: "IdneKLhsWOQ" },
-        { n: "Style", a: "Taylor Swift", y: 2014, id: "-CmadmM5cOk" },
-        { n: "Bad Blood", a: "Taylor Swift", y: 2014, id: "QcIy9NiNbmo" },
+        // 1960s
+        { n: "Hey Jude", a: "The Beatles", y: 1968, id: "A_MjCqQoLLA" },
+        { n: "I Want to Hold Your Hand", a: "The Beatles", y: 1963, id: "v1HDt1tknTc" },
+        { n: "She Loves You", a: "The Beatles", y: 1963, id: "QoF-7VMMihA" },
+        { n: "Help!", a: "The Beatles", y: 1965, id: "2Q_ZzBGPdqE" },
+        { n: "Yesterday", a: "The Beatles", y: 1965, id: "wM0id6UXK20" },
+        { n: "A Day in the Life", a: "The Beatles", y: 1967, id: "usNsCeOV4GM" },
+        { n: "Like a Rolling Stone", a: "Bob Dylan", y: 1965, id: "4F0yzXW63_A" },
+        { n: "Respect", a: "Aretha Franklin", y: 1967, id: "6FOUqQt3Kg0" },
+        { n: "Good Vibrations", a: "The Beach Boys", y: 1966, id: "Eab_beh07HU" },
+        { n: "Purple Haze", a: "Jimi Hendrix", y: 1967, id: "W5J_G_pUqvU" },
+        { n: "Paint It, Black", a: "The Rolling Stones", y: 1966, id: "O4irXQhgMqg" },
+        { n: "Satisfaction", a: "The Rolling Stones", y: 1965, id: "nrIPxlFzDi0" },
+        { n: "My Girl", a: "The Temptations", y: 1964, id: "C_CSjcm-z1w" },
+        { n: "Stand by Me", a: "Ben E. King", y: 1961, id: "hwZNL7QVJjE" },
+        { n: "California Dreamin'", a: "The Mamas & The Papas", y: 1965, id: "N-aK6JnyFmk" },
+        { n: "The Sound of Silence", a: "Simon & Garfunkel", y: 1964, id: "4zLfCnGVeL4" },
+        { n: "Light My Fire", a: "The Doors", y: 1967, id: "deB_u-to-o8" },
+        { n: "Brown Eyed Girl", a: "Van Morrison", y: 1967, id: "Ufm6T30G6X8" },
+        { n: "Gimme Shelter", a: "The Rolling Stones", y: 1969, id: "RbmS3tQJ7Os" },
+        { n: "Suspicious Minds", a: "Elvis Presley", y: 1969, id: "Wb0JlpgeobU" },
+        { n: "Unchained Melody", a: "The Righteous Brothers", y: 1965, id: "qiiyq2xrSI0" },
+        { n: "My Generation", a: "The Who", y: 1965, id: "fXvK2Aun8S4" },
+        { n: "Johnny B. Goode", a: "Chuck Berry", y: 1958, id: "ZFo8-JqzSCM" },
+        { n: "Dancing in the Street", a: "Martha & The Vandellas", y: 1964, id: "RGpx2mE_oE0" },
+        { n: "I Heard It Through the Grapevine", a: "Marvin Gaye", y: 1968, id: "Y7dGdrP3pms" },
+        { n: "God Only Knows", a: "The Beach Boys", y: 1966, id: "EkPy18xW1j8" },
+        { n: "What a Wonderful World", a: "Louis Armstrong", y: 1967, id: "A3yCcXgbKrE" },
+        { n: "You Really Got Me", a: "The Kinks", y: 1964, id: "fTTsY-ozGZg" },
+        { n: "A Whiter Shade of Pale", a: "Procol Harum", y: 1967, id: "St6jyEFe5WM" },
+        { n: "House of the Rising Sun", a: "The Animals", y: 1964, id: "0sB3Fjw3pVc" },
+
+        // 1970s
+        { n: "Bohemian Rhapsody", a: "Queen", y: 1975, id: "fJ9rUzIMcZQ" },
+        { n: "Imagine", a: "John Lennon", y: 1971, id: "YkgkThdzX-8" },
+        { n: "Stayin' Alive", a: "Bee Gees", y: 1977, id: "I_izvAbhExY" },
+        { n: "Dancing Queen", a: "ABBA", y: 1976, id: "xFrGuyw1V8s" },
+        { n: "Hotel California", a: "Eagles", y: 1976, id: "vced7_ySgV8" },
+        { n: "Dreams", a: "Fleetwood Mac", y: 1977, id: "Y3ywicffOj4" },
+        { n: "The Chain", a: "Fleetwood Mac", y: 1977, id: "JDG2m5hS1hc" },
+        { n: "Go Your Own Way", a: "Fleetwood Mac", y: 1977, id: "6ul-cZGQY_Y" },
+        { n: "Superstition", a: "Stevie Wonder", y: 1972, id: "0CFuCYNx-1g" },
+        { n: "Stairway to Heaven", a: "Led Zeppelin", y: 1971, id: "D9ioyEvdggk" },
+        { n: "Whole Lotta Love", a: "Led Zeppelin", y: 1969, id: "hq9V1V3uRpg" },
+        { n: "What's Going On", a: "Marvin Gaye", y: 1971, id: "_49XvL5pG7U" },
+        { n: "Born to Run", a: "Bruce Springsteen", y: 1975, id: "IxnAtjVp784" },
+        { n: "London Calling", a: "The Clash", y: 1979, id: "EfK-WX2pa8c" },
+        { n: "Tangled Up in Blue", a: "Bob Dylan", y: 1975, id: "YwSZvHqf9qM" },
+        { n: "No Woman, No Cry", a: "Bob Marley", y: 1974, id: "IT8XvzBu5v4" },
+        { n: "Bridge Over Troubled Water", a: "Simon & Garfunkel", y: 1970, id: "WrcwRt6JGsU" },
+        { n: "American Pie", a: "Don McLean", y: 1971, id: "iX_TFkut1n8" },
+        { n: "Jolene", a: "Dolly Parton", y: 1973, id: "L0eePw_Lao8" },
+        { n: "Sultans of Swing", a: "Dire Straits", y: 1978, id: "0fAQhSRLQnM" },
+        { n: "Heroes", a: "David Bowie", y: 1977, id: "lXgkuM2NhYI" },
+        { n: "Life on Mars?", a: "David Bowie", y: 1971, id: "AZKcl4-tcuo" },
+        { n: "September", a: "Earth, Wind & Fire", y: 1978, id: "Gs069dndIYk" },
+        { n: "Le Freak", a: "Chic", y: 1978, id: "h1qQ1SKNlgY" },
+        { n: "Heart of Glass", a: "Blondie", y: 1978, id: "WGUwIAtAf7M" },
+        { n: "Super Freak", a: "Rick James", y: 1981, id: "QYHxGOvqgNI" },
+        { n: "Your Song", a: "Elton John", y: 1970, id: "GlPlfCy1urI" },
+        { n: "Rocket Man", a: "Elton John", y: 1972, id: "DtVBCG6KGky" },
+        { n: "Tiny Dancer", a: "Elton John", y: 1971, id: "yYcyacLRPNs" },
+        { n: "Let's Stay Together", a: "Al Green", y: 1972, id: "COiIC3A0ROM" },
+
+        // 1980s
         { n: "Billie Jean", a: "Michael Jackson", y: 1982, id: "Zi_XLOBDo_Y" },
         { n: "Thriller", a: "Michael Jackson", y: 1982, id: "sOnqjkJTMaA" },
         { n: "Beat It", a: "Michael Jackson", y: 1982, id: "oRdxUFDoQe0" },
-        { n: "Smooth Criminal", a: "Michael Jackson", y: 1987, id: "h_D3VFfhvs4" },
-        { n: "Bohemian Rhapsody", a: "Queen", y: 1975, id: "fJ9rUzIMcZQ" },
-        { n: "Don't Stop Me Now", a: "Queen", y: 1978, id: "HgzGwKwLmgM" },
-        { n: "Another One Bites the Dust", a: "Queen", y: 1980, id: "rY0WxgSXdEE" },
-        { n: "Under Pressure", a: "Queen & David Bowie", y: 1981, id: "a01QQZyl-_I" },
-        { n: "We Will Rock You", a: "Queen", y: 1977, id: "-tJYN-eG1zk" },
-        { n: "Imagine", a: "John Lennon", y: 1971, id: "YkgkThdzX-8" },
-        { n: "Hey Jude", a: "The Beatles", y: 1968, id: "A_MjCqQoLLA" },
-        { n: "Yesterday", a: "The Beatles", y: 1965, id: "wXTJBr9tt8Q" },
-        { n: "Dancing Queen", a: "ABBA", y: 1976, id: "xFrGuyw1V8s" },
-        { n: "Stayin' Alive", a: "Bee Gees", y: 1977, id: "I_izvAbhExY" },
-        { n: "Hotel California", a: "Eagles", y: 1976, id: "09839DpTctU" },
+        { n: "Like a Virgin", a: "Madonna", y: 1984, id: "s__rX_jrqkY" },
+        { n: "Purple Rain", a: "Prince", y: 1984, id: "TvnYmWpD_T8" },
+        { n: "Take On Me", a: "a-ha", y: 1984, id: "djV11Xbc914" },
         { n: "Sweet Child O' Mine", a: "Guns N' Roses", y: 1987, id: "1w7OgIMMRc4" },
-        { n: "Livin' on a Prayer", a: "Bon Jovi", y: 1986, id: "lDK9QqIzhwk" },
-        { n: "Take on Me", a: "a-ha", y: 1985, id: "djV11Xbc914" },
+        { n: "Don't Stop Believin'", a: "Journey", y: 1981, id: "VcjzHMhBtf0" },
+        { n: "Livin' on a Prayer", a: "Bon Jovi", y: 1986, id: "lDK99Y4qsEk" },
+        { n: "Every Breath You Take", a: "The Police", y: 1983, id: "OMOGaugKpzs" },
+        { n: "Under Pressure", a: "Queen & David Bowie", y: 1981, id: "a01QQZyl-_I" },
+        { n: "Girls Just Want to Have Fun", a: "Cyndi Lauper", y: 1983, id: "PIb6AZdTr-A" },
+        { n: "With or Without You", a: "U2", y: 1987, id: "XmSdTa9kaiQ" },
+        { n: "Fast Car", a: "Tracy Chapman", y: 1988, id: "DWRcNpR6Ksy" },
+        { n: "Dancing in the Dark", a: "Bruce Springsteen", y: 1984, id: "129kuDCQtHs" },
+        { n: "Africa", a: "Toto", y: 1982, id: "FTQbiNvZqaY" },
+        { n: "Eye of the Tiger", a: "Survivor", y: 1982, id: "btPJPFnesV4" },
+        { n: "Never Gonna Give You Up", a: "Rick Astley", y: 1987, id: "dQw4w9WgXcQ" },
+        { n: "Blue Monday", a: "New Order", y: 1983, id: "FYH8DsU2WCk" },
+        { n: "Careless Whisper", a: "George Michael", y: 1984, id: "izGwDsrQ1eQ" },
+        { n: "Wake Me Up Before You Go-Go", a: "Wham!", y: 1984, id: "pIgZ7gMze7A" },
+        { n: "I Wanna Dance With Somebody", a: "Whitney Houston", y: 1987, id: "eH3giaIzONA" },
+        { n: "Material Girl", a: "Madonna", y: 1984, id: "69wBH6gz9Hs" },
+        { n: "Another One Bites the Dust", a: "Queen", y: 1980, id: "rY0WxgSXdEE" },
+        { n: "Call Me", a: "Blondie", y: 1980, id: "aH3Q_CZy968" },
+        { n: "Total Eclipse of the Heart", a: "Bonnie Tyler", y: 1983, id: "lcOxhH8N3Bo" },
+        { n: "Should I Stay or Should I Go", a: "The Clash", y: 1982, id: "BN1W8erfjrW" },
+        { n: "Faith", a: "George Michael", y: 1987, id: "lu3VTngm1F0" },
+        { n: "Walk Like an Egyptian", a: "The Bangles", y: 1986, id: "Cv6tuz8WwvM" },
+        { n: "Sweet Dreams", a: "Eurythmics", y: 1983, id: "qeMFqkcPYcg" },
+
+        // 1990s
         { n: "Smells Like Teen Spirit", a: "Nirvana", y: 1991, id: "hTWKbfoikeg" },
         { n: "Wonderwall", a: "Oasis", y: 1995, id: "6hzrDeceEKc" },
+        { n: "Losing My Religion", a: "R.E.M.", y: 1991, id: "xwtdhWltSIg" },
+        { n: "Baby One More Time", a: "Britney Spears", y: 1998, id: "C-u5WLJ9Yk4" },
+        { n: "Wannabe", a: "Spice Girls", y: 1996, id: "gJLIiF15wjQ" },
+        { n: "No Scrubs", a: "TLC", y: 1999, id: "FrLequ6dUdM" },
+        { n: "I Will Always Love You", a: "Whitney Houston", y: 1992, id: "3JWTaaS7LdU" },
+        { n: "Vogue", a: "Madonna", y: 1990, id: "GuJQSAiODqI" },
+        { n: "Zombie", a: "The Cranberries", y: 1994, id: "6Ejga4kJUts" },
+        { n: "Don't Speak", a: "No Doubt", y: 1995, id: "TR3Vdo5etli" },
+        { n: "Under the Bridge", a: "Red Hot Chili Peppers", y: 1991, id: "GLvohMXgcBo" },
+        { n: "One", a: "U2", y: 1991, id: "ftjEcrrf7r0" },
+        { n: "Creep", a: "Radiohead", y: 1992, id: "XFkzRNyygfk" },
+        { n: "Killing Me Softly", a: "Fugees", y: 1996, id: "oKOglGShUtU" },
+        { n: "Bitter Sweet Symphony", a: "The Verve", y: 1997, id: "1lyu1KKwC74" },
+        { n: "Iris", a: "Goo Goo Dolls", y: 1998, id: "NdYW5SR8AfY" },
+        { n: "Hallelujah", a: "Jeff Buckley", y: 1994, id: "y8AWFf7EAc4" },
+        { n: "My Heart Will Go On", a: "Celine Dion", y: 1997, id: "3gK_2Xf7BqE" },
+        { n: "Believe", a: "Cher", y: 1998, id: "nZRLVpOkWCI" },
+        { n: "U Can't Touch This", a: "MC Hammer", y: 1990, id: "otCpCn0l4Wo" },
+        { n: "Black or White", a: "Michael Jackson", y: 1991, id: "F2AitTPI5U0" },
+        { n: "Smooth", a: "Santana ft. Rob Thomas", y: 1999, id: "6Whgn_iE5uc" },
+        { n: "Angels", a: "Robbie Williams", y: 1997, id: "luwAMFcc2f8" },
+        { n: "Torn", a: "Natalie Imbruglia", y: 1997, id: "VV1XWJN3nJo" },
+        { n: "Always", a: "Bon Jovi", y: 1994, id: "9BMwcO6_hyA" },
+        { n: "What Is Love", a: "Haddaway", y: 1993, id: "HEXWRTEbj1I" },
+        { n: "Say My Name", a: "Destiny's Child", y: 1999, id: "sQgd6MccwZc" },
+        { n: "Genie in a Bottle", a: "Christina Aguilera", y: 1999, id: "kIDWG_YAsOQ" },
+        { n: "Basket Case", a: "Green Day", y: 1994, id: "NUTGr5t3MoY" },
+
+        // 2000s
+        { n: "Mr. Brightside", a: "The Killers", y: 2003, id: "gGdGFtwCNBE" },
+        { n: "Toxic", a: "Britney Spears", y: 2003, id: "LOZuxwVk7TU" },
+        { n: "Crazy in Love", a: "Beyoncé", y: 2003, id: "ViwtNuzbvyo" },
+        { n: "Single Ladies", a: "Beyoncé", y: 2008, id: "4m1EFMoRFvY" },
+        { n: "Hey Ya!", a: "Outkast", y: 2003, id: "PWgvGjAhvIw" },
+        { n: "Umbrella", a: "Rihanna", y: 2007, id: "cvm0sNfa9yU" },
+        { n: "Seven Nation Army", a: "The White Stripes", y: 2003, id: "0J2QdDbelmY" },
         { n: "Lose Yourself", a: "Eminem", y: 2002, id: "_Yhyp-_hX2s" },
-        { n: "Mr. Brightside", a: "The Killers", y: 2004, id: "gGdGFtwCNBE" },
+        { n: "Yellow", a: "Coldplay", y: 2000, id: "yKNxeF4KMsY" },
+        { n: "Clocks", a: "Coldplay", y: 2002, id: "d020hcWA_Wg" },
+        { n: "Fix You", a: "Coldplay", y: 2005, id: "k4V3Mo61fJM" },
+        { n: "Poker Face", a: "Lady Gaga", y: 2008, id: "bESGLojNYSo" },
+        { n: "Bad Romance", a: "Lady Gaga", y: 2009, id: "qrO4YZeyl0I" },
+        { n: "Hurt", a: "Johnny Cash", y: 2002, id: "8AHCfZQpJKY" },
+        { n: "Valerie", a: "Amy Winehouse", y: 2007, id: "4H5reVlsjF8" },
+        { n: "Back to Black", a: "Amy Winehouse", y: 2006, id: "TJAfLE39ZZ8" },
+        { n: "Crazy", a: "Gnarls Barkley", y: 2006, id: "b87X5779Apg" },
+        { n: "Hey There Delilah", a: "Plain White T's", y: 2006, id: "h_m-Bj_o6-o" },
+        { n: "Beautiful Day", a: "U2", y: 2000, id: "co6WMzDOh1o" },
+        { n: "Empire State of Mind", a: "Jay-Z ft. Alicia Keys", y: 2009, id: "QsZlY0Vz4-o" },
+        { n: "I Gotta Feeling", a: "Black Eyed Peas", y: 2009, id: "uSD4vsh1zDA" },
+        { n: "Hips Don't Lie", a: "Shakira", y: 2006, id: "DUT5rEU6pqM" },
+        { n: "Bleeding Love", a: "Leona Lewis", y: 2007, id: "Vzo-EL_62fQ" },
+        { n: "You're Beautiful", a: "James Blunt", y: 2004, id: "oofSnsGkops" },
+        { n: "How to Save a Life", a: "The Fray", y: 2005, id: "df2WafKwzsg" },
+        { n: "Rehab", a: "Amy Winehouse", y: 2006, id: "KUmZp8pR1uc" },
+        { n: "In the End", a: "Linkin Park", y: 2000, id: "eVTXPUF4Oz4" },
+        { n: "Seven Nation Army", a: "The White Stripes", y: 2003, id: "0J2QdDbelmY" },
+
+        // 2010s
         { n: "Rolling in the Deep", a: "Adele", y: 2011, id: "rYEDA3JcQqw" },
-        { n: "Uptown Funk", a: "Mark Ronson ft. Bruno Mars", y: 2014, id: "OPf0YbXqDm0" },
-        { n: "Blinding Lights", a: "The Weeknd", y: 2019, id: "4NRXx6U8ABQ" }
+        { n: "Someone Like You", a: "Adele", y: 2011, id: "hLQl3WQQoQ0" },
+        { n: "Uptown Funk", a: "Bruno Mars", y: 2014, id: "OPf0YbXqDm0" },
+        { n: "Shake It Off", a: "Taylor Swift", y: 2014, id: "nfWlot6h_JM" },
+        { n: "Blank Space", a: "Taylor Swift", y: 2014, id: "e-ORhEE9VVg" },
+        { n: "Blinding Lights", a: "The Weeknd", y: 2019, id: "4NRXx6U8ABQ" },
+        { n: "Starboy", a: "The Weeknd", y: 2016, id: "34Na4j8AVgA" },
+        { n: "Despacito", a: "Luis Fonsi", y: 2017, id: "kJQP7kiw5Fk" },
+        { n: "Shape of You", a: "Ed Sheeran", y: 2017, id: "JGwWNGJdvx8" },
+        { n: "Happy", a: "Pharrell Williams", y: 2013, id: "ZbZSe6N_BXs" },
+        { n: "Get Lucky", a: "Daft Punk", y: 2013, id: "5NV6Rdv1a3I" },
+        { n: "Hello", a: "Adele", y: 2015, id: "YQHsXMglC9A" },
+        { n: "Thinking Out Loud", a: "Ed Sheeran", y: 2014, id: "lp-EO5I6OHQ" },
+        { n: "Bad Guy", a: "Billie Eilish", y: 2019, id: "DyDfgMOUjCI" },
+        { n: "Old Town Road", a: "Lil Nas X", y: 2019, id: "r7qovpFAGrQ" },
+        { n: "Radioactive", a: "Imagine Dragons", y: 2012, id: "ktvTqknDobU" },
+        { n: "Royals", a: "Lorde", y: 2013, id: "nlcIKh6sOqc" },
+        { n: "Perfect", a: "Ed Sheeran", y: 2017, id: "2Vv-BfVoq4g" },
+        { n: "Wake Me Up", a: "Avicii", y: 2013, id: "IcrbM1l_BoI" },
+        { n: "Take Me to Church", a: "Hozier", y: 2013, id: "PVjiCP1EcVg" },
+        { n: "All About That Bass", a: "Meghan Trainor", y: 2014, id: "7PCkvCPvDXk" },
+        { n: "See You Again", a: "Wiz Khalifa ft. Charlie Puth", y: 2015, id: "RgKAFK5djSk" },
+        { n: "Can't Stop the Feeling!", a: "Justin Timberlake", y: 2016, id: "ru0K8uYEZWw" },
+        { n: "Cheap Thrills", a: "Sia", y: 2016, id: "nYh-n7f39IQ" },
+        { n: "Havana", a: "Camila Cabello", y: 2017, id: "BQ0mxQXmLsk" },
+
+        // 2020s
+        { n: "Flowers", a: "Miley Cyrus", y: 2023, id: "G7KNmW9a75Y" },
+        { n: "As It Was", a: "Harry Styles", y: 2022, id: "H5v3kku4y6Q" },
+        { n: "Anti-Hero", a: "Taylor Swift", y: 2022, id: "b1kbLwvqugk" },
+        { n: "Cruel Summer", a: "Taylor Swift", y: 2019, id: "ic8j13piAhQ" },
+        { n: "Drivers License", a: "Olivia Rodrigo", y: 2021, id: "ZmDBbnmKpqQ" },
+        { n: "Vampire", a: "Olivia Rodrigo", y: 2023, id: "RlPNh_PBZb4" },
+        { n: "Stay", a: "Kid LAROI & Bieber", y: 2021, id: "kTJczUoc26U" },
+        { n: "Save Your Tears", a: "The Weeknd", y: 2020, id: "XXYlFuWEuKI" },
+        { n: "Espresso", a: "Sabrina Carpenter", y: 2024, id: "ep2f_eHnQfI" },
+        { n: "Bad Habits", a: "Ed Sheeran", y: 2021, id: "orJSJGHjBLI" },
+        { n: "Levitating", a: "Dua Lipa", y: 2020, id: "TUVcZfQe-Kw" },
+        { n: "Good 4 U", a: "Olivia Rodrigo", y: 2021, id: "gNi_6U5Pm_o" },
+        { n: "Heat Waves", a: "Glass Animals", y: 2020, id: "mRD0-GxqHVo" },
+        { n: "Kill Bill", a: "SZA", y: 2022, id: "MSRcC5DXw2Q" },
+        { n: "Paint The Town Red", a: "Doja Cat", y: 2023, id: "m4_9TFeMfJE" }
     ];
 
     let players = [];
     let cur = 0;
     let deck = [];
     let currentSong = null;
-    let currentModeText = "All Time"; 
+    let currentModeText = "All Eras"; 
     
     document.addEventListener('DOMContentLoaded', () => {
-        const decadeInput = document.getElementById('decadeFilter');
-        const artistInput = document.getElementById('artistFilter');
-
-        artistInput.addEventListener('input', function() {
-            if (this.value.trim() !== "") {
-                decadeInput.value = 'all';
-                checkFilters();
+        const decIn = document.getElementById('decadeFilter');
+        const artIn = document.getElementById('artistFilter');
+        const urlIn = document.getElementById('customUrl');
+        artIn.addEventListener('input', () => { if (artIn.value.trim()) { decIn.value = 'all'; customPlaylistId = null; checkFilters(); } });
+        decIn.addEventListener('change', () => { if (decIn.value !== 'all') { artIn.value = ''; customPlaylistId = null; checkFilters(); } });
+        urlIn.addEventListener('input', () => { 
+            if (urlIn.value.includes('list=')) {
+                document.getElementById('applyCustomBtn').classList.remove('hidden');
+            } else {
+                document.getElementById('applyCustomBtn').classList.add('hidden');
+                customPlaylistId = null;
             }
         });
-
-        decadeInput.addEventListener('change', function() {
-            if (this.value !== 'all') {
-                artistInput.value = '';
-                checkFilters();
-            }
-        });
+        populateArtistList();
+        loadState();
     });
 
+    function applyCustomPlaylist() {
+        const url = document.getElementById('customUrl').value;
+        const match = url.match(/[&?]list=([^&]+)/);
+        if (match && match[1]) {
+            customPlaylistId = match[1];
+            document.getElementById('customStatus').innerText = "Stream Linked";
+            document.getElementById('startBtn').classList.remove('hidden');
+        }
+    }
+
     function saveState() {
-        const state = {
-            players: players,
-            cur: cur,
-            deck: deck,
-            gameStarted: !document.getElementById('game').classList.contains('hidden'),
-            modeText: currentModeText
-        };
-        try {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-        } catch(e) { console.error("Storage failed", e); }
+        const state = { players, cur, deck, currentSong, gameStarted: !document.getElementById('game').classList.contains('hidden'), modeText: currentModeText, customPlaylistId };
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
     }
 
     function loadState() {
         const raw = localStorage.getItem(STORAGE_KEY);
-        populateArtistList(); 
         if(!raw) return;
-        
         try {
             const state = JSON.parse(raw);
             players = state.players || [];
             cur = state.cur || 0;
             deck = state.deck || [];
-            currentModeText = state.modeText || "All Time";
-            
+            currentSong = state.currentSong || null;
+            currentModeText = state.modeText || "All Eras";
+            customPlaylistId = state.customPlaylistId || null;
             if(players.length > 0) renderPlayers();
-
             if(state.gameStarted && players.length > 0) {
                 document.getElementById('setup').classList.add('hidden');
                 document.getElementById('game').classList.remove('hidden');
-                document.getElementById('modeInfo').innerText = `Game Mode: ${currentModeText}`;
-                updateBoard();
-                updateDeckInfo();
-                if (deck.length > 0) deck = shuffle(deck);
+                document.getElementById('modeInfo').innerText = `Horizon: ${currentModeText}`;
+                updateBoard(); updateDeckInfo();
+                if (currentSong) {
+                    document.getElementById('loadBtn').classList.add('hidden');
+                    document.getElementById('controls').classList.remove('hidden');
+                }
             }
-        } catch(e) { console.error("Load Error", e); }
+        } catch(e) {}
     }
 
     function populateArtistList() {
         const artists = [...new Set(playlist.map(s => s.a))].sort();
-        const dataList = document.getElementById('artistList');
-        dataList.innerHTML = artists.map(a => `<option value="${a}">`).join('');
-    }
-
-    function shuffle(array) {
-        let currentIndex = array.length, randomIndex;
-        while (currentIndex != 0) {
-            randomIndex = Math.floor(Math.random() * currentIndex);
-            currentIndex--;
-            [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
-        }
-        return array;
+        document.getElementById('artistList').innerHTML = artists.map(a => `<option value="${a}">`).join('');
     }
 
     function addPlayer() {
@@ -359,33 +746,24 @@
         if(n) {
             players.push({ name: n, score: 0 });
             document.getElementById('pName').value = '';
-            renderPlayers();
-            saveState(); 
+            renderPlayers(); saveState(); 
         }
     }
 
     function renderPlayers() {
-        let html = players.map(p => `<span class="score-badge">${p.name}</span>`).join(' ');
-        document.getElementById('pList').innerHTML = html;
+        document.getElementById('pList').innerHTML = players.map(p => `<span class="player-tag">${p.name}</span>`).join('');
         if(players.length > 0) document.getElementById('startBtn').classList.remove('hidden');
     }
 
     function checkFilters() {
+        if (customPlaylistId) { document.getElementById('filterCount').innerText = "Stream Ready"; return; }
         const matches = getFilteredSongs();
-        const msg = document.getElementById('filterCount');
-        if (matches.length === 0) {
-            msg.innerText = "0 matches found.";
-            msg.style.color = "#e74c3c";
-        } else {
-            msg.innerText = `${matches.length} songs found.`;
-            msg.style.color = "#1DB954";
-        }
+        document.getElementById('filterCount').innerText = `${matches.length} tracks found`;
     }
 
     function getFilteredSongs() {
         const decade = document.getElementById('decadeFilter').value;
         const artist = document.getElementById('artistFilter').value.toLowerCase().trim();
-        
         return playlist.filter(song => {
             if (artist) return song.a.toLowerCase().includes(artist);
             if (decade !== 'all') {
@@ -395,86 +773,67 @@
                 if (decade === '80s') return y >= 1980 && y < 1990;
                 if (decade === '90s') return y >= 1990 && y < 2000;
                 if (decade === '00s') return y >= 2000 && y < 2010;
-                if (decade === '10s') return y >= 2010;
+                if (decade === '10s') return y >= 2010 && y < 2020;
+                if (decade === '20s') return y >= 2020;
             }
             return true;
         });
     }
 
     function startGame() {
-        if(!isPlayerReady) { alert("YouTube player loading... please wait."); return; }
-        
-        let finalPool = getFilteredSongs();
-        if (finalPool.length === 0) {
-            alert("No matching songs found! Please reset filters.");
-            return;
+        if(!isPlayerReady) return;
+        if (customPlaylistId) {
+            currentModeText = "Custom Session";
+        } else {
+            let pool = getFilteredSongs();
+            if (pool.length === 0) return;
+            const artist = document.getElementById('artistFilter').value;
+            const decade = document.getElementById('decadeFilter').value;
+            currentModeText = artist ? `Focus: ${artist}` : (decade !== 'all' ? `Decade: ${decade}` : "All Eras");
+            deck = pool.sort(() => Math.random() - 0.5); 
         }
-
-        const decade = document.getElementById('decadeFilter').value;
-        const artist = document.getElementById('artistFilter').value;
-        currentModeText = artist ? `Artist - ${artist}` : (decade !== 'all' ? `Decade - ${decade}` : "All Time");
-
-        deck = shuffle(finalPool).slice(0, 100);
-        
         document.getElementById('setup').classList.add('hidden');
         document.getElementById('game').classList.remove('hidden');
-        document.getElementById('modeInfo').innerText = `Game Mode: ${currentModeText}`;
-
-        updateBoard();
-        updateDeckInfo();
-        saveState(); 
+        document.getElementById('modeInfo').innerText = `Horizon: ${currentModeText}`;
+        updateBoard(); updateDeckInfo(); saveState(); 
     }
 
     function updateDeckInfo() {
-        document.getElementById('deckInfo').innerText = `Songs in Deck: ${deck.length}`;
+        document.getElementById('deckInfo').innerText = customPlaylistId ? `Source: Global Stream` : `Pool: ${deck.length} tracks remaining`;
     }
 
     function updateBoard() {
-        document.getElementById('turnTxt').innerText = players[cur].name + "'s Turn";
-        document.getElementById('sb').innerHTML = "<b>SCOREBOARD</b><br>" + 
-            players.map(p => `${p.name}: ${p.score}`).join(' | ');
+        document.getElementById('turnTxt').innerText = players[cur].name;
+        document.getElementById('sb').innerHTML = players.map(p => `<div class="score-item">${p.name} <b>${p.score}</b></div>`).join('');
     }
 
     function playRandomSong() {
         if(!isPlayerReady) return;
-
         document.getElementById('results').classList.add('hidden');
-        document.getElementById('statusText').innerText = "Loading Song...";
-        
+        document.getElementById('statusText').innerText = "Tuning frequency...";
         if(player && player.stopVideo) player.stopVideo();
 
-        if(deck.length === 0) deck = shuffle(getFilteredSongs()).slice(0, 100); 
-        
-        currentSong = deck.pop();
-        updateDeckInfo();
-        saveState(); 
-
-        if(player && player.loadVideoById) {
-            player.unMute();
-            player.setVolume(100);
-            
-            // Attempt autoplay
-            player.loadVideoById({
-                videoId: currentSong.id, 
-                startSeconds: 40,
-                suggestedQuality: 'small'
-            });
-            
-            // Show standard buttons immediately
+        if (customPlaylistId) {
+            if (!isPlaylistStarted) {
+                player.cuePlaylist({ list: customPlaylistId, listType: 'playlist', index: 0, startSeconds: 45 });
+                setTimeout(() => { player.playVideo(); player.setShuffle(true); player.nextVideo(); }, 500);
+                isPlaylistStarted = true;
+            } else { player.nextVideo(); }
+            document.getElementById('loadBtn').classList.add('hidden');
+            document.getElementById('controls').classList.remove('hidden');
+            document.getElementById('pauseBtn').innerText = "▶ Play";
+        } else {
+            if(deck.length === 0) deck = getFilteredSongs().sort(() => Math.random() - 0.5);
+            currentSong = deck.pop();
+            updateDeckInfo(); saveState(); 
+            player.loadVideoById({ videoId: currentSong.id, startSeconds: 45 });
             document.getElementById('loadBtn').classList.add('hidden');
             document.getElementById('controls').classList.remove('hidden');
             document.getElementById('pauseBtn').innerText = "▶ Play";
         }
     }
 
-    function toggleAudio() {
-        let s = player.getPlayerState();
-        if(s === YT.PlayerState.PLAYING) { 
-            player.pauseVideo(); 
-        } else { 
-            player.playVideo(); 
-        }
-    }
+    function toggleAudio() { player.getPlayerState() === YT.PlayerState.PLAYING ? player.pauseVideo() : player.playVideo(); }
 
     function showResults() {
         player.pauseVideo();
@@ -482,43 +841,50 @@
         document.getElementById('results').classList.remove('hidden');
         document.getElementById('statusText').innerText = "";
         
-        document.getElementById('resTitle').innerText = currentSong.n;
-        document.getElementById('resArtist').innerText = "By: " + currentSong.a;
-        document.getElementById('resYear').innerText = currentSong.y;
+        const songLink = document.getElementById('songLink');
+        if (customPlaylistId) {
+            const data = player.getVideoData();
+            const ft = data.title || "Untitled";
+            let artist = data.author || "Unknown", name = ft, year = "----";
+            if (ft.includes(" - ")) [artist, name] = ft.split(" - ");
+            const ym = ft.match(/\b(19|20)\d{2}\b/);
+            if (ym) year = ym[0];
+            document.getElementById('resTitle').innerText = name.trim();
+            document.getElementById('resArtist').innerText = artist.trim();
+            document.getElementById('resYear').innerText = year;
+            songLink.href = player.getVideoUrl();
+        } else if (currentSong) {
+            document.getElementById('resTitle').innerText = currentSong.n;
+            document.getElementById('resArtist').innerText = currentSong.a;
+            document.getElementById('resYear').innerText = currentSong.y;
+            songLink.href = `https://www.youtube.com/watch?v=${currentSong.id}`;
+        }
     }
 
     function submitTurn() {
-        let checks = document.querySelectorAll('.sc-check:checked').length;
-        if(checks >= 2) players[cur].score++;
-        
+        if(document.querySelectorAll('.sc-check:checked').length >= 2) players[cur].score++;
         if(players[cur].score >= 10) {
             document.getElementById('game').classList.add('hidden');
             document.getElementById('winScreen').classList.remove('hidden');
-            document.getElementById('winnerName').innerText = players[cur].name + "!";
+            document.getElementById('winnerName').innerText = players[cur].name;
             localStorage.removeItem(STORAGE_KEY); 
             return;
         }
-
         document.querySelectorAll('.sc-check').forEach(c => c.checked = false);
         cur = (cur + 1) % players.length;
-        
-        player.stopVideo();
+        if (!customPlaylistId) player.stopVideo();
         document.getElementById('results').classList.add('hidden');
         document.getElementById('loadBtn').classList.remove('hidden');
-        document.getElementById('statusText').innerText = "";
-        
-        updateBoard();
-        saveState(); 
+        currentSong = null; 
+        updateBoard(); saveState(); 
     }
 
-    function confirmReset() {
-        if(confirm("Restart game?")) {
+    function triggerReset() {
+        openModal("Reset Game?", "All scores will be lost in the night.", () => {
             localStorage.removeItem(STORAGE_KEY);
             location.reload();
-        }
+        });
     }
-
-    loadState();
 </script>
 </body>
 </html>
