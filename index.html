@@ -217,7 +217,7 @@
 </div>
 
 <script>
-    const STORAGE_KEY = 'family_hitster_save_v21';
+    const STORAGE_KEY = 'family_hitster_save_v22';
 
     var tag = document.createElement('script');
     tag.src = "https://www.youtube.com/iframe_api";
@@ -382,6 +382,7 @@
             players: players,
             cur: cur,
             deck: deck,
+            currentSong: currentSong, // CRITICAL: Save current song details
             gameStarted: !document.getElementById('game').classList.contains('hidden'),
             modeText: currentModeText,
             customPlaylistId: customPlaylistId
@@ -401,6 +402,7 @@
             players = state.players || [];
             cur = state.cur || 0;
             deck = state.deck || [];
+            currentSong = state.currentSong || null; // Load current song details
             currentModeText = state.modeText || "All Time";
             customPlaylistId = state.customPlaylistId || null;
             
@@ -412,7 +414,12 @@
                 document.getElementById('modeInfo').innerText = `Game Mode: ${currentModeText}`;
                 updateBoard();
                 updateDeckInfo();
-                if (deck.length > 0) deck = shuffle(deck);
+                
+                // If we were mid-song and it was static, ensure details are ready
+                if (currentSong) {
+                    document.getElementById('loadBtn').classList.add('hidden');
+                    document.getElementById('controls').classList.remove('hidden');
+                }
             }
         } catch(e) {}
     }
@@ -522,7 +529,6 @@
 
         if (customPlaylistId) {
             if (!isPlaylistStarted) {
-                // First load
                 player.cuePlaylist({
                     list: customPlaylistId,
                     listType: 'playlist',
@@ -530,7 +536,6 @@
                     startSeconds: 40,
                     suggestedQuality: 'small'
                 });
-                // Wait briefly for cueing then play & shuffle
                 setTimeout(() => {
                     player.playVideo();
                     player.setShuffle(true);
@@ -589,22 +594,26 @@
                 artist = parts[0].trim();
                 songName = parts[1].trim();
             }
+            
+            // Better Year Extraction (matches 19xx or 20xx anywhere in title)
             const yearMatch = fullTitle.match(/\b(19|20)\d{2}\b/);
             if (yearMatch) year = yearMatch[0];
 
             document.getElementById('resTitle').innerText = songName;
             document.getElementById('resArtist').innerText = "By: " + artist;
             document.getElementById('resYear').innerText = year;
-            
-            // Set link for custom playlist
             songLink.href = player.getVideoUrl();
         } else {
-            document.getElementById('resTitle').innerText = currentSong.n;
-            document.getElementById('resArtist').innerText = "By: " + currentSong.a;
-            document.getElementById('resYear').innerText = currentSong.y;
-            
-            // Set link for static playlist
-            songLink.href = `https://www.youtube.com/watch?v=${currentSong.id}`;
+            // Check if currentSong exists (it might be null if page refreshed and state didn't save)
+            if (currentSong) {
+                document.getElementById('resTitle').innerText = currentSong.n;
+                document.getElementById('resArtist').innerText = "By: " + currentSong.a;
+                document.getElementById('resYear').innerText = currentSong.y;
+                songLink.href = `https://www.youtube.com/watch?v=${currentSong.id}`;
+            } else {
+                document.getElementById('resTitle').innerText = "Error: Reloading data...";
+                location.reload(); // Quick fix if state is corrupted
+            }
         }
     }
 
@@ -628,6 +637,7 @@
         document.getElementById('loadBtn').classList.remove('hidden');
         document.getElementById('statusText').innerText = "";
         
+        currentSong = null; // Clear current song after turn ends
         updateBoard();
         saveState(); 
     }
