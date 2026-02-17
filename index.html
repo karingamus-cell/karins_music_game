@@ -92,6 +92,19 @@
             color: #888;
             line-height: 1.5;
         }
+
+        .song-link {
+            display: block;
+            margin: 15px 0;
+            color: #aaa;
+            text-decoration: none;
+            font-size: 13px;
+            background: rgba(255,255,255,0.05);
+            padding: 8px;
+            border-radius: 8px;
+            transition: color 0.2s;
+        }
+        .song-link:hover { color: var(--spotify-green); }
     </style>
 </head>
 <body>
@@ -185,6 +198,8 @@
                 <label><input type="checkbox" class="sc-check"> Artist</label>
                 <label><input type="checkbox" class="sc-check"> Year</label>
             </div>
+            
+            <a id="songLink" href="#" target="_blank" class="song-link">🔗 View on YouTube</a>
             
             <button onclick="submitTurn()">Confirm & Next Turn</button>
         </div>
@@ -560,6 +575,8 @@
         document.getElementById('results').classList.remove('hidden');
         document.getElementById('statusText').innerText = "";
         
+        const songLink = document.getElementById('songLink');
+        
         if (customPlaylistId) {
             const data = player.getVideoData();
             const fullTitle = data.title || "Unknown Title";
@@ -578,10 +595,16 @@
             document.getElementById('resTitle').innerText = songName;
             document.getElementById('resArtist').innerText = "By: " + artist;
             document.getElementById('resYear').innerText = year;
+            
+            // Set link for custom playlist
+            songLink.href = player.getVideoUrl();
         } else {
             document.getElementById('resTitle').innerText = currentSong.n;
             document.getElementById('resArtist').innerText = "By: " + currentSong.a;
             document.getElementById('resYear').innerText = currentSong.y;
+            
+            // Set link for static playlist
+            songLink.href = `https://www.youtube.com/watch?v=${currentSong.id}`;
         }
     }
 
