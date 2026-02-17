@@ -330,7 +330,8 @@
                     <option value="80s">The 1980s</option>
                     <option value="90s">The 1990s</option>
                     <option value="00s">The 2000s</option>
-                    <option value="10s">Modern Day (2010+)</option>
+                    <option value="10s">The 2010s</option>
+                    <option value="20s">The 2020s</option>
                 </select>
             </div>
 
@@ -406,7 +407,7 @@
 </div>
 
 <script>
-    const STORAGE_KEY = 'hitster_karin_rose_v1';
+    const STORAGE_KEY = 'hitster_karin_rose_v4_playlist_expansion';
 
     // YouTube API Load
     var tag = document.createElement('script');
@@ -440,7 +441,7 @@
             st.innerText = "◈ Rose noir playing...";
             btn.innerText = "⏸ Pause";
             retryCount = 0;
-            if (player.getCurrentTime() < 10) player.seekTo(40);
+            if (player.getCurrentTime() < 5) player.seekTo(45);
         } else if (event.data === YT.PlayerState.PAUSED) {
             btn.innerText = "▶ Play";
             st.innerText = "Suspended";
@@ -467,31 +468,215 @@
     function closeModal() { document.getElementById('modal-overlay').classList.add('hidden'); }
     function confirmModalAction() { if (modalCallback) modalCallback(); closeModal(); }
 
+    // --- EXPANDED SONG POOL (Now incorporating the provided Top 100 Playlist) ---
     const playlist = [
-        { n: "Shake It Off", a: "Taylor Swift", y: 2014, id: "nfWlot6h_JM" },
-        { n: "Love Story", a: "Taylor Swift", y: 2008, id: "8xg3vE8Ie_E" },
-        { n: "Blank Space", a: "Taylor Swift", y: 2014, id: "e-ORhEE9VVg" },
-        { n: "Anti-Hero", a: "Taylor Swift", y: 2022, id: "b1kbLwvqugk" },
-        { n: "Cruel Summer", a: "Taylor Swift", y: 2019, id: "ic8j13piAhQ" },
-        { n: "You Belong With Me", a: "Taylor Swift", y: 2008, id: "VuNIsY6JdUw" },
+        // 1960s
+        { n: "Hey Jude", a: "The Beatles", y: 1968, id: "A_MjCqQoLLA" },
+        { n: "I Want to Hold Your Hand", a: "The Beatles", y: 1963, id: "v1HDt1tknTc" },
+        { n: "She Loves You", a: "The Beatles", y: 1963, id: "QoF-7VMMihA" },
+        { n: "Help!", a: "The Beatles", y: 1965, id: "2Q_ZzBGPdqE" },
+        { n: "Yesterday", a: "The Beatles", y: 1965, id: "wM0id6UXK20" },
+        { n: "A Day in the Life", a: "The Beatles", y: 1967, id: "usNsCeOV4GM" },
+        { n: "Like a Rolling Stone", a: "Bob Dylan", y: 1965, id: "4F0yzXW63_A" },
+        { n: "Respect", a: "Aretha Franklin", y: 1967, id: "6FOUqQt3Kg0" },
+        { n: "Good Vibrations", a: "The Beach Boys", y: 1966, id: "Eab_beh07HU" },
+        { n: "Purple Haze", a: "Jimi Hendrix", y: 1967, id: "W5J_G_pUqvU" },
+        { n: "Paint It, Black", a: "The Rolling Stones", y: 1966, id: "O4irXQhgMqg" },
+        { n: "Satisfaction", a: "The Rolling Stones", y: 1965, id: "nrIPxlFzDi0" },
+        { n: "My Girl", a: "The Temptations", y: 1964, id: "C_CSjcm-z1w" },
+        { n: "Stand by Me", a: "Ben E. King", y: 1961, id: "hwZNL7QVJjE" },
+        { n: "California Dreamin'", a: "The Mamas & The Papas", y: 1965, id: "N-aK6JnyFmk" },
+        { n: "The Sound of Silence", a: "Simon & Garfunkel", y: 1964, id: "4zLfCnGVeL4" },
+        { n: "Light My Fire", a: "The Doors", y: 1967, id: "deB_u-to-o8" },
+        { n: "Brown Eyed Girl", a: "Van Morrison", y: 1967, id: "Ufm6T30G6X8" },
+        { n: "Gimme Shelter", a: "The Rolling Stones", y: 1969, id: "RbmS3tQJ7Os" },
+        { n: "Suspicious Minds", a: "Elvis Presley", y: 1969, id: "Wb0JlpgeobU" },
+        { n: "Unchained Melody", a: "The Righteous Brothers", y: 1965, id: "qiiyq2xrSI0" },
+        { n: "My Generation", a: "The Who", y: 1965, id: "fXvK2Aun8S4" },
+        { n: "Johnny B. Goode", a: "Chuck Berry", y: 1958, id: "ZFo8-JqzSCM" },
+        { n: "Dancing in the Street", a: "Martha & The Vandellas", y: 1964, id: "RGpx2mE_oE0" },
+        { n: "I Heard It Through the Grapevine", a: "Marvin Gaye", y: 1968, id: "Y7dGdrP3pms" },
+        { n: "God Only Knows", a: "The Beach Boys", y: 1966, id: "EkPy18xW1j8" },
+        { n: "What a Wonderful World", a: "Louis Armstrong", y: 1967, id: "A3yCcXgbKrE" },
+        { n: "You Really Got Me", a: "The Kinks", y: 1964, id: "fTTsY-ozGZg" },
+        { n: "A Whiter Shade of Pale", a: "Procol Harum", y: 1967, id: "St6jyEFe5WM" },
+        { n: "House of the Rising Sun", a: "The Animals", y: 1964, id: "0sB3Fjw3pVc" },
+
+        // 1970s
+        { n: "Bohemian Rhapsody", a: "Queen", y: 1975, id: "fJ9rUzIMcZQ" },
+        { n: "Imagine", a: "John Lennon", y: 1971, id: "YkgkThdzX-8" },
+        { n: "Stayin' Alive", a: "Bee Gees", y: 1977, id: "I_izvAbhExY" },
+        { n: "Dancing Queen", a: "ABBA", y: 1976, id: "xFrGuyw1V8s" },
+        { n: "Hotel California", a: "Eagles", y: 1976, id: "vced7_ySgV8" },
+        { n: "Dreams", a: "Fleetwood Mac", y: 1977, id: "Y3ywicffOj4" },
+        { n: "The Chain", a: "Fleetwood Mac", y: 1977, id: "JDG2m5hS1hc" },
+        { n: "Go Your Own Way", a: "Fleetwood Mac", y: 1977, id: "6ul-cZGQY_Y" },
+        { n: "Superstition", a: "Stevie Wonder", y: 1972, id: "0CFuCYNx-1g" },
+        { n: "Stairway to Heaven", a: "Led Zeppelin", y: 1971, id: "D9ioyEvdggk" },
+        { n: "Whole Lotta Love", a: "Led Zeppelin", y: 1969, id: "hq9V1V3uRpg" },
+        { n: "What's Going On", a: "Marvin Gaye", y: 1971, id: "_49XvL5pG7U" },
+        { n: "Born to Run", a: "Bruce Springsteen", y: 1975, id: "IxnAtjVp784" },
+        { n: "London Calling", a: "The Clash", y: 1979, id: "EfK-WX2pa8c" },
+        { n: "Tangled Up in Blue", a: "Bob Dylan", y: 1975, id: "YwSZvHqf9qM" },
+        { n: "No Woman, No Cry", a: "Bob Marley", y: 1974, id: "IT8XvzBu5v4" },
+        { n: "Bridge Over Troubled Water", a: "Simon & Garfunkel", y: 1970, id: "WrcwRt6JGsU" },
+        { n: "American Pie", a: "Don McLean", y: 1971, id: "iX_TFkut1n8" },
+        { n: "Jolene", a: "Dolly Parton", y: 1973, id: "L0eePw_Lao8" },
+        { n: "Sultans of Swing", a: "Dire Straits", y: 1978, id: "0fAQhSRLQnM" },
+        { n: "Heroes", a: "David Bowie", y: 1977, id: "lXgkuM2NhYI" },
+        { n: "Life on Mars?", a: "David Bowie", y: 1971, id: "AZKcl4-tcuo" },
+        { n: "September", a: "Earth, Wind & Fire", y: 1978, id: "Gs069dndIYk" },
+        { n: "Le Freak", a: "Chic", y: 1978, id: "h1qQ1SKNlgY" },
+        { n: "Heart of Glass", a: "Blondie", y: 1978, id: "WGUwIAtAf7M" },
+        { n: "Super Freak", a: "Rick James", y: 1981, id: "QYHxGOvqgNI" },
+        { n: "Your Song", a: "Elton John", y: 1970, id: "GlPlfCy1urI" },
+        { n: "Rocket Man", a: "Elton John", y: 1972, id: "DtVBCG6KGky" },
+        { n: "Tiny Dancer", a: "Elton John", y: 1971, id: "yYcyacLRPNs" },
+        { n: "Let's Stay Together", a: "Al Green", y: 1972, id: "COiIC3A0ROM" },
+
+        // 1980s
         { n: "Billie Jean", a: "Michael Jackson", y: 1982, id: "Zi_XLOBDo_Y" },
         { n: "Thriller", a: "Michael Jackson", y: 1982, id: "sOnqjkJTMaA" },
-        { n: "Bohemian Rhapsody", a: "Queen", y: 1975, id: "fJ9rUzIMcZQ" },
-        { n: "Dancing Queen", a: "ABBA", y: 1976, id: "xFrGuyw1V8s" },
-        { n: "Rolling in the Deep", a: "Adele", y: 2011, id: "rYEDA3JcQqw" },
-        { n: "Blinding Lights", a: "The Weeknd", y: 2019, id: "4NRXx6U8ABQ" },
-        { n: "Dreams", a: "Fleetwood Mac", y: 1977, id: "Y3ywicffOj4" },
-        { n: "Starboy", a: "The Weeknd", y: 2016, id: "34Na4j8AVgA" },
+        { n: "Beat It", a: "Michael Jackson", y: 1982, id: "oRdxUFDoQe0" },
+        { n: "Like a Virgin", a: "Madonna", y: 1984, id: "s__rX_jrqkY" },
+        { n: "Purple Rain", a: "Prince", y: 1984, id: "TvnYmWpD_T8" },
+        { n: "Take On Me", a: "a-ha", y: 1984, id: "djV11Xbc914" },
+        { n: "Sweet Child O' Mine", a: "Guns N' Roses", y: 1987, id: "1w7OgIMMRc4" },
+        { n: "Don't Stop Believin'", a: "Journey", y: 1981, id: "VcjzHMhBtf0" },
+        { n: "Livin' on a Prayer", a: "Bon Jovi", y: 1986, id: "lDK99Y4qsEk" },
+        { n: "Every Breath You Take", a: "The Police", y: 1983, id: "OMOGaugKpzs" },
+        { n: "Under Pressure", a: "Queen & David Bowie", y: 1981, id: "a01QQZyl-_I" },
+        { n: "Girls Just Want to Have Fun", a: "Cyndi Lauper", y: 1983, id: "PIb6AZdTr-A" },
+        { n: "With or Without You", a: "U2", y: 1987, id: "XmSdTa9kaiQ" },
+        { n: "Fast Car", a: "Tracy Chapman", y: 1988, id: "DWRcNpR6Ksy" },
+        { n: "Dancing in the Dark", a: "Bruce Springsteen", y: 1984, id: "129kuDCQtHs" },
+        { n: "Africa", a: "Toto", y: 1982, id: "FTQbiNvZqaY" },
+        { n: "Eye of the Tiger", a: "Survivor", y: 1982, id: "btPJPFnesV4" },
+        { n: "Never Gonna Give You Up", a: "Rick Astley", y: 1987, id: "dQw4w9WgXcQ" },
+        { n: "Blue Monday", a: "New Order", y: 1983, id: "FYH8DsU2WCk" },
+        { n: "Careless Whisper", a: "George Michael", y: 1984, id: "izGwDsrQ1eQ" },
+        { n: "Wake Me Up Before You Go-Go", a: "Wham!", y: 1984, id: "pIgZ7gMze7A" },
+        { n: "I Wanna Dance With Somebody", a: "Whitney Houston", y: 1987, id: "eH3giaIzONA" },
+        { n: "Material Girl", a: "Madonna", y: 1984, id: "69wBH6gz9Hs" },
+        { n: "Another One Bites the Dust", a: "Queen", y: 1980, id: "rY0WxgSXdEE" },
+        { n: "Call Me", a: "Blondie", y: 1980, id: "aH3Q_CZy968" },
+        { n: "Total Eclipse of the Heart", a: "Bonnie Tyler", y: 1983, id: "lcOxhH8N3Bo" },
+        { n: "Should I Stay or Should I Go", a: "The Clash", y: 1982, id: "BN1W8erfjrW" },
+        { n: "Faith", a: "George Michael", y: 1987, id: "lu3VTngm1F0" },
+        { n: "Walk Like an Egyptian", a: "The Bangles", y: 1986, id: "Cv6tuz8WwvM" },
+        { n: "Sweet Dreams", a: "Eurythmics", y: 1983, id: "qeMFqkcPYcg" },
+
+        // 1990s
+        { n: "Smells Like Teen Spirit", a: "Nirvana", y: 1991, id: "hTWKbfoikeg" },
+        { n: "Wonderwall", a: "Oasis", y: 1995, id: "6hzrDeceEKc" },
+        { n: "Losing My Religion", a: "R.E.M.", y: 1991, id: "xwtdhWltSIg" },
+        { n: "Baby One More Time", a: "Britney Spears", y: 1998, id: "C-u5WLJ9Yk4" },
+        { n: "Wannabe", a: "Spice Girls", y: 1996, id: "gJLIiF15wjQ" },
+        { n: "No Scrubs", a: "TLC", y: 1999, id: "FrLequ6dUdM" },
+        { n: "I Will Always Love You", a: "Whitney Houston", y: 1992, id: "3JWTaaS7LdU" },
+        { n: "Vogue", a: "Madonna", y: 1990, id: "GuJQSAiODqI" },
+        { n: "Zombie", a: "The Cranberries", y: 1994, id: "6Ejga4kJUts" },
+        { n: "Don't Speak", a: "No Doubt", y: 1995, id: "TR3Vdo5etli" },
+        { n: "Under the Bridge", a: "Red Hot Chili Peppers", y: 1991, id: "GLvohMXgcBo" },
+        { n: "One", a: "U2", y: 1991, id: "ftjEcrrf7r0" },
+        { n: "Creep", a: "Radiohead", y: 1992, id: "XFkzRNyygfk" },
+        { n: "Killing Me Softly", a: "Fugees", y: 1996, id: "oKOglGShUtU" },
+        { n: "Bitter Sweet Symphony", a: "The Verve", y: 1997, id: "1lyu1KKwC74" },
+        { n: "Iris", a: "Goo Goo Dolls", y: 1998, id: "NdYW5SR8AfY" },
+        { n: "Hallelujah", a: "Jeff Buckley", y: 1994, id: "y8AWFf7EAc4" },
+        { n: "My Heart Will Go On", a: "Celine Dion", y: 1997, id: "3gK_2Xf7BqE" },
+        { n: "Believe", a: "Cher", y: 1998, id: "nZRLVpOkWCI" },
+        { n: "U Can't Touch This", a: "MC Hammer", y: 1990, id: "otCpCn0l4Wo" },
+        { n: "Black or White", a: "Michael Jackson", y: 1991, id: "F2AitTPI5U0" },
+        { n: "Smooth", a: "Santana ft. Rob Thomas", y: 1999, id: "6Whgn_iE5uc" },
+        { n: "Angels", a: "Robbie Williams", y: 1997, id: "luwAMFcc2f8" },
+        { n: "Torn", a: "Natalie Imbruglia", y: 1997, id: "VV1XWJN3nJo" },
+        { n: "Always", a: "Bon Jovi", y: 1994, id: "9BMwcO6_hyA" },
+        { n: "What Is Love", a: "Haddaway", y: 1993, id: "HEXWRTEbj1I" },
+        { n: "Say My Name", a: "Destiny's Child", y: 1999, id: "sQgd6MccwZc" },
+        { n: "Genie in a Bottle", a: "Christina Aguilera", y: 1999, id: "kIDWG_YAsOQ" },
+        { n: "Basket Case", a: "Green Day", y: 1994, id: "NUTGr5t3MoY" },
+
+        // 2000s
         { n: "Mr. Brightside", a: "The Killers", y: 2003, id: "gGdGFtwCNBE" },
-        { n: "Landslide", a: "Fleetwood Mac", y: 1975, id: "K_PQ6p0W2XQ" },
-        { n: "Flowers", a: "Miley Cyrus", y: 2023, id: "G7KNmW9a75Y" }
+        { n: "Toxic", a: "Britney Spears", y: 2003, id: "LOZuxwVk7TU" },
+        { n: "Crazy in Love", a: "Beyoncé", y: 2003, id: "ViwtNuzbvyo" },
+        { n: "Single Ladies", a: "Beyoncé", y: 2008, id: "4m1EFMoRFvY" },
+        { n: "Hey Ya!", a: "Outkast", y: 2003, id: "PWgvGjAhvIw" },
+        { n: "Umbrella", a: "Rihanna", y: 2007, id: "cvm0sNfa9yU" },
+        { n: "Seven Nation Army", a: "The White Stripes", y: 2003, id: "0J2QdDbelmY" },
+        { n: "Lose Yourself", a: "Eminem", y: 2002, id: "_Yhyp-_hX2s" },
+        { n: "Yellow", a: "Coldplay", y: 2000, id: "yKNxeF4KMsY" },
+        { n: "Clocks", a: "Coldplay", y: 2002, id: "d020hcWA_Wg" },
+        { n: "Fix You", a: "Coldplay", y: 2005, id: "k4V3Mo61fJM" },
+        { n: "Poker Face", a: "Lady Gaga", y: 2008, id: "bESGLojNYSo" },
+        { n: "Bad Romance", a: "Lady Gaga", y: 2009, id: "qrO4YZeyl0I" },
+        { n: "Hurt", a: "Johnny Cash", y: 2002, id: "8AHCfZQpJKY" },
+        { n: "Valerie", a: "Amy Winehouse", y: 2007, id: "4H5reVlsjF8" },
+        { n: "Back to Black", a: "Amy Winehouse", y: 2006, id: "TJAfLE39ZZ8" },
+        { n: "Crazy", a: "Gnarls Barkley", y: 2006, id: "b87X5779Apg" },
+        { n: "Hey There Delilah", a: "Plain White T's", y: 2006, id: "h_m-Bj_o6-o" },
+        { n: "Beautiful Day", a: "U2", y: 2000, id: "co6WMzDOh1o" },
+        { n: "Empire State of Mind", a: "Jay-Z ft. Alicia Keys", y: 2009, id: "QsZlY0Vz4-o" },
+        { n: "I Gotta Feeling", a: "Black Eyed Peas", y: 2009, id: "uSD4vsh1zDA" },
+        { n: "Hips Don't Lie", a: "Shakira", y: 2006, id: "DUT5rEU6pqM" },
+        { n: "Bleeding Love", a: "Leona Lewis", y: 2007, id: "Vzo-EL_62fQ" },
+        { n: "You're Beautiful", a: "James Blunt", y: 2004, id: "oofSnsGkops" },
+        { n: "How to Save a Life", a: "The Fray", y: 2005, id: "df2WafKwzsg" },
+        { n: "Rehab", a: "Amy Winehouse", y: 2006, id: "KUmZp8pR1uc" },
+        { n: "In the End", a: "Linkin Park", y: 2000, id: "eVTXPUF4Oz4" },
+        { n: "Seven Nation Army", a: "The White Stripes", y: 2003, id: "0J2QdDbelmY" },
+
+        // 2010s
+        { n: "Rolling in the Deep", a: "Adele", y: 2011, id: "rYEDA3JcQqw" },
+        { n: "Someone Like You", a: "Adele", y: 2011, id: "hLQl3WQQoQ0" },
+        { n: "Uptown Funk", a: "Bruno Mars", y: 2014, id: "OPf0YbXqDm0" },
+        { n: "Shake It Off", a: "Taylor Swift", y: 2014, id: "nfWlot6h_JM" },
+        { n: "Blank Space", a: "Taylor Swift", y: 2014, id: "e-ORhEE9VVg" },
+        { n: "Blinding Lights", a: "The Weeknd", y: 2019, id: "4NRXx6U8ABQ" },
+        { n: "Starboy", a: "The Weeknd", y: 2016, id: "34Na4j8AVgA" },
+        { n: "Despacito", a: "Luis Fonsi", y: 2017, id: "kJQP7kiw5Fk" },
+        { n: "Shape of You", a: "Ed Sheeran", y: 2017, id: "JGwWNGJdvx8" },
+        { n: "Happy", a: "Pharrell Williams", y: 2013, id: "ZbZSe6N_BXs" },
+        { n: "Get Lucky", a: "Daft Punk", y: 2013, id: "5NV6Rdv1a3I" },
+        { n: "Hello", a: "Adele", y: 2015, id: "YQHsXMglC9A" },
+        { n: "Thinking Out Loud", a: "Ed Sheeran", y: 2014, id: "lp-EO5I6OHQ" },
+        { n: "Bad Guy", a: "Billie Eilish", y: 2019, id: "DyDfgMOUjCI" },
+        { n: "Old Town Road", a: "Lil Nas X", y: 2019, id: "r7qovpFAGrQ" },
+        { n: "Radioactive", a: "Imagine Dragons", y: 2012, id: "ktvTqknDobU" },
+        { n: "Royals", a: "Lorde", y: 2013, id: "nlcIKh6sOqc" },
+        { n: "Perfect", a: "Ed Sheeran", y: 2017, id: "2Vv-BfVoq4g" },
+        { n: "Wake Me Up", a: "Avicii", y: 2013, id: "IcrbM1l_BoI" },
+        { n: "Take Me to Church", a: "Hozier", y: 2013, id: "PVjiCP1EcVg" },
+        { n: "All About That Bass", a: "Meghan Trainor", y: 2014, id: "7PCkvCPvDXk" },
+        { n: "See You Again", a: "Wiz Khalifa ft. Charlie Puth", y: 2015, id: "RgKAFK5djSk" },
+        { n: "Can't Stop the Feeling!", a: "Justin Timberlake", y: 2016, id: "ru0K8uYEZWw" },
+        { n: "Cheap Thrills", a: "Sia", y: 2016, id: "nYh-n7f39IQ" },
+        { n: "Havana", a: "Camila Cabello", y: 2017, id: "BQ0mxQXmLsk" },
+
+        // 2020s
+        { n: "Flowers", a: "Miley Cyrus", y: 2023, id: "G7KNmW9a75Y" },
+        { n: "As It Was", a: "Harry Styles", y: 2022, id: "H5v3kku4y6Q" },
+        { n: "Anti-Hero", a: "Taylor Swift", y: 2022, id: "b1kbLwvqugk" },
+        { n: "Cruel Summer", a: "Taylor Swift", y: 2019, id: "ic8j13piAhQ" },
+        { n: "Drivers License", a: "Olivia Rodrigo", y: 2021, id: "ZmDBbnmKpqQ" },
+        { n: "Vampire", a: "Olivia Rodrigo", y: 2023, id: "RlPNh_PBZb4" },
+        { n: "Stay", a: "Kid LAROI & Bieber", y: 2021, id: "kTJczUoc26U" },
+        { n: "Save Your Tears", a: "The Weeknd", y: 2020, id: "XXYlFuWEuKI" },
+        { n: "Espresso", a: "Sabrina Carpenter", y: 2024, id: "ep2f_eHnQfI" },
+        { n: "Bad Habits", a: "Ed Sheeran", y: 2021, id: "orJSJGHjBLI" },
+        { n: "Levitating", a: "Dua Lipa", y: 2020, id: "TUVcZfQe-Kw" },
+        { n: "Good 4 U", a: "Olivia Rodrigo", y: 2021, id: "gNi_6U5Pm_o" },
+        { n: "Heat Waves", a: "Glass Animals", y: 2020, id: "mRD0-GxqHVo" },
+        { n: "Kill Bill", a: "SZA", y: 2022, id: "MSRcC5DXw2Q" },
+        { n: "Paint The Town Red", a: "Doja Cat", y: 2023, id: "m4_9TFeMfJE" }
     ];
 
     let players = [];
     let cur = 0;
     let deck = [];
     let currentSong = null;
-    let currentModeText = "All Decades"; 
+    let currentModeText = "All Eras"; 
     
     document.addEventListener('DOMContentLoaded', () => {
         const decIn = document.getElementById('decadeFilter');
@@ -535,7 +720,7 @@
             cur = state.cur || 0;
             deck = state.deck || [];
             currentSong = state.currentSong || null;
-            currentModeText = state.modeText || "All Decades";
+            currentModeText = state.modeText || "All Eras";
             customPlaylistId = state.customPlaylistId || null;
             if(players.length > 0) renderPlayers();
             if(state.gameStarted && players.length > 0) {
@@ -571,7 +756,7 @@
     }
 
     function checkFilters() {
-        if (customPlaylistId) { document.getElementById('filterCount').innerText = "Custom Stream Ready"; return; }
+        if (customPlaylistId) { document.getElementById('filterCount').innerText = "Stream Ready"; return; }
         const matches = getFilteredSongs();
         document.getElementById('filterCount').innerText = `${matches.length} tracks found`;
     }
@@ -588,7 +773,8 @@
                 if (decade === '80s') return y >= 1980 && y < 1990;
                 if (decade === '90s') return y >= 1990 && y < 2000;
                 if (decade === '00s') return y >= 2000 && y < 2010;
-                if (decade === '10s') return y >= 2010;
+                if (decade === '10s') return y >= 2010 && y < 2020;
+                if (decade === '20s') return y >= 2020;
             }
             return true;
         });
@@ -597,14 +783,14 @@
     function startGame() {
         if(!isPlayerReady) return;
         if (customPlaylistId) {
-            currentModeText = "Custom Selection";
+            currentModeText = "Custom Session";
         } else {
             let pool = getFilteredSongs();
             if (pool.length === 0) return;
             const artist = document.getElementById('artistFilter').value;
             const decade = document.getElementById('decadeFilter').value;
-            currentModeText = artist ? `Focus: ${artist}` : (decade !== 'all' ? decade : "All Decades");
-            deck = pool.sort(() => Math.random() - 0.5).slice(0, 100);
+            currentModeText = artist ? `Focus: ${artist}` : (decade !== 'all' ? `Decade: ${decade}` : "All Eras");
+            deck = pool.sort(() => Math.random() - 0.5); 
         }
         document.getElementById('setup').classList.add('hidden');
         document.getElementById('game').classList.remove('hidden');
@@ -613,7 +799,7 @@
     }
 
     function updateDeckInfo() {
-        document.getElementById('deckInfo').innerText = customPlaylistId ? `Source: YouTube Stream` : `Library: ${deck.length} tracks remaining`;
+        document.getElementById('deckInfo').innerText = customPlaylistId ? `Source: Global Stream` : `Pool: ${deck.length} tracks remaining`;
     }
 
     function updateBoard() {
@@ -624,12 +810,12 @@
     function playRandomSong() {
         if(!isPlayerReady) return;
         document.getElementById('results').classList.add('hidden');
-        document.getElementById('statusText').innerText = "Tuning frequencies...";
+        document.getElementById('statusText').innerText = "Tuning frequency...";
         if(player && player.stopVideo) player.stopVideo();
 
         if (customPlaylistId) {
             if (!isPlaylistStarted) {
-                player.cuePlaylist({ list: customPlaylistId, listType: 'playlist', index: 0, startSeconds: 40 });
+                player.cuePlaylist({ list: customPlaylistId, listType: 'playlist', index: 0, startSeconds: 45 });
                 setTimeout(() => { player.playVideo(); player.setShuffle(true); player.nextVideo(); }, 500);
                 isPlaylistStarted = true;
             } else { player.nextVideo(); }
@@ -640,7 +826,7 @@
             if(deck.length === 0) deck = getFilteredSongs().sort(() => Math.random() - 0.5);
             currentSong = deck.pop();
             updateDeckInfo(); saveState(); 
-            player.loadVideoById({ videoId: currentSong.id, startSeconds: 40 });
+            player.loadVideoById({ videoId: currentSong.id, startSeconds: 45 });
             document.getElementById('loadBtn').classList.add('hidden');
             document.getElementById('controls').classList.remove('hidden');
             document.getElementById('pauseBtn').innerText = "▶ Play";
@@ -694,7 +880,7 @@
     }
 
     function triggerReset() {
-        openModal("End Journey?", "All scores will be lost in the night.", () => {
+        openModal("Reset Game?", "All scores will be lost in the night.", () => {
             localStorage.removeItem(STORAGE_KEY);
             location.reload();
         });
