@@ -169,6 +169,24 @@
             color: #402020;
         }
 
+        button.featured-btn {
+            background: rgba(168, 129, 175, 0.15);
+            border: 1px dashed var(--accent);
+            color: var(--primary);
+            font-size: 0.7rem;
+            padding: 12px 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            margin-top: 0;
+            height: 50px;
+        }
+        button.featured-btn:hover {
+            background: rgba(168, 129, 175, 0.25);
+            border-style: solid;
+        }
+
         /* Game Elements */
         .player-tag {
             background: rgba(244, 194, 194, 0.08);
@@ -335,17 +353,23 @@
                 </select>
             </div>
 
-            <div class="input-group">
-                <label>Focus Artist</label>
-                <input type="text" id="artistFilter" list="artistList" placeholder="e.g. Fleetwood Mac">
-                <datalist id="artistList"></datalist>
-            </div>
-
-            <div class="input-group">
+            <div class="input-group" style="margin-bottom: 10px;">
                 <label>Custom Playlist</label>
                 <input type="text" id="customUrl" placeholder="YouTube Link...">
                 <button id="applyCustomBtn" onclick="applyCustomPlaylist()" class="hidden ghost" style="font-size: 0.65rem; padding: 8px; margin-top: 10px;">Connect Playlist</button>
                 <div id="customStatus" style="font-size: 0.65rem; margin-top: 8px; color: var(--primary);"></div>
+            </div>
+
+            <div class="input-group">
+                <label>Quick Mixes</label>
+                <div style="display: flex; gap: 10px;">
+                    <button onclick="selectDisneyPlaylist()" class="ghost featured-btn" style="flex: 1;">
+                        ✨ Disney
+                    </button>
+                    <button onclick="selectEurovisionPlaylist()" class="ghost featured-btn" style="flex: 1;">
+                        🎤 Eurovision
+                    </button>
+                </div>
             </div>
 
             <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 25px;">
@@ -410,7 +434,7 @@
 </div>
 
 <script>
-    const STORAGE_KEY = 'hitster_karin_rose_v8_final';
+    const STORAGE_KEY = 'hitster_karin_rose_v12_clean';
 
     // YouTube API Load
     var tag = document.createElement('script');
@@ -531,10 +555,9 @@
     
     document.addEventListener('DOMContentLoaded', () => {
         const decIn = document.getElementById('decadeFilter');
-        const artIn = document.getElementById('artistFilter');
         const urlIn = document.getElementById('customUrl');
-        artIn.addEventListener('input', () => { if (artIn.value.trim()) { decIn.value = 'all'; customPlaylistId = null; checkFilters(); } });
-        decIn.addEventListener('change', () => { if (decIn.value !== 'all') { artIn.value = ''; customPlaylistId = null; checkFilters(); } });
+        
+        decIn.addEventListener('change', () => { if (decIn.value !== 'all') { customPlaylistId = null; checkFilters(); } });
         urlIn.addEventListener('input', () => { 
             if (urlIn.value.includes('list=')) {
                 document.getElementById('applyCustomBtn').classList.remove('hidden');
@@ -543,9 +566,22 @@
                 customPlaylistId = null;
             }
         });
-        populateArtistList();
         loadState();
     });
+
+    function selectDisneyPlaylist() {
+        const disneyUrl = "https://www.youtube.com/watch?v=79DijItQXMM&list=PLOba6OKTJnLbDvwBBEwO1EaVsiICn8Svw";
+        document.getElementById('customUrl').value = disneyUrl;
+        applyCustomPlaylist();
+        document.getElementById('customStatus').innerText = "Disney Magic Linked! ✨";
+    }
+
+    function selectEurovisionPlaylist() {
+        const euroUrl = "https://www.youtube.com/playlist?list=PLFGFNKT7xpknOeLZfasz2apcdR32DxkAn";
+        document.getElementById('customUrl').value = euroUrl;
+        applyCustomPlaylist();
+        document.getElementById('customStatus').innerText = "European Glamour Linked! 🎤";
+    }
 
     function applyCustomPlaylist() {
         const url = document.getElementById('customUrl').value;
@@ -554,6 +590,7 @@
             customPlaylistId = match[1];
             document.getElementById('customStatus').innerText = "Stream Linked";
             document.getElementById('startBtn').classList.remove('hidden');
+            document.getElementById('decadeFilter').value = 'all';
         }
     }
 
@@ -587,11 +624,6 @@
         } catch(e) {}
     }
 
-    function populateArtistList() {
-        const artists = [...new Set(playlist.map(s => s.a))].sort();
-        document.getElementById('artistList').innerHTML = artists.map(a => `<option value="${a}">`).join('');
-    }
-
     function addPlayer() {
         if(players.length >= 10) return;
         let n = document.getElementById('pName').value.trim();
@@ -615,9 +647,7 @@
 
     function getFilteredSongs() {
         const decade = document.getElementById('decadeFilter').value;
-        const artist = document.getElementById('artistFilter').value.toLowerCase().trim();
         return playlist.filter(song => {
-            if (artist) return song.a.toLowerCase().includes(artist);
             if (decade !== 'all') {
                 const y = parseInt(song.y);
                 if (decade === '60s') return y >= 1960 && y < 1970;
@@ -634,14 +664,19 @@
 
     function startGame() {
         if(!isPlayerReady || players.length === 0) return;
+        
+        isPlaylistStarted = false; 
+
         if (customPlaylistId) {
-            currentModeText = "Custom Session";
+            const url = document.getElementById('customUrl').value;
+            if (url.includes("Disney")) currentModeText = "Disney Magic";
+            else if (url.includes("Eurovision")) currentModeText = "Eurovision Night";
+            else currentModeText = "Custom Session";
         } else {
             let pool = getFilteredSongs();
             if (pool.length === 0) return;
-            const artist = document.getElementById('artistFilter').value;
             const decade = document.getElementById('decadeFilter').value;
-            currentModeText = artist ? `Focus: ${artist}` : (decade !== 'all' ? `Decade: ${decade}` : "All Eras");
+            currentModeText = (decade !== 'all' ? decade : "All Eras");
             deck = pool.sort(() => Math.random() - 0.5); 
         }
         document.getElementById('setup').classList.add('hidden');
@@ -668,13 +703,23 @@
 
         if (customPlaylistId) {
             if (!isPlaylistStarted) {
-                player.setLoop(true);
                 player.setShuffle(true);
-                player.cuePlaylist({ list: customPlaylistId, listType: 'playlist', index: 0, startSeconds: 45 });
-                setTimeout(() => { 
-                    player.playVideo(); 
-                    setTimeout(() => player.nextVideo(), 800);
-                }, 1200);
+                player.setLoop(true);
+                player.loadPlaylist({
+                    list: customPlaylistId,
+                    listType: 'playlist',
+                    index: 0,
+                    startSeconds: 45,
+                    suggestedQuality: 'small'
+                });
+                
+                setTimeout(() => {
+                    player.setShuffle(true);
+                    setTimeout(() => {
+                        player.nextVideo();
+                    }, 500);
+                }, 1000);
+                
                 isPlaylistStarted = true;
             } else { 
                 player.nextVideo(); 
