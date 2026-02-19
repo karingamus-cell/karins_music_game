@@ -189,18 +189,20 @@
 
         /* Lyrics Styling */
         .lyrics-box {
-            background: rgba(0,0,0,0.3);
+            background: rgba(0,0,0,0.4);
             border: 1px solid var(--glass-border);
             border-radius: 20px;
-            padding: 20px;
+            padding: 25px;
             margin-top: 20px;
-            max-height: 250px;
+            max-height: 280px;
             overflow-y: auto;
             font-size: 0.85rem;
-            line-height: 1.6;
+            line-height: 1.7;
             color: var(--text-main);
             text-align: center;
             white-space: pre-wrap;
+            scrollbar-width: thin;
+            scrollbar-color: var(--accent) transparent;
         }
 
         .lyrics-btn {
@@ -208,7 +210,7 @@
             border: 1px solid var(--glass-border);
             color: var(--text-muted);
             font-size: 0.65rem;
-            padding: 10px;
+            padding: 10px 20px;
             margin-top: 15px;
             width: auto;
             display: inline-block;
@@ -466,8 +468,8 @@
 </div>
 
 <script>
-    const STORAGE_KEY = 'hitster_karin_rose_v14_lyrics';
-    const apiKey = ""; // API key provided at runtime by the environment
+    const STORAGE_KEY = 'hitster_karin_rose_v15_lyrics_grounded';
+    const apiKey = ""; 
 
     var tag = document.createElement('script');
     tag.src = "https://www.youtube.com/iframe_api";
@@ -526,7 +528,7 @@
         }
     }
 
-    // Gemini API Lyrics Integration
+    // Improved Lyrics Retrieval with Google Search Grounding
     async function toggleLyrics() {
         const display = document.getElementById('lyricsDisplay');
         const btn = document.getElementById('lyricsToggleBtn');
@@ -550,7 +552,9 @@
         let query = "";
         if (customPlaylistId) {
             const data = player.getVideoData();
-            query = data.title || "Unknown Song";
+            query = (data.title || "Unknown Song")
+                .replace(/\[.*?\]|\(.*?\)|\bOfficial Video\b|\bOfficial Audio\b|\bLyric Video\b/gi, '')
+                .trim();
         } else if (currentSong) {
             query = `${currentSong.n} by ${currentSong.a}`;
         }
@@ -562,14 +566,17 @@
             currentLyrics = lyrics;
             display.innerText = lyrics;
         } catch (error) {
-            display.innerText = "Could not find lyrics for this one. Enjoy the vibe!";
+            display.innerText = "Lyrics unavailable for this journey. Keep the vibe going!";
         }
     }
 
     async function fetchLyricsWithRetry(query, retries = 5, delay = 1000) {
         const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+        
+        // Use tools: [{ google_search: {} }] to enable grounding for fact retrieval (lyrics)
         const body = {
-            contents: [{ parts: [{ text: `Provide the full lyrics for the song: ${query}. Return only the lyrics text. If you can't find it, say "Lyrics not found".` }] }]
+            contents: [{ parts: [{ text: `Provide the full lyrics for the song: ${query}. Return only the lyrics text. If you are absolutely unable to find them or they are instrumental, say "Lyrics not found".` }] }],
+            tools: [{ "google_search": {} }]
         };
 
         for (let i = 0; i < retries; i++) {
@@ -580,7 +587,14 @@
                     body: JSON.stringify(body)
                 });
                 const result = await response.json();
-                return result.candidates?.[0]?.content?.parts?.[0]?.text || "Lyrics not found";
+                
+                if (result.error) throw new Error(result.error.message);
+
+                const text = result.candidates?.[0]?.content?.parts?.[0]?.text;
+                if (!text || text.toLowerCase().includes("not found") || text.length < 20) {
+                    return "Lyrics not found for this specific arrangement.";
+                }
+                return text;
             } catch (err) {
                 if (i === retries - 1) throw err;
                 await new Promise(r => setTimeout(r, delay * Math.pow(2, i)));
@@ -602,23 +616,17 @@
         { n: "Respect", a: "Aretha Franklin", y: 1967, id: "6FOUqQt3Kg0" },
         { n: "Good Vibrations", a: "The Beach Boys", y: 1966, id: "Eab_beh07HU" },
         { n: "Stand by Me", a: "Ben E. King", y: 1961, id: "hwZNL7QVJjE" },
-        { n: "Satisfaction", a: "The Rolling Stones", y: 1965, id: "nrIPxlFzDi0" },
         { n: "Bohemian Rhapsody", a: "Queen", y: 1975, id: "fJ9rUzIMcZQ" },
         { n: "Hotel California", a: "Eagles", y: 1976, id: "vced7_ySgV8" },
         { n: "Dreams", a: "Fleetwood Mac", y: 1977, id: "Y3ywicffOj4" },
-        { n: "Stayin' Alive", a: "Bee Gees", y: 1977, id: "I_izvAbhExY" },
         { n: "Billie Jean", a: "Michael Jackson", y: 1982, id: "Zi_XLOBDo_Y" },
         { n: "Take On Me", a: "a-ha", y: 1984, id: "djV11Xbc914" },
-        { n: "Purple Rain", a: "Prince", y: 1984, id: "TvnYmWpD_T8" },
+        { n: "Sweet Child O' Mine", a: "Guns N' Roses", y: 1987, id: "1w7OgIMMRc4" },
         { n: "Smells Like Teen Spirit", a: "Nirvana", y: 1991, id: "hTWKbfoikeg" },
         { n: "Wonderwall", a: "Oasis", y: 1995, id: "6hzrDeceEKc" },
-        { n: "Losing My Religion", a: "R.E.M.", y: 1991, id: "xwtdhWltSIg" },
-        { n: "Mr. Brightside", a: "The Killers", y: 2003, id: "gGdGFtwCNBE" },
         { n: "Toxic", a: "Britney Spears", y: 2003, id: "LOZuxwVk7TU" },
-        { n: "Poker Face", a: "Lady Gaga", y: 2008, id: "bESGLojNYSo" },
+        { n: "Mr. Brightside", a: "The Killers", y: 2003, id: "gGdGFtwCNBE" },
         { n: "Rolling in the Deep", a: "Adele", y: 2011, id: "rYEDA3JcQqw" },
-        { n: "Uptown Funk", a: "Bruno Mars", y: 2014, id: "OPf0YbXqDm0" },
-        { n: "Bad Guy", a: "Billie Eilish", y: 2019, id: "DyDfgMOUjCI" },
         { n: "Flowers", a: "Miley Cyrus", y: 2023, id: "G7KNmW9a75Y" },
         { n: "Anti-Hero", a: "Taylor Swift", y: 2022, id: "b1kbLwvqugk" }
     ];
@@ -770,7 +778,7 @@
     function playRandomSong() {
         if(!isPlayerReady) return;
         isResultsScreen = false;
-        currentLyrics = ""; // Reset lyrics for new song
+        currentLyrics = ""; 
         document.getElementById('lyricsDisplay').classList.add('hidden');
         document.getElementById('lyricsToggleBtn').innerText = "📜 Show Lyrics";
         document.getElementById('lyricsArea').classList.remove('hidden');
