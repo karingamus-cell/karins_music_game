@@ -285,7 +285,7 @@
 
         /* Helpers */
         .hidden { display: none !important; }
-        #player-wrapper { position: absolute; left: -9999px; }
+        #player-offscreen { position: absolute; left: -9999px; }
 
         /* Modal Overlay */
         #modal-overlay {
@@ -340,7 +340,11 @@
 
 <div class="bg-glow"></div>
 <div class="bg-glow-2"></div>
-<div id="player-wrapper"><div id="youtube-player"></div></div>
+
+<!-- The YouTube player remains strictly off-screen -->
+<div id="player-offscreen">
+    <div id="youtube-player"></div>
+</div>
 
 <!-- Custom Confirmation Modal -->
 <div id="modal-overlay" class="hidden">
@@ -460,7 +464,7 @@
         <!-- WIN SCREEN -->
         <div id="winScreen" class="hidden">
             <h1 style="font-size: 5rem; margin-bottom: 10px;">👑</h1>
-            <h2 id="winnerName" style="font-family: 'Playfair Display', serif; font-size: 2rem; margin: 0; line-height: 1.4;"></h2>
+            <h2 id="winnerName" style="font-family: 'Playfair Display', serif; font-size: 1.8rem; margin: 0; line-height: 1.4;"></h2>
             <p style="letter-spacing: 3px; text-transform: uppercase; color: var(--primary); margin-top: 25px; font-weight: 700; font-size: 0.8rem;">The Ultimate Hitster</p>
             <button onclick="location.reload()" class="pink" style="margin-top: 50px;">New Beginning</button>
         </div>
@@ -468,7 +472,7 @@
 </div>
 
 <script>
-    const STORAGE_KEY = 'hitster_karin_rose_v15_lyrics_grounded';
+    const STORAGE_KEY = 'hitster_karin_rose_v18_final';
     const apiKey = ""; 
 
     var tag = document.createElement('script');
@@ -487,8 +491,14 @@
 
     function onYouTubeIframeAPIReady() {
         player = new YT.Player('youtube-player', {
-            height: '100', width: '100', videoId: '',
-            playerVars: { 'playsinline': 1, 'controls': 0, 'rel': 0, 'autoplay': 1 },
+            height: '100%', width: '100%', videoId: '',
+            playerVars: { 
+                'playsinline': 1, 
+                'controls': 0, 
+                'rel': 0, 
+                'autoplay': 1,
+                'cc_load_policy': 1
+            },
             events: {
                 'onReady': (e) => { isPlayerReady = true; e.target.setVolume(100); },
                 'onStateChange': onPlayerStateChange,
@@ -528,7 +538,7 @@
         }
     }
 
-    // Improved Lyrics Retrieval with Google Search Grounding
+    // AI Lyrics Retrieval
     async function toggleLyrics() {
         const display = document.getElementById('lyricsDisplay');
         const btn = document.getElementById('lyricsToggleBtn');
@@ -566,16 +576,14 @@
             currentLyrics = lyrics;
             display.innerText = lyrics;
         } catch (error) {
-            display.innerText = "Lyrics unavailable for this journey. Keep the vibe going!";
+            display.innerText = "Lyrics were too shy for this one. Keep the music playing!";
         }
     }
 
-    async function fetchLyricsWithRetry(query, retries = 5, delay = 1000) {
+    async function fetchLyricsWithRetry(query, retries = 3, delay = 1000) {
         const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
-        
-        // Use tools: [{ google_search: {} }] to enable grounding for fact retrieval (lyrics)
-        const body = {
-            contents: [{ parts: [{ text: `Provide the full lyrics for the song: ${query}. Return only the lyrics text. If you are absolutely unable to find them or they are instrumental, say "Lyrics not found".` }] }],
+        const payload = {
+            contents: [{ parts: [{ text: `Search and provide only the lyrics for: ${query}. Do not include commentary or extra text.` }] }],
             tools: [{ "google_search": {} }]
         };
 
@@ -584,20 +592,15 @@
                 const response = await fetch(url, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(body)
+                    body: JSON.stringify(payload)
                 });
                 const result = await response.json();
-                
-                if (result.error) throw new Error(result.error.message);
-
                 const text = result.candidates?.[0]?.content?.parts?.[0]?.text;
-                if (!text || text.toLowerCase().includes("not found") || text.length < 20) {
-                    return "Lyrics not found for this specific arrangement.";
-                }
-                return text;
+                if (text && text.length > 20) return text;
+                throw new Error("Empty response");
             } catch (err) {
                 if (i === retries - 1) throw err;
-                await new Promise(r => setTimeout(r, delay * Math.pow(2, i)));
+                await new Promise(r => setTimeout(r, delay));
             }
         }
     }
@@ -612,23 +615,42 @@
     function confirmModalAction() { if (modalCallback) modalCallback(); closeModal(); }
 
     const playlist = [
+        // 1960s
         { n: "Hey Jude", a: "The Beatles", y: 1968, id: "A_MjCqQoLLA" },
         { n: "Respect", a: "Aretha Franklin", y: 1967, id: "6FOUqQt3Kg0" },
         { n: "Good Vibrations", a: "The Beach Boys", y: 1966, id: "Eab_beh07HU" },
         { n: "Stand by Me", a: "Ben E. King", y: 1961, id: "hwZNL7QVJjE" },
+        { n: "Satisfaction", a: "The Rolling Stones", y: 1965, id: "nrIPxlFzDi0" },
+        // 1970s
         { n: "Bohemian Rhapsody", a: "Queen", y: 1975, id: "fJ9rUzIMcZQ" },
         { n: "Hotel California", a: "Eagles", y: 1976, id: "vced7_ySgV8" },
         { n: "Dreams", a: "Fleetwood Mac", y: 1977, id: "Y3ywicffOj4" },
+        { n: "Stayin' Alive", a: "Bee Gees", y: 1977, id: "I_izvAbhExY" },
+        { n: "Dancing Queen", a: "ABBA", y: 1976, id: "xFrGuyw1V8s" },
+        // 1980s
         { n: "Billie Jean", a: "Michael Jackson", y: 1982, id: "Zi_XLOBDo_Y" },
+        { n: "Thriller", a: "Michael Jackson", y: 1982, id: "sOnqjkJTMaA" },
         { n: "Take On Me", a: "a-ha", y: 1984, id: "djV11Xbc914" },
         { n: "Sweet Child O' Mine", a: "Guns N' Roses", y: 1987, id: "1w7OgIMMRc4" },
+        { n: "Purple Rain", a: "Prince", y: 1984, id: "TvnYmWpD_T8" },
+        // 1990s
         { n: "Smells Like Teen Spirit", a: "Nirvana", y: 1991, id: "hTWKbfoikeg" },
         { n: "Wonderwall", a: "Oasis", y: 1995, id: "6hzrDeceEKc" },
-        { n: "Toxic", a: "Britney Spears", y: 2003, id: "LOZuxwVk7TU" },
+        { n: "Losing My Religion", a: "R.E.M.", y: 1991, id: "xwtdhWltSIg" },
+        { n: "No Scrubs", a: "TLC", y: 1999, id: "FrLequ6dUdM" },
+        { n: "Baby One More Time", a: "Britney Spears", y: 1998, id: "C-u5WLJ9Yk4" },
+        // 2000s
         { n: "Mr. Brightside", a: "The Killers", y: 2003, id: "gGdGFtwCNBE" },
+        { n: "Toxic", a: "Britney Spears", y: 2003, id: "LOZuxwVk7TU" },
+        { n: "Crazy in Love", a: "Beyonce", y: 2003, id: "ViwtNuzbvyo" },
+        { n: "Poker Face", a: "Lady Gaga", y: 2008, id: "bESGLojNYSo" },
+        { n: "Lose Yourself", a: "Eminem", y: 2002, id: "_Yhyp-_hX2s" },
+        // 2010s
         { n: "Rolling in the Deep", a: "Adele", y: 2011, id: "rYEDA3JcQqw" },
-        { n: "Flowers", a: "Miley Cyrus", y: 2023, id: "G7KNmW9a75Y" },
-        { n: "Anti-Hero", a: "Taylor Swift", y: 2022, id: "b1kbLwvqugk" }
+        { n: "Uptown Funk", a: "Bruno Mars", y: 2014, id: "OPf0YbXqDm0" },
+        { n: "Shape of You", a: "Ed Sheeran", y: 2017, id: "JGwWNGJdvx8" },
+        { n: "Blinding Lights", a: "The Weeknd", y: 2019, id: "4NRXx6U8ABQ" },
+        { n: "Flowers", a: "Miley Cyrus", y: 2023, id: "G7KNmW9a75Y" }
     ];
 
     let players = [];
@@ -779,6 +801,7 @@
         if(!isPlayerReady) return;
         isResultsScreen = false;
         currentLyrics = ""; 
+        
         document.getElementById('lyricsDisplay').classList.add('hidden');
         document.getElementById('lyricsToggleBtn').innerText = "📜 Show Lyrics";
         document.getElementById('lyricsArea').classList.remove('hidden');
@@ -813,6 +836,7 @@
     function showResults() {
         isResultsScreen = true;
         player.pauseVideo();
+        
         document.getElementById('controls').classList.add('hidden');
         document.getElementById('results').classList.remove('hidden');
         document.getElementById('statusText').innerText = "";
@@ -854,6 +878,7 @@
 
     function submitTurn() {
         if(document.querySelectorAll('.sc-check:checked').length >= 2) players[cur].score++;
+        
         if(players[cur].score >= 10) {
             document.getElementById('game').classList.add('hidden');
             document.getElementById('winScreen').classList.remove('hidden');
@@ -861,10 +886,13 @@
             localStorage.removeItem(STORAGE_KEY); 
             return;
         }
+
         document.querySelectorAll('.sc-check').forEach(c => c.checked = false);
         cur = (cur + 1) % players.length;
+        
         if (!customPlaylistId) player.stopVideo();
         isResultsScreen = false;
+        
         document.getElementById('lyricsArea').classList.add('hidden');
         document.getElementById('results').classList.add('hidden');
         document.getElementById('loadBtn').classList.remove('hidden');
