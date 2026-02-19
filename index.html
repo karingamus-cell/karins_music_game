@@ -341,7 +341,7 @@
 <div class="bg-glow"></div>
 <div class="bg-glow-2"></div>
 
-<!-- The YouTube player remains strictly off-screen -->
+<!-- The shared player container -->
 <div id="player-offscreen">
     <div id="youtube-player"></div>
 </div>
@@ -472,7 +472,7 @@
 </div>
 
 <script>
-    const STORAGE_KEY = 'hitster_karin_rose_v18_final';
+    const STORAGE_KEY = 'hitster_karin_rose_v20_adskip';
     const apiKey = ""; 
 
     var tag = document.createElement('script');
@@ -488,6 +488,7 @@
     let modalCallback = null;
     let isResultsScreen = false;
     let currentLyrics = "";
+    let adCheckInterval = null;
 
     function onYouTubeIframeAPIReady() {
         player = new YT.Player('youtube-player', {
@@ -497,14 +498,48 @@
                 'controls': 0, 
                 'rel': 0, 
                 'autoplay': 1,
-                'cc_load_policy': 1
+                'mute': 0
             },
             events: {
-                'onReady': (e) => { isPlayerReady = true; e.target.setVolume(100); },
+                'onReady': (e) => { 
+                    isPlayerReady = true; 
+                    e.target.setVolume(100);
+                    startAdMonitor();
+                },
                 'onStateChange': onPlayerStateChange,
                 'onError': onPlayerError
             }
         });
+    }
+
+    // "Best Effort" Ad Skipping Logic
+    function startAdMonitor() {
+        if (adCheckInterval) clearInterval(adCheckInterval);
+        adCheckInterval = setInterval(() => {
+            if (!player || typeof player.getPlayerState !== 'function') return;
+            
+            // Check if player is actually in an ad state (internal YT flag)
+            // or if the video data author is empty/ad-like.
+            const data = player.getVideoData();
+            const isAd = player.getAdState && player.getAdState() === 1;
+            
+            if (isAd) {
+                document.getElementById('statusText').innerText = "Sorry, ads...";
+                player.mute(); // Mute annoying ads automatically
+                
+                // Attempt to skip: Seek to the very end of the ad
+                const duration = player.getDuration();
+                if (duration > 0) {
+                    player.seekTo(duration, true);
+                }
+            } else if (player.getPlayerState() === YT.PlayerState.PLAYING) {
+                // If ad just finished, unmute and ensure we are at the right spot
+                if (player.isMuted()) {
+                    player.unMute();
+                    if (player.getCurrentTime() < 5) player.seekTo(45);
+                }
+            }
+        }, 500);
     }
 
     function onPlayerStateChange(event) {
@@ -517,6 +552,7 @@
             btn.innerText = "⏸ Pause";
             rBtn.innerText = "⏸ Pause";
             retryCount = 0;
+            // Standard seek logic if no ad detected
             if (player.getCurrentTime() < 5) player.seekTo(45);
         } else if (event.data === YT.PlayerState.PAUSED) {
             btn.innerText = "▶ Play";
@@ -621,36 +657,38 @@
         { n: "Good Vibrations", a: "The Beach Boys", y: 1966, id: "Eab_beh07HU" },
         { n: "Stand by Me", a: "Ben E. King", y: 1961, id: "hwZNL7QVJjE" },
         { n: "Satisfaction", a: "The Rolling Stones", y: 1965, id: "nrIPxlFzDi0" },
+        { n: "Yesterday", a: "The Beatles", y: 1965, id: "wM0id6UXK20" },
         // 1970s
         { n: "Bohemian Rhapsody", a: "Queen", y: 1975, id: "fJ9rUzIMcZQ" },
         { n: "Hotel California", a: "Eagles", y: 1976, id: "vced7_ySgV8" },
         { n: "Dreams", a: "Fleetwood Mac", y: 1977, id: "Y3ywicffOj4" },
         { n: "Stayin' Alive", a: "Bee Gees", y: 1977, id: "I_izvAbhExY" },
-        { n: "Dancing Queen", a: "ABBA", y: 1976, id: "xFrGuyw1V8s" },
+        { n: "September", a: "Earth, Wind & Fire", y: 1978, id: "Gs069dndIYk" },
         // 1980s
         { n: "Billie Jean", a: "Michael Jackson", y: 1982, id: "Zi_XLOBDo_Y" },
-        { n: "Thriller", a: "Michael Jackson", y: 1982, id: "sOnqjkJTMaA" },
         { n: "Take On Me", a: "a-ha", y: 1984, id: "djV11Xbc914" },
         { n: "Sweet Child O' Mine", a: "Guns N' Roses", y: 1987, id: "1w7OgIMMRc4" },
         { n: "Purple Rain", a: "Prince", y: 1984, id: "TvnYmWpD_T8" },
+        { n: "Thriller", a: "Michael Jackson", y: 1982, id: "sOnqjkJTMaA" },
         // 1990s
         { n: "Smells Like Teen Spirit", a: "Nirvana", y: 1991, id: "hTWKbfoikeg" },
         { n: "Wonderwall", a: "Oasis", y: 1995, id: "6hzrDeceEKc" },
         { n: "Losing My Religion", a: "R.E.M.", y: 1991, id: "xwtdhWltSIg" },
-        { n: "No Scrubs", a: "TLC", y: 1999, id: "FrLequ6dUdM" },
         { n: "Baby One More Time", a: "Britney Spears", y: 1998, id: "C-u5WLJ9Yk4" },
         // 2000s
         { n: "Mr. Brightside", a: "The Killers", y: 2003, id: "gGdGFtwCNBE" },
         { n: "Toxic", a: "Britney Spears", y: 2003, id: "LOZuxwVk7TU" },
-        { n: "Crazy in Love", a: "Beyonce", y: 2003, id: "ViwtNuzbvyo" },
         { n: "Poker Face", a: "Lady Gaga", y: 2008, id: "bESGLojNYSo" },
-        { n: "Lose Yourself", a: "Eminem", y: 2002, id: "_Yhyp-_hX2s" },
+        { n: "Hey Ya!", a: "Outkast", y: 2003, id: "PWgvGjAhvIw" },
         // 2010s
         { n: "Rolling in the Deep", a: "Adele", y: 2011, id: "rYEDA3JcQqw" },
         { n: "Uptown Funk", a: "Bruno Mars", y: 2014, id: "OPf0YbXqDm0" },
-        { n: "Shape of You", a: "Ed Sheeran", y: 2017, id: "JGwWNGJdvx8" },
         { n: "Blinding Lights", a: "The Weeknd", y: 2019, id: "4NRXx6U8ABQ" },
-        { n: "Flowers", a: "Miley Cyrus", y: 2023, id: "G7KNmW9a75Y" }
+        // 2020s
+        { n: "Flowers", a: "Miley Cyrus", y: 2023, id: "G7KNmW9a75Y" },
+        { n: "As It Was", a: "Harry Styles", y: 2022, id: "H5v3kku4y6Q" },
+        { n: "Espresso", a: "Sabrina Carpenter", y: 2024, id: "ep2f_eHnQfI" },
+        { n: "Anti-Hero", a: "Taylor Swift", y: 2022, id: "b1kbLwvqugk" }
     ];
 
     let players = [];
@@ -807,6 +845,7 @@
         document.getElementById('lyricsArea').classList.remove('hidden');
         document.getElementById('results').classList.add('hidden');
         document.getElementById('statusText').innerText = "Sorry, ads...";
+        
         if(player && player.stopVideo) player.stopVideo();
 
         if (customPlaylistId) {
@@ -836,7 +875,6 @@
     function showResults() {
         isResultsScreen = true;
         player.pauseVideo();
-        
         document.getElementById('controls').classList.add('hidden');
         document.getElementById('results').classList.remove('hidden');
         document.getElementById('statusText').innerText = "";
@@ -878,7 +916,6 @@
 
     function submitTurn() {
         if(document.querySelectorAll('.sc-check:checked').length >= 2) players[cur].score++;
-        
         if(players[cur].score >= 10) {
             document.getElementById('game').classList.add('hidden');
             document.getElementById('winScreen').classList.remove('hidden');
@@ -886,13 +923,10 @@
             localStorage.removeItem(STORAGE_KEY); 
             return;
         }
-
         document.querySelectorAll('.sc-check').forEach(c => c.checked = false);
         cur = (cur + 1) % players.length;
-        
         if (!customPlaylistId) player.stopVideo();
         isResultsScreen = false;
-        
         document.getElementById('lyricsArea').classList.add('hidden');
         document.getElementById('results').classList.add('hidden');
         document.getElementById('loadBtn').classList.remove('hidden');
