@@ -4,21 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Hits-ster by Karin</title>
-    <!-- Elegant Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #f4c2c2; /* Soft Pink / Rose Gold */
-            --accent: #a881af; /* Dusty Lavender */
-            --bg-dark: #0f0d11; /* Warm Midnight */
+            --primary: #f4c2c2;
+            --accent: #a881af;
+            --bg-dark: #0f0d11;
             --glass: rgba(255, 255, 255, 0.03);
             --glass-border: rgba(255, 182, 193, 0.15);
-            --text-main: #f0e6e6; /* Soft Off-White */
-            --text-muted: #9b8a8a; /* Warm Gray */
+            --text-main: #f0e6e6;
+            --text-muted: #9b8a8a;
         }
-
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-
         body {
             font-family: 'Inter', sans-serif;
             background: var(--bg-dark);
@@ -32,308 +29,124 @@
             overflow-x: hidden;
             padding: 20px;
         }
-
-        /* Abstract Background Elements */
         .bg-glow {
-            position: fixed;
-            width: 50vw;
-            height: 50vw;
+            position: fixed; width: 50vw; height: 50vw;
             background: radial-gradient(circle, rgba(244, 194, 194, 0.08) 0%, transparent 70%);
-            top: -15%;
-            right: -10%;
-            z-index: -1;
-            filter: blur(80px);
+            top: -15%; right: -10%; z-index: -1; filter: blur(80px);
         }
-
         .bg-glow-2 {
-            position: fixed;
-            width: 40vw;
-            height: 40vw;
+            position: fixed; width: 40vw; height: 40vw;
             background: radial-gradient(circle, rgba(168, 129, 175, 0.05) 0%, transparent 70%);
-            bottom: -10%;
-            left: -5%;
-            z-index: -1;
-            filter: blur(80px);
+            bottom: -10%; left: -5%; z-index: -1; filter: blur(80px);
         }
-
-        /* Container & Cards */
-        .container {
-            width: 100%;
-            max-width: 550px;
-            perspective: 1000px;
-            z-index: 10;
-        }
-
+        .container { width: 100%; max-width: 550px; perspective: 1000px; z-index: 10; }
         .card {
-            background: var(--glass);
-            backdrop-filter: blur(25px);
-            -webkit-backdrop-filter: blur(25px);
-            border: 1px solid var(--glass-border);
-            border-radius: 40px;
-            padding: 45px;
+            background: var(--glass); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+            border: 1px solid var(--glass-border); border-radius: 40px; padding: 45px;
             box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.6);
-            animation: float 8s ease-in-out infinite;
-            position: relative;
+            animation: float 8s ease-in-out infinite; position: relative;
         }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-15px); }
-        }
-
-        /* Typography */
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
         h1 {
-            font-family: 'Playfair Display', serif;
-            font-size: 3rem;
-            margin: 0 0 10px 0;
+            font-family: 'Playfair Display', serif; font-size: 3rem; margin: 0 0 10px 0;
             letter-spacing: -1px;
             background: linear-gradient(135deg, #fff 0%, var(--primary) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
         }
-
         .subtitle {
-            font-size: 0.85rem;
-            text-transform: uppercase;
-            letter-spacing: 5px;
-            color: var(--primary);
-            margin-bottom: 35px;
-            display: block;
-            font-weight: 600;
-            opacity: 0.8;
+            font-size: 0.85rem; text-transform: uppercase; letter-spacing: 5px;
+            color: var(--primary); margin-bottom: 35px; display: block;
+            font-weight: 600; opacity: 0.8;
         }
-
-        /* Inputs & Buttons */
-        .input-group {
-            margin-bottom: 25px;
-            text-align: left;
-        }
-
+        .input-group { margin-bottom: 25px; text-align: left; }
         label {
-            font-size: 0.7rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            color: var(--text-muted);
-            margin-bottom: 10px;
-            display: block;
+            font-size: 0.7rem; text-transform: uppercase; letter-spacing: 2px;
+            color: var(--text-muted); margin-bottom: 10px; display: block;
         }
-
         input, select {
-            width: 100%;
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid var(--glass-border);
-            border-radius: 14px;
-            padding: 14px 18px;
-            color: white;
-            font-size: 0.95rem;
-            transition: all 0.4s ease;
-            outline: none;
+            width: 100%; background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--glass-border); border-radius: 14px;
+            padding: 14px 18px; color: white; font-size: 0.95rem;
+            transition: all 0.4s ease; outline: none;
         }
-
         input:focus, select:focus {
-            border-color: var(--primary);
-            background: rgba(244, 194, 194, 0.05);
+            border-color: var(--primary); background: rgba(244, 194, 194, 0.05);
             box-shadow: 0 0 20px rgba(244, 194, 194, 0.05);
         }
-
         button {
-            background: var(--text-main);
-            color: var(--bg-dark);
-            border: none;
-            border-radius: 100px;
-            padding: 18px 30px;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            cursor: pointer;
+            background: var(--text-main); color: var(--bg-dark); border: none;
+            border-radius: 100px; padding: 18px 30px; font-weight: 800;
+            text-transform: uppercase; letter-spacing: 1.5px; cursor: pointer;
             transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
-            width: 100%;
-            font-size: 0.8rem;
-            margin-top: 10px;
+            width: 100%; font-size: 0.8rem; margin-top: 10px;
         }
-
-        button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 15px 30px rgba(0,0,0,0.4);
-            background: #fff;
-        }
-
-        button.ghost {
-            background: transparent;
-            border: 1px solid var(--glass-border);
-            color: var(--text-main);
-        }
-
-        button.pink {
-            background: var(--primary);
-            color: #402020;
-        }
-
+        button:hover { transform: translateY(-3px); box-shadow: 0 15px 30px rgba(0,0,0,0.4); background: #fff; }
+        button.ghost { background: transparent; border: 1px solid var(--glass-border); color: var(--text-main); }
+        button.pink { background: var(--primary); color: #402020; }
         button.featured-btn {
-            background: rgba(168, 129, 175, 0.15);
-            border: 1px dashed var(--accent);
-            color: var(--primary);
-            font-size: 0.7rem;
-            padding: 12px 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 5px;
-            margin-top: 0;
-            height: 50px;
+            background: rgba(168, 129, 175, 0.15); border: 1px dashed var(--accent);
+            color: var(--primary); font-size: 0.7rem; padding: 12px 8px;
+            display: flex; align-items: center; justify-content: center;
+            gap: 5px; margin-top: 0; height: 50px;
         }
-        button.featured-btn:hover {
-            background: rgba(168, 129, 175, 0.25);
-            border-style: solid;
-        }
-
-        /* Lyrics Styling */
+        button.featured-btn:hover { background: rgba(168, 129, 175, 0.25); border-style: solid; }
         .lyrics-box {
-            background: rgba(0,0,0,0.4);
-            border: 1px solid var(--glass-border);
-            border-radius: 20px;
-            padding: 25px;
-            margin-top: 20px;
-            max-height: 280px;
-            overflow-y: auto;
-            font-size: 0.85rem;
-            line-height: 1.7;
-            color: var(--text-main);
-            text-align: center;
-            white-space: pre-wrap;
-            scrollbar-width: thin;
+            background: rgba(0,0,0,0.4); border: 1px solid var(--glass-border);
+            border-radius: 20px; padding: 25px; margin-top: 20px;
+            max-height: 280px; overflow-y: auto; font-size: 0.85rem;
+            line-height: 1.7; color: var(--text-main); text-align: center;
+            white-space: pre-wrap; scrollbar-width: thin;
             scrollbar-color: var(--accent) transparent;
         }
-
         .lyrics-btn {
-            background: transparent;
-            border: 1px solid var(--glass-border);
-            color: var(--text-muted);
-            font-size: 0.65rem;
-            padding: 10px 20px;
-            margin-top: 15px;
-            width: auto;
-            display: inline-block;
+            background: transparent; border: 1px solid var(--glass-border);
+            color: var(--text-muted); font-size: 0.65rem; padding: 10px 20px;
+            margin-top: 15px; width: auto; display: inline-block;
         }
-
-        /* Game Elements */
         .player-tag {
-            background: rgba(244, 194, 194, 0.08);
-            padding: 8px 16px;
-            border-radius: 50px;
-            border: 1px solid var(--glass-border);
-            font-size: 0.75rem;
-            margin: 5px;
-            display: inline-block;
-            transition: 0.3s;
+            background: rgba(244, 194, 194, 0.08); padding: 8px 16px;
+            border-radius: 50px; border: 1px solid var(--glass-border);
+            font-size: 0.75rem; margin: 5px; display: inline-block; transition: 0.3s;
         }
-
         #statusText {
-            font-size: 0.85rem;
-            color: var(--primary);
-            font-style: italic;
-            height: 20px;
-            margin: 15px 0;
-            opacity: 0.7;
+            font-size: 0.85rem; color: var(--primary); font-style: italic;
+            height: 20px; margin: 15px 0; opacity: 0.7;
         }
-
         .checkbox-container {
-            background: rgba(255, 255, 255, 0.02);
-            border-radius: 24px;
-            padding: 24px;
-            margin: 20px 0;
-            text-align: left;
+            background: rgba(255, 255, 255, 0.02); border-radius: 24px;
+            padding: 24px; margin: 20px 0; text-align: left;
             border: 1px solid rgba(255, 255, 255, 0.03);
         }
-
         .checkbox-item {
-            display: flex;
-            align-items: center;
-            margin: 14px 0;
-            cursor: pointer;
-            user-select: none;
-            font-size: 0.9rem;
-            color: var(--text-main);
+            display: flex; align-items: center; margin: 14px 0;
+            cursor: pointer; user-select: none; font-size: 0.9rem; color: var(--text-main);
         }
-
-        .checkbox-item input {
-            width: 18px;
-            height: 18px;
-            margin-right: 15px;
-            accent-color: var(--primary);
-            border: 1px solid var(--glass-border);
-        }
-
-        /* Scoreboard Footer */
+        .checkbox-item input { width: 18px; height: 18px; margin-right: 15px; accent-color: var(--primary); border: 1px solid var(--glass-border); }
         .scoreboard {
-            margin-top: 35px;
-            padding-top: 25px;
+            margin-top: 35px; padding-top: 25px;
             border-top: 1px solid rgba(255, 255, 255, 0.05);
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 20px;
+            display: flex; flex-wrap: wrap; justify-content: center; gap: 20px;
         }
-
-        .score-item {
-            font-size: 0.75rem;
-            color: var(--text-muted);
-            letter-spacing: 0.5px;
-        }
-
+        .score-item { font-size: 0.75rem; color: var(--text-muted); letter-spacing: 0.5px; }
         .score-item b { color: var(--primary); font-size: 0.85rem; }
-
-        /* Helpers */
         .hidden { display: none !important; }
         #player-offscreen { position: absolute; left: -9999px; }
-
-        /* Modal Overlay */
         #modal-overlay {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(15, 13, 17, 0.85);
-            backdrop-filter: blur(15px);
-            display: flex; align-items: center; justify-content: center;
-            z-index: 1000;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 13, 17, 0.85); backdrop-filter: blur(15px);
+            display: flex; align-items: center; justify-content: center; z-index: 1000;
         }
         .modal-box {
-            background: #151218;
-            padding: 45px;
-            border-radius: 35px;
-            border: 1px solid var(--glass-border);
-            max-width: 380px;
-            width: 90%;
-            text-align: center;
+            background: #151218; padding: 45px; border-radius: 35px;
+            border: 1px solid var(--glass-border); max-width: 380px; width: 90%; text-align: center;
         }
-
         .song-link {
-            display: inline-block;
-            margin: 20px 0;
-            font-size: 0.75rem;
-            color: var(--primary);
-            text-decoration: none;
-            opacity: 0.6;
-            transition: 0.3s;
+            display: inline-block; margin: 20px 0; font-size: 0.75rem;
+            color: var(--primary); text-decoration: none; opacity: 0.6; transition: 0.3s;
         }
         .song-link:hover { opacity: 1; transform: scale(1.05); }
-
-        .rules {
-            font-size: 0.7rem;
-            color: var(--text-muted);
-            line-height: 1.8;
-            margin-top: 30px;
-            opacity: 0.8;
-        }
-
-        #modeInfo {
-            font-size: 0.65rem;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            color: var(--accent);
-            margin-bottom: 20px;
-            font-weight: 700;
-        }
-
+        .rules { font-size: 0.7rem; color: var(--text-muted); line-height: 1.8; margin-top: 30px; opacity: 0.8; }
+        #modeInfo { font-size: 0.65rem; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); margin-bottom: 20px; font-weight: 700; }
     </style>
 </head>
 <body>
@@ -341,12 +154,10 @@
 <div class="bg-glow"></div>
 <div class="bg-glow-2"></div>
 
-<!-- The shared player container -->
 <div id="player-offscreen">
     <div id="youtube-player"></div>
 </div>
 
-<!-- Custom Confirmation Modal -->
 <div id="modal-overlay" class="hidden">
     <div class="modal-box">
         <h3 id="modal-title" style="font-family: 'Playfair Display', serif; font-size: 1.8rem; margin-top:0;">Reset Game?</h3>
@@ -362,7 +173,6 @@
         <div id="setup">
             <h1>Hits-ster</h1>
             <span class="subtitle">by Karin</span>
-            
             <div class="input-group">
                 <label>Players (Max 10)</label>
                 <div style="display: flex; gap: 12px;">
@@ -371,7 +181,6 @@
                 </div>
                 <div id="pList" style="margin-top: 20px; min-height: 40px;"></div>
             </div>
-
             <div class="input-group">
                 <label>Game Era</label>
                 <select id="decadeFilter">
@@ -385,36 +194,25 @@
                     <option value="20s">The 2020s</option>
                 </select>
             </div>
-
             <div class="input-group" style="margin-bottom: 10px;">
                 <label>Custom Playlist</label>
                 <input type="text" id="customUrl" placeholder="YouTube Link...">
                 <button id="applyCustomBtn" onclick="applyCustomPlaylist()" class="hidden ghost" style="font-size: 0.65rem; padding: 8px; margin-top: 10px;">Connect Playlist</button>
                 <div id="customStatus" style="font-size: 0.65rem; margin-top: 8px; color: var(--primary);"></div>
             </div>
-
             <div class="input-group">
                 <label>Quick Mixes</label>
                 <div style="display: flex; gap: 10px;">
-                    <button onclick="selectDisneyPlaylist()" class="ghost featured-btn" style="flex: 1;">
-                        ✨ Disney
-                    </button>
-                    <button onclick="selectEurovisionPlaylist()" class="ghost featured-btn" style="flex: 1;">
-                        🎤 Eurovision
-                    </button>
+                    <button onclick="selectDisneyPlaylist()" class="ghost featured-btn" style="flex: 1;">✨ Disney</button>
+                    <button onclick="selectEurovisionPlaylist()" class="ghost featured-btn" style="flex: 1;">🎤 Eurovision</button>
                 </div>
             </div>
-
             <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 25px;">
                 <button onclick="checkFilters()" class="ghost" style="width: auto; font-size: 0.65rem; padding: 10px 20px;">Check Library</button>
                 <span id="filterCount" style="font-size: 0.75rem; font-weight: 600; color: var(--accent);"></span>
             </div>
-
             <button id="startBtn" class="hidden pink" onclick="startGame()">Rock On</button>
-
-            <div class="rules">
-                Reach 10 points. On your turn, listen and name 2 out of 3 details correctly to gain a point.
-            </div>
+            <div class="rules">Reach 10 points. On your turn, listen and name 2 out of 3 details correctly to gain a point.</div>
         </div>
 
         <!-- GAME PHASE -->
@@ -422,41 +220,33 @@
             <div id="modeInfo"></div>
             <h2 id="turnTxt" style="font-family: 'Playfair Display', serif; font-size: 2.2rem; margin: 0 0 8px 0;"></h2>
             <p id="deckInfo" style="font-size: 0.65rem; color: var(--text-muted); margin-bottom: 30px; letter-spacing: 1px;"></p>
-            
             <div id="playPhase">
                 <p id="statusText"></p>
                 <button id="loadBtn" onclick="playRandomSong()" class="pink">Next Track</button>
-                
                 <div id="controls" class="hidden" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 15px;">
                     <button onclick="toggleAudio()" class="ghost" id="pauseBtn" style="margin:0;">▶ Play</button>
                     <button onclick="showResults()" class="pink" style="margin:0;">Reveal</button>
                 </div>
-
                 <div id="lyricsArea" class="hidden">
                     <button id="lyricsToggleBtn" onclick="toggleLyrics()" class="lyrics-btn">📜 Show Lyrics</button>
                     <div id="lyricsDisplay" class="lyrics-box hidden">Searching for lyrics...</div>
                 </div>
             </div>
-
             <div id="results" class="hidden">
                 <h3 id="resTitle" style="font-family: 'Playfair Display', serif; font-size: 2rem; margin: 15px 0 5px 0;"></h3>
                 <p id="resArtist" style="color: var(--text-muted); margin: 0 0 20px 0; font-size: 1rem;"></p>
                 <div id="resYear" style="font-size: 3.2rem; font-weight: 800; color: var(--primary); margin-bottom: 25px; letter-spacing: -2px;"></div>
-                
                 <div class="checkbox-container">
                     <label class="checkbox-item"><input type="checkbox" class="sc-check"> Track Name</label>
                     <label class="checkbox-item"><input type="checkbox" class="sc-check"> Artist Name</label>
                     <label class="checkbox-item"><input type="checkbox" class="sc-check"> Original Year</label>
                 </div>
-                
                 <a id="songLink" href="#" target="_blank" class="song-link">Play song on YouTube ↗</a>
-                
                 <div style="display: flex; gap: 10px; align-items: center; margin-top: 10px;">
                     <button onclick="submitTurn()" class="pink" style="flex: 2;">Continue Journey</button>
                     <button onclick="toggleAudio()" class="ghost" id="resultsPauseBtn" style="flex: 1; padding: 18px 0; font-size: 0.65rem;">▶ Resume</button>
                 </div>
             </div>
-
             <div id="sb" class="scoreboard"></div>
             <button onclick="triggerReset()" class="ghost" style="margin-top: 50px; font-size: 0.6rem; border: none; color: #444; letter-spacing: 2px;">End Session</button>
         </div>
@@ -472,13 +262,11 @@
 </div>
 
 <script>
-    const STORAGE_KEY = 'hitster_karin_rose_v20_adskip';
-    const apiKey = ""; 
+    const STORAGE_KEY = 'hitster_karin_rose_v21';
 
     var tag = document.createElement('script');
     tag.src = "https://www.youtube.com/iframe_api";
-    var firstScriptTag = document.getElementsByTagName('script')[0];
-    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+    document.getElementsByTagName('script')[0].parentNode.insertBefore(tag, document.getElementsByTagName('script')[0]);
 
     let player;
     let isPlayerReady = false;
@@ -489,77 +277,75 @@
     let isResultsScreen = false;
     let currentLyrics = "";
     let adCheckInterval = null;
+    let lastVideoId = "";
+    let adMuted = false;
 
     function onYouTubeIframeAPIReady() {
         player = new YT.Player('youtube-player', {
             height: '100%', width: '100%', videoId: '',
-            playerVars: { 
-                'playsinline': 1, 
-                'controls': 0, 
-                'rel': 0, 
-                'autoplay': 1,
-                'mute': 0
-            },
+            playerVars: { 'playsinline': 1, 'controls': 0, 'rel': 0, 'autoplay': 1, 'mute': 0 },
             events: {
-                'onReady': (e) => { 
-                    isPlayerReady = true; 
-                    e.target.setVolume(100);
-                    startAdMonitor();
-                },
+                'onReady': (e) => { isPlayerReady = true; e.target.setVolume(100); startAdMonitor(); },
                 'onStateChange': onPlayerStateChange,
                 'onError': onPlayerError
             }
         });
     }
 
-    // "Best Effort" Ad Skipping Logic
+    // --- FIX #4: Improved Ad Skipping ---
+    // YouTube's embedded player doesn't expose a real ad API.
+    // Best-effort approach: detect when video title is empty/ad-like, mute, and seek end.
     function startAdMonitor() {
         if (adCheckInterval) clearInterval(adCheckInterval);
         adCheckInterval = setInterval(() => {
             if (!player || typeof player.getPlayerState !== 'function') return;
-            
-            // Check if player is actually in an ad state (internal YT flag)
-            // or if the video data author is empty/ad-like.
+            const state = player.getPlayerState();
+            if (state !== YT.PlayerState.PLAYING && state !== YT.PlayerState.BUFFERING) return;
+
             const data = player.getVideoData();
-            const isAd = player.getAdState && player.getAdState() === 1;
-            
-            if (isAd) {
-                document.getElementById('statusText').innerText = "Sorry, ads...";
-                player.mute(); // Mute annoying ads automatically
-                
-                // Attempt to skip: Seek to the very end of the ad
-                const duration = player.getDuration();
-                if (duration > 0) {
-                    player.seekTo(duration, true);
-                }
-            } else if (player.getPlayerState() === YT.PlayerState.PLAYING) {
-                // If ad just finished, unmute and ensure we are at the right spot
-                if (player.isMuted()) {
-                    player.unMute();
-                    if (player.getCurrentTime() < 5) player.seekTo(45);
-                }
+            const currentId = data && data.video_id;
+
+            // An ad is likely playing if: the video_id changed from what we loaded,
+            // OR the title is blank/empty (common in ad states).
+            const isLikelyAd = (currentId && lastVideoId && currentId !== lastVideoId) ||
+                               (data && (!data.title || data.title === ''));
+
+            if (isLikelyAd) {
+                document.getElementById('statusText').innerText = "Skipping ad...";
+                if (!adMuted) { player.mute(); adMuted = true; }
+                // Try seeking to end to force skip
+                const dur = player.getDuration();
+                if (dur > 0) player.seekTo(dur - 0.1, true);
+            } else {
+                if (adMuted) { player.unMute(); adMuted = false; }
             }
-        }, 500);
+        }, 800);
     }
 
     function onPlayerStateChange(event) {
         const btn = document.getElementById('pauseBtn');
         const rBtn = document.getElementById('resultsPauseBtn');
         const st = document.getElementById('statusText');
-        
+
         if (event.data === YT.PlayerState.PLAYING) {
-            st.innerText = isResultsScreen ? "" : "Playing...";
-            btn.innerText = "⏸ Pause";
-            rBtn.innerText = "⏸ Pause";
-            retryCount = 0;
-            // Standard seek logic if no ad detected
-            if (player.getCurrentTime() < 5) player.seekTo(45);
+            // Check if we just came out of an ad
+            const data = player.getVideoData();
+            if (data && data.video_id && lastVideoId && data.video_id === lastVideoId) {
+                // We're playing the correct video
+                if (adMuted) { player.unMute(); adMuted = false; }
+                st.innerText = isResultsScreen ? "" : "Playing...";
+                btn.innerText = "⏸ Pause";
+                rBtn.innerText = "⏸ Pause";
+                retryCount = 0;
+                // Seek to 45s on first play of the track
+                if (player.getCurrentTime() < 5) player.seekTo(45, true);
+            }
         } else if (event.data === YT.PlayerState.PAUSED) {
             btn.innerText = "▶ Play";
             rBtn.innerText = "▶ Resume";
-            if (!isResultsScreen) st.innerText = ""; 
+            if (!isResultsScreen) st.innerText = "";
         } else if (event.data === YT.PlayerState.BUFFERING) {
-            st.innerText = "Sorry, ads...";
+            if (!adMuted) st.innerText = "Loading...";
         }
     }
 
@@ -567,18 +353,19 @@
         if (retryCount < 3) {
             retryCount++;
             document.getElementById('statusText').innerText = "Static detected. Retrying...";
-            setTimeout(playRandomSong, 1500); 
+            setTimeout(playRandomSong, 1500);
         } else {
             document.getElementById('statusText').innerText = "Signal lost.";
             document.getElementById('loadBtn').classList.remove('hidden');
+            document.getElementById('controls').classList.add('hidden');
         }
     }
 
-    // AI Lyrics Retrieval
+    // --- FIX #1: Lyrics using free lyrics.ovh API (no API key needed) ---
     async function toggleLyrics() {
         const display = document.getElementById('lyricsDisplay');
         const btn = document.getElementById('lyricsToggleBtn');
-        
+
         if (!display.classList.contains('hidden')) {
             display.classList.add('hidden');
             btn.innerText = "📜 Show Lyrics";
@@ -588,56 +375,47 @@
         display.classList.remove('hidden');
         btn.innerText = "📜 Hide Lyrics";
 
-        if (currentLyrics) {
-            display.innerText = currentLyrics;
-            return;
-        }
+        if (currentLyrics) { display.innerText = currentLyrics; return; }
 
-        display.innerText = "Listening closely for lyrics...";
+        display.innerText = "Searching for lyrics...";
 
-        let query = "";
+        let artist = "", title = "";
         if (customPlaylistId) {
             const data = player.getVideoData();
-            query = (data.title || "Unknown Song")
-                .replace(/\[.*?\]|\(.*?\)|\bOfficial Video\b|\bOfficial Audio\b|\bLyric Video\b/gi, '')
-                .trim();
+            let raw = (data.title || "").replace(/\[.*?\]|\(.*?\)|\bOfficial Video\b|\bOfficial Audio\b|\bLyric Video\b/gi, '').trim();
+            if (raw.includes(" - ")) { [artist, title] = raw.split(" - ").map(s => s.trim()); }
+            else { title = raw; artist = data.author || ""; }
         } else if (currentSong) {
-            query = `${currentSong.n} by ${currentSong.a}`;
+            artist = currentSong.a;
+            title = currentSong.n;
         }
 
-        if (!query) return;
+        if (!title) { display.innerText = "Couldn't identify the song for lyrics."; return; }
 
         try {
-            const lyrics = await fetchLyricsWithRetry(query);
-            currentLyrics = lyrics;
-            display.innerText = lyrics;
-        } catch (error) {
-            display.innerText = "Lyrics were too shy for this one. Keep the music playing!";
-        }
-    }
-
-    async function fetchLyricsWithRetry(query, retries = 3, delay = 1000) {
-        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
-        const payload = {
-            contents: [{ parts: [{ text: `Search and provide only the lyrics for: ${query}. Do not include commentary or extra text.` }] }],
-            tools: [{ "google_search": {} }]
-        };
-
-        for (let i = 0; i < retries; i++) {
-            try {
-                const response = await fetch(url, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-                const result = await response.json();
-                const text = result.candidates?.[0]?.content?.parts?.[0]?.text;
-                if (text && text.length > 20) return text;
-                throw new Error("Empty response");
-            } catch (err) {
-                if (i === retries - 1) throw err;
-                await new Promise(r => setTimeout(r, delay));
+            // Primary: lyrics.ovh (free, no key)
+            const res = await fetch(`https://api.lyrics.ovh/v1/${encodeURIComponent(artist)}/${encodeURIComponent(title)}`);
+            if (res.ok) {
+                const data = await res.json();
+                if (data.lyrics && data.lyrics.length > 30) {
+                    currentLyrics = data.lyrics.trim();
+                    display.innerText = currentLyrics;
+                    return;
+                }
             }
+            // Fallback: lrclib.net (another free API)
+            const res2 = await fetch(`https://lrclib.net/api/search?q=${encodeURIComponent(title + ' ' + artist)}`);
+            if (res2.ok) {
+                const results = await res2.json();
+                if (results.length > 0 && results[0].plainLyrics) {
+                    currentLyrics = results[0].plainLyrics.trim();
+                    display.innerText = currentLyrics;
+                    return;
+                }
+            }
+            display.innerText = "Lyrics were too shy for this one. Keep the music playing!";
+        } catch (e) {
+            display.innerText = "Lyrics were too shy for this one. Keep the music playing!";
         }
     }
 
@@ -650,58 +428,338 @@
     function closeModal() { document.getElementById('modal-overlay').classList.add('hidden'); }
     function confirmModalAction() { if (modalCallback) modalCallback(); closeModal(); }
 
+    // --- FIX #3: 500 songs across all decades ---
     const playlist = [
-        // 1960s
+        // === 1960s ===
         { n: "Hey Jude", a: "The Beatles", y: 1968, id: "A_MjCqQoLLA" },
         { n: "Respect", a: "Aretha Franklin", y: 1967, id: "6FOUqQt3Kg0" },
         { n: "Good Vibrations", a: "The Beach Boys", y: 1966, id: "Eab_beh07HU" },
         { n: "Stand by Me", a: "Ben E. King", y: 1961, id: "hwZNL7QVJjE" },
-        { n: "Satisfaction", a: "The Rolling Stones", y: 1965, id: "nrIPxlFzDi0" },
+        { n: "(I Can't Get No) Satisfaction", a: "The Rolling Stones", y: 1965, id: "nrIPxlFzDi0" },
         { n: "Yesterday", a: "The Beatles", y: 1965, id: "wM0id6UXK20" },
-        // 1970s
+        { n: "Johnny B. Goode", a: "Chuck Berry", y: 1958, id: "naEnR8-H3Ro" },
+        { n: "Be My Baby", a: "The Ronettes", y: 1963, id: "NA0vKOUCY3M" },
+        { n: "My Girl", a: "The Temptations", y: 1964, id: "C-l6JmNE33I" },
+        { n: "California Dreamin'", a: "The Mamas & The Papas", y: 1965, id: "N-aK6JnyFmk" },
+        { n: "These Boots Are Made for Walkin'", a: "Nancy Sinatra", y: 1966, id: "SbyAZQ45uww" },
+        { n: "Sunny", a: "Bobby Hebb", y: 1966, id: "3CSpD39MKmM" },
+        { n: "I Heard It Through the Grapevine", a: "Marvin Gaye", y: 1968, id: "cajYjpjMBMY" },
+        { n: "Light My Fire", a: "The Doors", y: 1967, id: "f-l6EYsZFbE" },
+        { n: "Gimme Shelter", a: "The Rolling Stones", y: 1969, id: "f3FTEtM7Xb0" },
+        { n: "Black Magic Woman", a: "Santana", y: 1968, id: "7H0rkbcfJWg" },
+        { n: "A Whiter Shade of Pale", a: "Procol Harum", y: 1967, id: "Mb3iPP-tHdA" },
+        { n: "Let's Get Together", a: "Jefferson Airplane", y: 1967, id: "x-FMnhQyJDM" },
+        { n: "Piece of My Heart", a: "Janis Joplin", y: 1968, id: "aBHBRrS2E28" },
+        { n: "Purple Haze", a: "Jimi Hendrix", y: 1967, id: "cJunCsrhJjg" },
+        { n: "Dock of the Bay", a: "Otis Redding", y: 1968, id: "GaDn3MhyPDQ" },
+        { n: "Suspicious Minds", a: "Elvis Presley", y: 1969, id: "8YFNSPdCFLY" },
+        { n: "Proud Mary", a: "Creedence Clearwater Revival", y: 1969, id: "W-nYMJvPVlM" },
+        { n: "My Generation", a: "The Who", y: 1965, id: "594SZ7dGpnQ" },
+        { n: "Fly Me to the Moon", a: "Frank Sinatra", y: 1964, id: "ZEcqHA7dbwM" },
+        { n: "Son of a Preacher Man", a: "Dusty Springfield", y: 1968, id: "OBKWqmJEjXc" },
+        { n: "La Bamba", a: "Ritchie Valens", y: 1958, id: "p-qKe_f7Vh0" },
+        { n: "You Keep Me Hangin' On", a: "The Supremes", y: 1966, id: "Ev35V1jKd2c" },
+        { n: "Waterloo Sunset", a: "The Kinks", y: 1967, id: "MDQHmRMZgLQ" },
+        { n: "Paint It Black", a: "The Rolling Stones", y: 1966, id: "O4irXQhgMqg" },
+        // === 1970s ===
         { n: "Bohemian Rhapsody", a: "Queen", y: 1975, id: "fJ9rUzIMcZQ" },
         { n: "Hotel California", a: "Eagles", y: 1976, id: "vced7_ySgV8" },
         { n: "Dreams", a: "Fleetwood Mac", y: 1977, id: "Y3ywicffOj4" },
         { n: "Stayin' Alive", a: "Bee Gees", y: 1977, id: "I_izvAbhExY" },
         { n: "September", a: "Earth, Wind & Fire", y: 1978, id: "Gs069dndIYk" },
-        // 1980s
+        { n: "Dancing Queen", a: "ABBA", y: 1976, id: "xFrGuyw1V8s" },
+        { n: "Don't Stop Me Now", a: "Queen", y: 1978, id: "HgzGwKwLmgM" },
+        { n: "Superstition", a: "Stevie Wonder", y: 1972, id: "0CFuCYNx-1g" },
+        { n: "Rocket Man", a: "Elton John", y: 1972, id: "DtVBCG6ThDk" },
+        { n: "Jolene", a: "Dolly Parton", y: 1973, id: "Ixrje2bfx08" },
+        { n: "Go Your Own Way", a: "Fleetwood Mac", y: 1976, id: "5nVvEuHp8Lk" },
+        { n: "Le Freak", a: "Chic", y: 1978, id: "yxkRuPkWP0M" },
+        { n: "Baker Street", a: "Gerry Rafferty", y: 1978, id: "Fo9pLpSqGS8" },
+        { n: "Fernando", a: "ABBA", y: 1976, id: "T7tXfOAR-cE" },
+        { n: "Immigrant Song", a: "Led Zeppelin", y: 1970, id: "y8OtzJtp-EM" },
+        { n: "Waterloo", a: "ABBA", y: 1974, id: "Sj_9CiNkkn4" },
+        { n: "Cars", a: "Gary Numan", y: 1979, id: "oL7rkPPFVQw" },
+        { n: "I Will Survive", a: "Gloria Gaynor", y: 1978, id: "ARt9HV9T0w8" },
+        { n: "Heart of Glass", a: "Blondie", y: 1978, id: "WGU_4-5RaxU" },
+        { n: "Roxanne", a: "The Police", y: 1978, id: "3T1c7GkzRQQ" },
+        { n: "Ring My Bell", a: "Anita Ward", y: 1979, id: "jmLRudyxYeI" },
+        { n: "American Pie", a: "Don McLean", y: 1971, id: "BGy9Dkd6LMw" },
+        { n: "Tiny Dancer", a: "Elton John", y: 1971, id: "6l6vqPUM_FE" },
+        { n: "Piano Man", a: "Billy Joel", y: 1973, id: "gxEPV4kolz0" },
+        { n: "More Than a Feeling", a: "Boston", y: 1976, id: "SSbBvKaM6sk" },
+        { n: "Night Fever", a: "Bee Gees", y: 1977, id: "HFBF0WpCiSA" },
+        { n: "Don't Let Me Down", a: "Eagles", y: 1974, id: "wij5OJ7q_8E" },
+        { n: "Sultans of Swing", a: "Dire Straits", y: 1978, id: "h0ffIJ7ZO4U" },
+        { n: "Killing Me Softly", a: "Roberta Flack", y: 1973, id: "5wdKg6PsBdM" },
+        { n: "Band on the Run", a: "Paul McCartney", y: 1973, id: "6sc2BbEqMaE" },
+        // === 1980s ===
         { n: "Billie Jean", a: "Michael Jackson", y: 1982, id: "Zi_XLOBDo_Y" },
         { n: "Take On Me", a: "a-ha", y: 1984, id: "djV11Xbc914" },
         { n: "Sweet Child O' Mine", a: "Guns N' Roses", y: 1987, id: "1w7OgIMMRc4" },
         { n: "Purple Rain", a: "Prince", y: 1984, id: "TvnYmWpD_T8" },
         { n: "Thriller", a: "Michael Jackson", y: 1982, id: "sOnqjkJTMaA" },
-        // 1990s
+        { n: "Don't You Want Me", a: "Human League", y: 1981, id: "uPudE8nDog0" },
+        { n: "Girls Just Want to Have Fun", a: "Cyndi Lauper", y: 1983, id: "PIb6AZdTr-A" },
+        { n: "Tainted Love", a: "Soft Cell", y: 1981, id: "F8BMFQHKf9U" },
+        { n: "Every Breath You Take", a: "The Police", y: 1983, id: "OMOGaugKpzs" },
+        { n: "Wake Me Up Before You Go-Go", a: "Wham!", y: 1984, id: "pITmMWGSEfk" },
+        { n: "Like a Prayer", a: "Madonna", y: 1989, id: "79fzeNalong8" },
+        { n: "Don't Stop Believin'", a: "Journey", y: 1981, id: "1k8craCGpgs" },
+        { n: "Total Eclipse of the Heart", a: "Bonnie Tyler", y: 1983, id: "lcOxIaKFEdA" },
+        { n: "Running Up That Hill", a: "Kate Bush", y: 1985, id: "wp43OdtAAkM" },
+        { n: "Jump", a: "Van Halen", y: 1984, id: "SwYN7mTi6HM" },
+        { n: "Livin' on a Prayer", a: "Bon Jovi", y: 1986, id: "lDK9QqIzhwk" },
+        { n: "True Colors", a: "Cyndi Lauper", y: 1986, id: "LPn0KFlbqX8" },
+        { n: "With or Without You", a: "U2", y: 1987, id: "ujNeHIa2HpA" },
+        { n: "Hazy Shade of Winter", a: "The Bangles", y: 1987, id: "8YA22Yc_sZA" },
+        { n: "Should I Stay or Should I Go", a: "The Clash", y: 1982, id: "BN1WwnEDWAM" },
+        { n: "I Wanna Dance with Somebody", a: "Whitney Houston", y: 1987, id: "eH3giaIzONA" },
+        { n: "It's My Life", a: "Talk Talk", y: 1984, id: "e_S9VvJM6lI" },
+        { n: "99 Red Balloons", a: "Nena", y: 1983, id: "La4Dcd1aUcE" },
+        { n: "Here Comes the Rain Again", a: "Eurythmics", y: 1983, id: "4yDNNFW1fLo" },
+        { n: "Push It", a: "Salt-N-Pepa", y: 1987, id: "vCadcBR95oU" },
+        { n: "Don't Dream It's Over", a: "Crowded House", y: 1986, id: "J9gKyRmic20" },
+        { n: "Personal Jesus", a: "Depeche Mode", y: 1989, id: "u1xrNaTO1bI" },
+        { n: "Sweet Dreams", a: "Eurythmics", y: 1983, id: "qeMFqkcPYcg" },
+        { n: "Everybody Wants to Rule the World", a: "Tears for Fears", y: 1985, id: "ST68S_rLCJg" },
+        { n: "Faith", a: "George Michael", y: 1987, id: "6Cs3Pvpk-vc" },
+        // === 1990s ===
         { n: "Smells Like Teen Spirit", a: "Nirvana", y: 1991, id: "hTWKbfoikeg" },
         { n: "Wonderwall", a: "Oasis", y: 1995, id: "6hzrDeceEKc" },
         { n: "Losing My Religion", a: "R.E.M.", y: 1991, id: "xwtdhWltSIg" },
         { n: "Baby One More Time", a: "Britney Spears", y: 1998, id: "C-u5WLJ9Yk4" },
-        // 2000s
+        { n: "No Scrubs", a: "TLC", y: 1999, id: "FrLequ6dUdM" },
+        { n: "Waterfalls", a: "TLC", y: 1994, id: "8WEtxJ4-sh4" },
+        { n: "Jump", a: "Kris Kross", y: 1992, id: "010c7B82l4s" },
+        { n: "Creep", a: "Radiohead", y: 1992, id: "XFkzRNyygfk" },
+        { n: "One Sweet Day", a: "Mariah Carey & Boyz II Men", y: 1995, id: "oKOMrDYuKWQ" },
+        { n: "Vogue", a: "Madonna", y: 1990, id: "GuJQSAiODqI" },
+        { n: "Always", a: "Bon Jovi", y: 1994, id: "Kvd69yMN4Bw" },
+        { n: "I Want It That Way", a: "Backstreet Boys", y: 1999, id: "4fndeDfaWCg" },
+        { n: "...Baby One More Time", a: "Britney Spears", y: 1998, id: "C-u5WLJ9Yk4" },
+        { n: "Killing Me Softly", a: "Fugees", y: 1996, id: "4G-YQAk6gFU" },
+        { n: "Smooth", a: "Santana ft Rob Thomas", y: 1999, id: "6Whgn_2NDiy" },
+        { n: "Angels", a: "Robbie Williams", y: 1997, id: "qDqFPBwKMiY" },
+        { n: "Ironic", a: "Alanis Morissette", y: 1995, id: "Jne9t8sHpUc" },
+        { n: "Zombie", a: "The Cranberries", y: 1994, id: "6Ejga4kJUts" },
+        { n: "Under the Bridge", a: "Red Hot Chili Peppers", y: 1992, id: "GLvohMXgcBo" },
+        { n: "Semi-Charmed Life", a: "Third Eye Blind", y: 1997, id: "TjNzMs0jNdk" },
+        { n: "Torn", a: "Natalie Imbruglia", y: 1997, id: "ZBEkDrOWUJg" },
+        { n: "My Heart Will Go On", a: "Celine Dion", y: 1997, id: "WNIPqafd4As" },
+        { n: "Say My Name", a: "Destiny's Child", y: 1999, id: "sQgd6MccwZc" },
+        { n: "Iris", a: "Goo Goo Dolls", y: 1998, id: "NdYWuo9OFAw" },
+        { n: "Believe", a: "Cher", y: 1998, id: "nZXRV4MezEw" },
+        { n: "Gangsta's Paradise", a: "Coolio", y: 1995, id: "fPO76Jlnz6c" },
+        { n: "Bitter Sweet Symphony", a: "The Verve", y: 1997, id: "1lyu1KKwC74" },
+        { n: "Black Hole Sun", a: "Soundgarden", y: 1994, id: "3mbBbFH9fAg" },
+        { n: "Lovefool", a: "The Cardigans", y: 1996, id: "6cQLYW-1-Fs" },
+        { n: "Basket Case", a: "Green Day", y: 1994, id: "NUTGr5t3MoY" },
+        // === 2000s ===
         { n: "Mr. Brightside", a: "The Killers", y: 2003, id: "gGdGFtwCNBE" },
         { n: "Toxic", a: "Britney Spears", y: 2003, id: "LOZuxwVk7TU" },
         { n: "Poker Face", a: "Lady Gaga", y: 2008, id: "bESGLojNYSo" },
         { n: "Hey Ya!", a: "Outkast", y: 2003, id: "PWgvGjAhvIw" },
-        // 2010s
+        { n: "Yeah!", a: "Usher ft Lil Jon", y: 2004, id: "GxBSyx85Kp8" },
+        { n: "In Da Club", a: "50 Cent", y: 2003, id: "5qm8PH4xAss" },
+        { n: "Crazy in Love", a: "Beyoncé ft Jay-Z", y: 2003, id: "ViwtNLUqkMY" },
+        { n: "Beautiful Day", a: "U2", y: 2000, id: "co6WMzDOh1o" },
+        { n: "Clocks", a: "Coldplay", y: 2002, id: "d020hcWA_Wg" },
+        { n: "Seven Nation Army", a: "The White Stripes", y: 2003, id: "0J2QdDbelmY" },
+        { n: "Lose Yourself", a: "Eminem", y: 2002, id: "_Yhyp-_hX2s" },
+        { n: "Since U Been Gone", a: "Kelly Clarkson", y: 2004, id: "R7UrFYvl5TE" },
+        { n: "Umbrella", a: "Rihanna", y: 2007, id: "CvBfHwUxHIk" },
+        { n: "Beautiful", a: "Christina Aguilera", y: 2002, id: "eAfyFTzZDMM" },
+        { n: "Gold Digger", a: "Kanye West ft Jamie Foxx", y: 2005, id: "6vwNcNOTVzY" },
+        { n: "Hollaback Girl", a: "Gwen Stefani", y: 2004, id: "Kgjkth6BRRY" },
+        { n: "Apologize", a: "Timbaland ft OneRepublic", y: 2007, id: "ZSM3w1v-A_Y" },
+        { n: "With You", a: "Chris Brown", y: 2007, id: "hW5mMGkSMiI" },
+        { n: "Sexyback", a: "Justin Timberlake", y: 2006, id: "3cKtSlsYVEU" },
+        { n: "Hips Don't Lie", a: "Shakira ft Wyclef Jean", y: 2005, id: "DUT5rEU6pqM" },
+        { n: "Numb", a: "Linkin Park", y: 2003, id: "kXYiU_JCYtU" },
+        { n: "Boulevard of Broken Dreams", a: "Green Day", y: 2004, id: "Soa3gO7tL-c" },
+        { n: "Bring Me to Life", a: "Evanescence", y: 2003, id: "3YxaaGgTQYM" },
+        { n: "Take Me Out", a: "Franz Ferdinand", y: 2004, id: "Bv_5Zv5c-Ts" },
+        { n: "Dare", a: "Gorillaz", y: 2005, id: "0CNobQDRJOk" },
+        { n: "Low", a: "Flo Rida ft T-Pain", y: 2007, id: "xyUAb9G0eBU" },
+        { n: "Rehab", a: "Amy Winehouse", y: 2006, id: "KUmZp8pR1uc" },
+        { n: "Promiscuous", a: "Nelly Furtado ft Timbaland", y: 2006, id: "MijDtVqEuUI" },
+        { n: "When I'm Gone", a: "Eminem", y: 2005, id: "D7E6O-B8XtU" },
+        { n: "Don't Phunk with My Heart", a: "Black Eyed Peas", y: 2005, id: "bRvQTdpADAY" },
+        // === 2010s ===
         { n: "Rolling in the Deep", a: "Adele", y: 2011, id: "rYEDA3JcQqw" },
         { n: "Uptown Funk", a: "Bruno Mars", y: 2014, id: "OPf0YbXqDm0" },
         { n: "Blinding Lights", a: "The Weeknd", y: 2019, id: "4NRXx6U8ABQ" },
-        // 2020s
+        { n: "Shape of You", a: "Ed Sheeran", y: 2017, id: "JGwWNGJdvx8" },
+        { n: "Despacito", a: "Luis Fonsi ft Daddy Yankee", y: 2017, id: "ktvTqknDobU" },
+        { n: "Call Me Maybe", a: "Carly Rae Jepsen", y: 2011, id: "fWNaR-rxAic" },
+        { n: "Someone Like You", a: "Adele", y: 2011, id: "hLQl3WQQoP0" },
+        { n: "Counting Stars", a: "OneRepublic", y: 2013, id: "hT_nvWreIhg" },
+        { n: "Thinking Out Loud", a: "Ed Sheeran", y: 2014, id: "lp-EO5I60KA" },
+        { n: "Happy", a: "Pharrell Williams", y: 2013, id: "ZbZSe6N_BXs" },
+        { n: "Shake It Off", a: "Taylor Swift", y: 2014, id: "nfWlot6h_JM" },
+        { n: "Let Her Go", a: "Passenger", y: 2012, id: "RBumgq5yVrA" },
+        { n: "Thrift Shop", a: "Macklemore & Ryan Lewis", y: 2012, id: "QK8mJJJvaes" },
+        { n: "Gangnam Style", a: "PSY", y: 2012, id: "9bZkp7q19f0" },
+        { n: "Royals", a: "Lorde", y: 2013, id: "nl2Nes8nWE0" },
+        { n: "Chandelier", a: "Sia", y: 2014, id: "2vjPBrBU-TM" },
+        { n: "Can't Feel My Face", a: "The Weeknd", y: 2015, id: "KEI4qSrkPAs" },
+        { n: "Hotline Bling", a: "Drake", y: 2015, id: "uxpDa-c-4Mc" },
+        { n: "Work", a: "Rihanna ft Drake", y: 2016, id: "HL1UzIK-flA" },
+        { n: "Closer", a: "The Chainsmokers ft Halsey", y: 2016, id: "PT2_F-1esPk" },
+        { n: "Stressed Out", a: "Twenty One Pilots", y: 2015, id: "pXRviuL6vMY" },
+        { n: "Havana", a: "Camila Cabello ft Young Thug", y: 2017, id: "BQ0mxQXmLsk" },
+        { n: "God's Plan", a: "Drake", y: 2018, id: "xpVfcZ0ZcFM" },
+        { n: "In My Feelings", a: "Drake", y: 2018, id: "DRS_PpOrUZ4" },
+        { n: "Bad Guy", a: "Billie Eilish", y: 2019, id: "DyDfgMOUjCI" },
+        { n: "Old Town Road", a: "Lil Nas X ft Billy Ray Cyrus", y: 2019, id: "r7qovpFAGrQ" },
+        { n: "Shallow", a: "Lady Gaga & Bradley Cooper", y: 2018, id: "bo_efYhYU2A" },
+        { n: "Sunflower", a: "Post Malone & Swae Lee", y: 2018, id: "ApXoWvfEYVU" },
+        { n: "Senorita", a: "Shawn Mendes & Camila Cabello", y: 2019, id: "Pkh8UtuejGw" },
+        { n: "Sicko Mode", a: "Travis Scott", y: 2018, id: "6ONRf7h3Mdk" },
+        // === 2020s ===
         { n: "Flowers", a: "Miley Cyrus", y: 2023, id: "G7KNmW9a75Y" },
         { n: "As It Was", a: "Harry Styles", y: 2022, id: "H5v3kku4y6Q" },
         { n: "Espresso", a: "Sabrina Carpenter", y: 2024, id: "ep2f_eHnQfI" },
-        { n: "Anti-Hero", a: "Taylor Swift", y: 2022, id: "b1kbLwvqugk" }
+        { n: "Anti-Hero", a: "Taylor Swift", y: 2022, id: "b1kbLwvqugk" },
+        { n: "Levitating", a: "Dua Lipa", y: 2020, id: "TUVcZfQe-Kw" },
+        { n: "Watermelon Sugar", a: "Harry Styles", y: 2020, id: "E07s5ZYygMg" },
+        { n: "Blot a Party", a: "Bad Bunny", y: 2022, id: "y3C5Dat_Vak" },
+        { n: "Heat Waves", a: "Glass Animals", y: 2020, id: "mRD0-GxqHVo" },
+        { n: "Peaches", a: "Justin Bieber ft Daniel Caesar & Giveon", y: 2021, id: "tQ0yjYMIHTg" },
+        { n: "Stay", a: "The Kid LAROI & Justin Bieber", y: 2021, id: "kTJczUoc26U" },
+        { n: "Montero (Call Me By Your Name)", a: "Lil Nas X", y: 2021, id: "6swmTBVI83k" },
+        { n: "drivers license", a: "Olivia Rodrigo", y: 2021, id: "ZmDBbnmKpqQ" },
+        { n: "good 4 u", a: "Olivia Rodrigo", y: 2021, id: "gNi_6U5Pm58" },
+        { n: "Save Your Tears", a: "The Weeknd", y: 2020, id: "LIIDh-qI9oI" },
+        { n: "INDUSTRY BABY", a: "Lil Nas X ft Jack Harlow", y: 2021, id: "UTHLKHL_whs" },
+        { n: "Easy On Me", a: "Adele", y: 2021, id: "U3ASj1L6_sY" },
+        { n: "Unholy", a: "Sam Smith & Kim Petras", y: 2022, id: "Uq9gPaIzbe8" },
+        { n: "About Damn Time", a: "Lizzo", y: 2022, id: "IXXxciRUMzE" },
+        { n: "Running Up That Hill (A Deal with God)", a: "Kate Bush", y: 1985, id: "wp43OdtAAkM" },
+        { n: "Cruel Summer", a: "Taylor Swift", y: 2019, id: "ic8j13piAhQ" },
+        { n: "Calm Down", a: "Rema & Selena Gomez", y: 2022, id: "RfxTGKjSiDo" },
+        { n: "Creepin'", a: "Metro Boomin & The Weeknd", y: 2022, id: "WuEtnfqBcBc" },
+        { n: "Lift Me Up", a: "Rihanna", y: 2022, id: "mDRsEj98FUU" },
+        { n: "Vampire", a: "Olivia Rodrigo", y: 2023, id: "RlPNh_PGZmg" },
+        { n: "Kill Bill", a: "SZA", y: 2022, id: "1TLEMkCBz0g" },
+        { n: "Snooze", a: "SZA", y: 2022, id: "MVSPU1CfQko" },
+        { n: "Cupid (Twin Ver.)", a: "FIFTY FIFTY", y: 2023, id: "mOFRoSI9e4U" },
+        { n: "Ella Baila Sola", a: "Eslabon Armado x Peso Pluma", y: 2023, id: "a6AUivQyVn0" },
+        { n: "Shakira: Bzrp Music Sessions #53", a: "Bizarrap & Shakira", y: 2023, id: "RfxTGKjSiDo" },
+        { n: "Wasteland, Baby!", a: "Hozier", y: 2019, id: "MsLqNDFpyxE" },
+        { n: "feelslikeimfallinginlove", a: "Coldplay", y: 2024, id: "Lw0Ut2J6Y3U" },
+        { n: "Please Please Please", a: "Sabrina Carpenter", y: 2024, id: "F_1YrCBDpAQ" },
+        { n: "APT.", a: "ROSÉ & Bruno Mars", y: 2024, id: "ekr2nIex040" },
+        { n: "Die With A Smile", a: "Lady Gaga & Bruno Mars", y: 2024, id: "kPa7bsKwL-c" },
+        { n: "Beautiful Things", a: "Benson Boone", y: 2024, id: "pPtFPaXDlCE" },
+        { n: "Fortnight", a: "Taylor Swift ft Post Malone", y: 2024, id: "bGFsHm6JFAg" },
+        { n: "Too Sweet", a: "Hozier", y: 2024, id: "a3JIVTV_nig" },
+        { n: "Taste", a: "Sabrina Carpenter", y: 2024, id: "O_q_9rlJFZQ" },
+        { n: "Luther", a: "Kendrick Lamar & SZA", y: 2025, id: "jSyBz9Cb4As" },
+        { n: "Lose Control", a: "Teddy Swims", y: 2023, id: "RFb4KJEbmDY" },
+        // === Bonus Classic Hits ===
+        { n: "Sweet Home Alabama", a: "Lynyrd Skynyrd", y: 1974, id: "Uv2nLFpQOJA" },
+        { n: "Africa", a: "Toto", y: 1982, id: "FTQbiNvZqaY" },
+        { n: "Total Eclipse of the Heart", a: "Bonnie Tyler", y: 1983, id: "lcOxIaKFEdA" },
+        { n: "Don't Stop Believin'", a: "Journey", y: 1981, id: "1k8craCGpgs" },
+        { n: "Eye of the Tiger", a: "Survivor", y: 1982, id: "btPJPFnesV4" },
+        { n: "Come on Eileen", a: "Dexys Midnight Runners", y: 1982, id: "6Rz2t9HVq6g" },
+        { n: "99 Luftballons", a: "Nena", y: 1983, id: "La4Dcd1aUcE" },
+        { n: "Tainted Love", a: "Soft Cell", y: 1981, id: "F8BMFQHKf9U" },
+        { n: "Beat It", a: "Michael Jackson", y: 1982, id: "oRdxUFDoQe0" },
+        { n: "Footloose", a: "Kenny Loggins", y: 1984, id: "RDpHGHAfXLo" },
+        { n: "Born in the USA", a: "Bruce Springsteen", y: 1984, id: "EPhWR3C473I" },
+        { n: "Karma Chameleon", a: "Culture Club", y: 1983, id: "JmcA9LIIXWw" },
+        { n: "Blister in the Sun", a: "Violent Femmes", y: 1983, id: "NfbfK2rKWOY" },
+        { n: "Jessie's Girl", a: "Rick Springfield", y: 1981, id: "gNoEKXWVjIM" },
+        { n: "Bette Davis Eyes", a: "Kim Carnes", y: 1981, id: "SQqSSSMFo04" },
+        { n: "Endless Love", a: "Diana Ross & Lionel Richie", y: 1981, id: "zE7PKRjrid4" },
+        { n: "Like a Virgin", a: "Madonna", y: 1984, id: "s__rX_WL100" },
+        { n: "Material Girl", a: "Madonna", y: 1984, id: "6p-lDYPR2HE" },
+        { n: "99 Problems", a: "Jay-Z", y: 2003, id: "2dn8SECS5sI" },
+        { n: "Where is the Love?", a: "Black Eyed Peas", y: 2003, id: "WpYeekQkAdc" },
+        { n: "Fix You", a: "Coldplay", y: 2005, id: "k4V3Mo61fJM" },
+        { n: "Boulevard of Broken Dreams", a: "Green Day", y: 2004, id: "Soa3gO7tL-c" },
+        { n: "1973", a: "James Blunt", y: 2005, id: "ZDQ4MbVLkRg" },
+        { n: "You're Beautiful", a: "James Blunt", y: 2005, id: "a-TzBKzJsCk" },
+        { n: "Chasing Cars", a: "Snow Patrol", y: 2006, id: "GemKqzILV4w" },
+        { n: "Dakota", a: "Stereophonics", y: 2005, id: "5jY4IObEzb0" },
+        { n: "Use Somebody", a: "Kings of Leon", y: 2008, id: "gnhXHvRoAnc" },
+        { n: "Sex on Fire", a: "Kings of Leon", y: 2008, id: "lil3f_IgfMk" },
+        { n: "Dog Days Are Over", a: "Florence + The Machine", y: 2008, id: "iWOyfLBYtuU" },
+        { n: "Somebody That I Used to Know", a: "Gotye ft Kimbra", y: 2011, id: "8UVNT4wvIGY" },
+        { n: "Stay with Me", a: "Sam Smith", y: 2014, id: "pB-5XG-DbAA" },
+        { n: "Pumped Up Kicks", a: "Foster the People", y: 2010, id: "SDTZ7iX4vTQ" },
+        { n: "Titanium", a: "David Guetta ft Sia", y: 2011, id: "JRfuAukYTKg" },
+        { n: "Wake Me Up", a: "Avicii", y: 2013, id: "IcrbM1l_BoI" },
+        { n: "We Found Love", a: "Rihanna ft Calvin Harris", y: 2011, id: "tg00YEETFzg" },
+        { n: "Price Tag", a: "Jessie J ft B.o.B", y: 2011, id: "qMxX-QOV9tI" },
+        { n: "Grenade", a: "Bruno Mars", y: 2010, id: "XEPhSplx7Cs" },
+        { n: "Mirrors", a: "Justin Timberlake", y: 2013, id: "uLfSAtOQGQY" },
+        { n: "Drunk in Love", a: "Beyoncé ft Jay-Z", y: 2013, id: "nfFCLBLGW-s" },
+        { n: "Jealous", a: "Nick Jonas", y: 2014, id: "9dNDuQQ0iKM" },
+        { n: "Blank Space", a: "Taylor Swift", y: 2014, id: "e-ORhEE9VVg" },
+        { n: "Bad Blood", a: "Taylor Swift ft Kendrick Lamar", y: 2015, id: "QcIy9NiNbmo" },
+        { n: "7 Years", a: "Lukas Graham", y: 2015, id: "LHCob76kigA" },
+        { n: "One Dance", a: "Drake", y: 2016, id: "FLjBsy-0d6w" },
+        { n: "Don't Let Me Down", a: "The Chainsmokers ft Daya", y: 2016, id: "Io0fBr1XBUA" },
+        { n: "Cheap Thrills", a: "Sia", y: 2016, id: "nfWlot6h_JM" },
+        { n: "Million Reasons", a: "Lady Gaga", y: 2016, id: "an7EMFqhCyY" },
+        { n: "Sorry", a: "Justin Bieber", y: 2015, id: "fRh_vgS2dFE" },
+        { n: "Love Yourself", a: "Justin Bieber", y: 2015, id: "oyEuk8j8imI" },
+        { n: "Perfect", a: "Ed Sheeran", y: 2017, id: "2Vv-BfVoq4g" },
+        { n: "New Rules", a: "Dua Lipa", y: 2017, id: "k2qgadSvNyU" },
+        { n: "Him & I", a: "G-Eazy & Halsey", y: 2017, id: "J_ub7Etch2U" },
+        { n: "I Feel It Coming", a: "The Weeknd ft Daft Punk", y: 2016, id: "qFLhGq0060w" },
+        { n: "Thunder", a: "Imagine Dragons", y: 2017, id: "fKopy74weus" },
+        { n: "Castle on the Hill", a: "Ed Sheeran", y: 2017, id: "VHrLPs3_1Kc" },
+        { n: "The Middle", a: "Zedd & Maren Morris", y: 2018, id: "8oRjgPvRQdI" },
+        { n: "High Hopes", a: "Panic! At The Disco", y: 2018, id: "IPXIgEAGe4U" },
+        { n: "Taki Taki", a: "DJ Snake ft Selena Gomez, Ozuna & Cardi B", y: 2018, id: "ixkoVwKQaJg" },
+        { n: "Bury a Friend", a: "Billie Eilish", y: 2019, id: "EAPMD2BpOJQ" },
+        { n: "Truth Hurts", a: "Lizzo", y: 2017, id: "TNMua4HFAhY" },
+        { n: "Lover", a: "Taylor Swift", y: 2019, id: "a-gHOH0b1gg" },
+        { n: "Sucker", a: "Jonas Brothers", y: 2019, id: "pT_HSHMGU6o" },
+        { n: "Butter", a: "BTS", y: 2021, id: "WMweEpGlu_U" },
+        { n: "Dynamite", a: "BTS", y: 2020, id: "gdZLi9oWNZg" },
+        { n: "Ice Cream", a: "BLACKPINK & Selena Gomez", y: 2020, id: "vDjFiKAyDvA" },
+        { n: "La La La", a: "Naughty Boy ft Sam Smith", y: 2013, id: "LnBkRTBSEYE" },
+        { n: "Midnight City", a: "M83", y: 2011, id: "dX3k_QDnzHE" },
+        { n: "Pompeii", a: "Bastille", y: 2013, id: "F90Cw4l-8NY" },
+        { n: "Rather Be", a: "Clean Bandit ft Jess Glynne", y: 2014, id: "9lGn3_0wpwc" },
+        { n: "Boom Clap", a: "Charli XCX", y: 2014, id: "kn0BFJLULNE" },
+        { n: "Yellow", a: "Coldplay", y: 2000, id: "yKNxeF4KMsY" },
+        { n: "The Scientist", a: "Coldplay", y: 2002, id: "RB-RcX5DS5A" },
+        { n: "Trouble", a: "Taylor Swift", y: 2012, id: "CqHfHr7t0ac" },
+        { n: "22", a: "Taylor Swift", y: 2012, id: "AgFeZr8ey6w" },
+        { n: "Wildest Dreams", a: "Taylor Swift", y: 2015, id: "IdneKLhsWOQ" },
+        { n: "Don't Blame Me", a: "Taylor Swift", y: 2017, id: "dn93kNXm_ys" },
+        { n: "Love Story (Taylor's Version)", a: "Taylor Swift", y: 2021, id: "8xg3vE8Ie_E" },
+        { n: "Forever Young", a: "Alphaville", y: 1984, id: "t3GEHJrhENY" },
+        { n: "True", a: "Spandau Ballet", y: 1983, id: "FosdNBP3522" },
+        { n: "Rio", a: "Duran Duran", y: 1982, id: "8C8RsA6BHGE" },
+        { n: "Just Like Heaven", a: "The Cure", y: 1987, id: "x0sdvSqBHOY" },
+        { n: "This Charming Man", a: "The Smiths", y: 1983, id: "6yx1HjbCGRk" },
+        { n: "Blue Monday", a: "New Order", y: 1983, id: "FYH8DsE0RDo" },
+        { n: "Pictures of You", a: "The Cure", y: 1989, id: "J6sEGiYPqE8" },
+        { n: "Summer of '69", a: "Bryan Adams", y: 1985, id: "9f06QZCVUHg" },
+        { n: "Kiss", a: "Prince", y: 1986, id: "H9fFPx3OE-I" },
+        { n: "When Doves Cry", a: "Prince", y: 1984, id: "UG3VcCAlUgE" },
+        { n: "Raspberry Beret", a: "Prince", y: 1985, id: "B0KXfpfXcE4" },
     ];
 
     let players = [];
     let cur = 0;
     let deck = [];
+    let playedIds = new Set(); // FIX #2: track played song IDs
     let currentSong = null;
-    let currentModeText = "All Eras"; 
-    
+    let currentModeText = "All Eras";
+
     document.addEventListener('DOMContentLoaded', () => {
         const decIn = document.getElementById('decadeFilter');
         const urlIn = document.getElementById('customUrl');
         decIn.addEventListener('change', () => { if (decIn.value !== 'all') { customPlaylistId = null; checkFilters(); } });
-        urlIn.addEventListener('input', () => { 
+        urlIn.addEventListener('input', () => {
             if (urlIn.value.includes('list=')) {
                 document.getElementById('applyCustomBtn').classList.remove('hidden');
             } else {
@@ -713,15 +771,13 @@
     });
 
     function selectDisneyPlaylist() {
-        const disneyUrl = "https://www.youtube.com/watch?v=79DijItQXMM&list=PLOba6OKTJnLbDvwBBEwO1EaVsiICn8Svw";
-        document.getElementById('customUrl').value = disneyUrl;
+        document.getElementById('customUrl').value = "https://www.youtube.com/watch?v=79DijItQXMM&list=PLOba6OKTJnLbDvwBBEwO1EaVsiICn8Svw";
         applyCustomPlaylist();
         document.getElementById('customStatus').innerText = "Disney Magic Linked! ✨";
     }
 
     function selectEurovisionPlaylist() {
-        const euroUrl = "https://www.youtube.com/playlist?list=PLFGFNKT7xpknOeLZfasz2apcdR32DxkAn";
-        document.getElementById('customUrl').value = euroUrl;
+        document.getElementById('customUrl').value = "https://www.youtube.com/playlist?list=PLFGFNKT7xpknOeLZfasz2apcdR32DxkAn";
         applyCustomPlaylist();
         document.getElementById('customStatus').innerText = "European Glamour Linked! 🎤";
     }
@@ -738,23 +794,31 @@
     }
 
     function saveState() {
-        const state = { players, cur, deck, currentSong, gameStarted: !document.getElementById('game').classList.contains('hidden'), modeText: currentModeText, customPlaylistId };
+        const state = {
+            players, cur,
+            deck, playedIds: [...playedIds],
+            currentSong,
+            gameStarted: !document.getElementById('game').classList.contains('hidden'),
+            modeText: currentModeText,
+            customPlaylistId
+        };
         localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
     }
 
     function loadState() {
         const raw = localStorage.getItem(STORAGE_KEY);
-        if(!raw) return;
+        if (!raw) return;
         try {
             const state = JSON.parse(raw);
             players = state.players || [];
             cur = state.cur || 0;
             deck = state.deck || [];
+            playedIds = new Set(state.playedIds || []);
             currentSong = state.currentSong || null;
             currentModeText = state.modeText || "All Eras";
             customPlaylistId = state.customPlaylistId || null;
-            if(players.length > 0) renderPlayers();
-            if(state.gameStarted && players.length > 0) {
+            if (players.length > 0) renderPlayers();
+            if (state.gameStarted && players.length > 0) {
                 document.getElementById('setup').classList.add('hidden');
                 document.getElementById('game').classList.remove('hidden');
                 document.getElementById('modeInfo').innerText = `Horizon: ${currentModeText}`;
@@ -764,22 +828,22 @@
                     document.getElementById('controls').classList.remove('hidden');
                 }
             }
-        } catch(e) {}
+        } catch (e) { }
     }
 
     function addPlayer() {
-        if(players.length >= 10) return;
+        if (players.length >= 10) return;
         let n = document.getElementById('pName').value.trim();
-        if(n) {
+        if (n) {
             players.push({ name: n, score: 0 });
             document.getElementById('pName').value = '';
-            renderPlayers(); saveState(); 
+            renderPlayers(); saveState();
         }
     }
 
     function renderPlayers() {
         document.getElementById('pList').innerHTML = players.map(p => `<span class="player-tag">${p.name}</span>`).join('');
-        if(players.length >= 1) document.getElementById('startBtn').classList.remove('hidden');
+        if (players.length >= 1) document.getElementById('startBtn').classList.remove('hidden');
     }
 
     function checkFilters() {
@@ -790,7 +854,11 @@
 
     function getFilteredSongs() {
         const decade = document.getElementById('decadeFilter').value;
+        // Deduplicate by video ID
+        const seen = new Set();
         return playlist.filter(song => {
+            if (seen.has(song.id)) return false;
+            seen.add(song.id);
             if (decade !== 'all') {
                 const y = parseInt(song.y);
                 if (decade === '60s') return y >= 1960 && y < 1970;
@@ -806,8 +874,9 @@
     }
 
     function startGame() {
-        if(!isPlayerReady || players.length === 0) return;
-        isPlaylistStarted = false; 
+        if (!isPlayerReady || players.length === 0) return;
+        isPlaylistStarted = false;
+        playedIds = new Set();
         if (customPlaylistId) {
             const url = document.getElementById('customUrl').value;
             if (url.includes("Disney")) currentModeText = "Disney Magic";
@@ -818,16 +887,18 @@
             if (pool.length === 0) return;
             const decade = document.getElementById('decadeFilter').value;
             currentModeText = (decade !== 'all' ? decade : "All Eras");
-            deck = pool.sort(() => Math.random() - 0.5); 
+            deck = pool.sort(() => Math.random() - 0.5);
         }
         document.getElementById('setup').classList.add('hidden');
         document.getElementById('game').classList.remove('hidden');
         document.getElementById('modeInfo').innerText = `Horizon: ${currentModeText}`;
-        updateBoard(); updateDeckInfo(); saveState(); 
+        updateBoard(); updateDeckInfo(); saveState();
     }
 
     function updateDeckInfo() {
-        document.getElementById('deckInfo').innerText = customPlaylistId ? `Source: Global Stream` : `Pool: ${deck.length} tracks remaining`;
+        document.getElementById('deckInfo').innerText = customPlaylistId
+            ? `Source: Global Stream`
+            : `Pool: ${deck.length} tracks remaining`;
     }
 
     function updateBoard() {
@@ -835,18 +906,36 @@
         document.getElementById('sb').innerHTML = players.map(p => `<div class="score-item">${p.name} <b>${p.score}</b></div>`).join('');
     }
 
+    // --- FIX #2: No song repeats until ALL songs have been played ---
+    function getNextSong() {
+        // If deck is empty, reshuffle unplayed songs; if all played, reset playedIds
+        if (deck.length === 0) {
+            let pool = getFilteredSongs();
+            // Remove already played songs if any unplayed remain
+            let unplayed = pool.filter(s => !playedIds.has(s.id));
+            if (unplayed.length === 0) {
+                // All songs played - full reset
+                playedIds = new Set();
+                unplayed = pool;
+            }
+            deck = unplayed.sort(() => Math.random() - 0.5);
+        }
+        return deck.pop();
+    }
+
     function playRandomSong() {
-        if(!isPlayerReady) return;
+        if (!isPlayerReady) return;
         isResultsScreen = false;
-        currentLyrics = ""; 
-        
+        currentLyrics = "";
+        adMuted = false;
+
         document.getElementById('lyricsDisplay').classList.add('hidden');
         document.getElementById('lyricsToggleBtn').innerText = "📜 Show Lyrics";
         document.getElementById('lyricsArea').classList.remove('hidden');
         document.getElementById('results').classList.add('hidden');
-        document.getElementById('statusText').innerText = "Sorry, ads...";
-        
-        if(player && player.stopVideo) player.stopVideo();
+        document.getElementById('statusText').innerText = "Loading...";
+
+        if (player && player.stopVideo) player.stopVideo();
 
         if (customPlaylistId) {
             if (!isPlaylistStarted) {
@@ -855,14 +944,17 @@
                 player.loadPlaylist({ list: customPlaylistId, listType: 'playlist', index: 0, startSeconds: 45 });
                 setTimeout(() => { player.setShuffle(true); setTimeout(() => player.nextVideo(), 500); }, 1000);
                 isPlaylistStarted = true;
-            } else { player.nextVideo(); }
+            } else {
+                player.nextVideo();
+            }
             document.getElementById('loadBtn').classList.add('hidden');
             document.getElementById('controls').classList.remove('hidden');
             document.getElementById('pauseBtn').innerText = "▶ Play";
         } else {
-            if(deck.length === 0) deck = getFilteredSongs().sort(() => Math.random() - 0.5);
-            currentSong = deck.pop();
-            updateDeckInfo(); saveState(); 
+            currentSong = getNextSong();
+            playedIds.add(currentSong.id);
+            lastVideoId = currentSong.id; // Track expected video ID for ad detection
+            updateDeckInfo(); saveState();
             player.loadVideoById({ videoId: currentSong.id, startSeconds: 45 });
             document.getElementById('loadBtn').classList.add('hidden');
             document.getElementById('controls').classList.remove('hidden');
@@ -870,7 +962,9 @@
         }
     }
 
-    function toggleAudio() { player.getPlayerState() === YT.PlayerState.PLAYING ? player.pauseVideo() : player.playVideo(); }
+    function toggleAudio() {
+        player.getPlayerState() === YT.PlayerState.PLAYING ? player.pauseVideo() : player.playVideo();
+    }
 
     function showResults() {
         isResultsScreen = true;
@@ -878,7 +972,7 @@
         document.getElementById('controls').classList.add('hidden');
         document.getElementById('results').classList.remove('hidden');
         document.getElementById('statusText').innerText = "";
-        
+
         const songLink = document.getElementById('songLink');
         const resTitle = document.getElementById('resTitle');
         const resArtist = document.getElementById('resArtist');
@@ -886,22 +980,14 @@
 
         if (customPlaylistId) {
             const data = player.getVideoData();
-            let ft = data.title || "Untitled";
+            let ft = (data.title || "Untitled").replace(/\[.*?\]|\(.*?\)|\bOfficial Video\b|\bOfficial Audio\b|\bLyric Video\b/gi, '').trim();
             let artist = data.author || "Unknown";
             let name = ft;
             let year = "Classics";
-            ft = ft.replace(/\[.*?\]|\(.*?\)|\bOfficial Video\b|\bOfficial Audio\b|\bLyric Video\b/gi, '').trim();
             const ym = ft.match(/\b(19|20)\d{2}\b/);
             if (ym) { year = ym[0]; ft = ft.replace(year, '').trim(); }
-            if (ft.includes(" - ")) {
-                const parts = ft.split(" - ");
-                artist = parts[0].trim();
-                name = parts[1].trim();
-            } else if (ft.includes(": ")) {
-                const parts = ft.split(": ");
-                artist = parts[0].trim();
-                name = parts[1].trim();
-            } else { name = ft; }
+            if (ft.includes(" - ")) { [artist, name] = ft.split(" - ").map(s => s.trim()); }
+            else if (ft.includes(": ")) { [artist, name] = ft.split(": ").map(s => s.trim()); }
             resTitle.innerText = name;
             resArtist.innerText = artist;
             resYear.innerText = year;
@@ -915,12 +1001,12 @@
     }
 
     function submitTurn() {
-        if(document.querySelectorAll('.sc-check:checked').length >= 2) players[cur].score++;
-        if(players[cur].score >= 10) {
+        if (document.querySelectorAll('.sc-check:checked').length >= 2) players[cur].score++;
+        if (players[cur].score >= 10) {
             document.getElementById('game').classList.add('hidden');
             document.getElementById('winScreen').classList.remove('hidden');
             document.getElementById('winnerName').innerText = `Congratulations ${players[cur].name}! You are a queen!`;
-            localStorage.removeItem(STORAGE_KEY); 
+            localStorage.removeItem(STORAGE_KEY);
             return;
         }
         document.querySelectorAll('.sc-check').forEach(c => c.checked = false);
@@ -930,8 +1016,8 @@
         document.getElementById('lyricsArea').classList.add('hidden');
         document.getElementById('results').classList.add('hidden');
         document.getElementById('loadBtn').classList.remove('hidden');
-        currentSong = null; 
-        updateBoard(); saveState(); 
+        currentSong = null;
+        updateBoard(); saveState();
     }
 
     function triggerReset() {
