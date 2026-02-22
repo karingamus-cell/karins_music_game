@@ -147,6 +147,46 @@
         .song-link:hover { opacity: 1; transform: scale(1.05); }
         .rules { font-size: 0.7rem; color: var(--text-muted); line-height: 1.8; margin-top: 30px; opacity: 0.8; }
         #modeInfo { font-size: 0.65rem; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); margin-bottom: 20px; font-weight: 700; }
+
+        /* Score celebration animation */
+        @keyframes scorePop {
+            0%   { transform: scale(1); }
+            20%  { transform: scale(1.5); color: #fff; }
+            50%  { transform: scale(1.3) rotate(-5deg); }
+            70%  { transform: scale(1.4) rotate(5deg); }
+            100% { transform: scale(1); }
+        }
+        @keyframes confettiBurst {
+            0%   { opacity: 1; transform: translateY(0) scale(1); }
+            100% { opacity: 0; transform: translateY(-60px) scale(0.3); }
+        }
+        .score-celebrate b {
+            display: inline-block;
+            animation: scorePop 0.6s cubic-bezier(0.36, 0.07, 0.19, 0.97);
+            color: var(--primary);
+        }
+        .confetti-piece {
+            position: fixed;
+            font-size: 1.4rem;
+            pointer-events: none;
+            z-index: 9999;
+            animation: confettiBurst 0.9s ease-out forwards;
+        }
+
+        /* Preview length pills */
+        .preview-pills { display: flex; gap: 8px; margin-top: 8px; }
+        .preview-pill {
+            flex: 1; background: rgba(255,255,255,0.03);
+            border: 1px solid var(--glass-border); border-radius: 50px;
+            padding: 10px 0; font-size: 0.7rem; font-weight: 700;
+            color: var(--text-muted); cursor: pointer; text-align: center;
+            transition: all 0.3s; margin-top: 0; letter-spacing: 1px;
+        }
+        .preview-pill.active {
+            background: rgba(244, 194, 194, 0.12);
+            border-color: var(--primary); color: var(--primary);
+        }
+        .preview-pill:hover { border-color: var(--primary); color: var(--primary); }
     </style>
 </head>
 <body>
@@ -211,6 +251,15 @@
                 <button onclick="checkFilters()" class="ghost" style="width: auto; font-size: 0.65rem; padding: 10px 20px;">Check Library</button>
                 <span id="filterCount" style="font-size: 0.75rem; font-weight: 600; color: var(--accent);"></span>
             </div>
+            <div class="input-group">
+                <label>Preview Length</label>
+                <div class="preview-pills">
+                    <button class="preview-pill active" onclick="setPreview(10, this)">10s</button>
+                    <button class="preview-pill" onclick="setPreview(20, this)">20s</button>
+                    <button class="preview-pill" onclick="setPreview(30, this)">30s</button>
+                    <button class="preview-pill" onclick="setPreview(0, this)">Unlimited</button>
+                </div>
+            </div>
             <button id="startBtn" class="hidden pink" onclick="startGame()">Rock On</button>
             <div class="rules">Reach 10 points. On your turn, listen and name 2 out of 3 details correctly to gain a point.</div>
         </div>
@@ -226,6 +275,10 @@
                 <div id="controls" class="hidden" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 15px;">
                     <button onclick="toggleAudio()" class="ghost" id="pauseBtn" style="margin:0;">▶ Play</button>
                     <button onclick="showResults()" class="pink" style="margin:0;">Reveal</button>
+                </div>
+                <div id="extraControls" class="hidden" style="display: flex; gap: 10px; margin-top: 10px;">
+                    <button onclick="restartFromBeginning()" class="ghost" style="margin:0; font-size: 0.65rem; padding: 10px; flex:1;">⏮ From Start</button>
+                    <div id="previewCountdown" style="flex:1; display:flex; align-items:center; justify-content:center; font-size:0.8rem; color:var(--accent); font-weight:700;"></div>
                 </div>
                 <div id="lyricsArea" class="hidden">
                     <button id="lyricsToggleBtn" onclick="toggleLyrics()" class="lyrics-btn">📜 Show Lyrics</button>
@@ -262,7 +315,7 @@
 </div>
 
 <script>
-    const STORAGE_KEY = 'hitster_karin_rose_v21';
+    const STORAGE_KEY = 'hitster_karin_rose_v22';
 
     var tag = document.createElement('script');
     tag.src = "https://www.youtube.com/iframe_api";
@@ -279,6 +332,17 @@
     let adCheckInterval = null;
     let lastVideoId = "";
     let adMuted = false;
+    let previewSeconds = 10;       // NEW: preview length in seconds (0 = unlimited)
+    let previewTimer = null;        // NEW: countdown timer
+    let songStartTime = null;       // NEW: when the song actually started playing
+    let playingForReal = false;     // NEW: true once the correct video is confirmed playing
+
+    // --- Preview length selector ---
+    function setPreview(secs, btn) {
+        previewSeconds = secs;
+        document.querySelectorAll('.preview-pill').forEach(p => p.classList.remove('active'));
+        btn.classList.add('active');
+    }
 
     function onYouTubeIframeAPIReady() {
         player = new YT.Player('youtube-player', {
@@ -292,28 +356,24 @@
         });
     }
 
-    // --- FIX #4: Improved Ad Skipping ---
-    // YouTube's embedded player doesn't expose a real ad API.
-    // Best-effort approach: detect when video title is empty/ad-like, mute, and seek end.
+    // --- Ad skip: only trigger when lastVideoId is set AND video_id differs ---
     function startAdMonitor() {
         if (adCheckInterval) clearInterval(adCheckInterval);
         adCheckInterval = setInterval(() => {
             if (!player || typeof player.getPlayerState !== 'function') return;
+            if (!lastVideoId) return; // Don't run until we've loaded a song
             const state = player.getPlayerState();
             if (state !== YT.PlayerState.PLAYING && state !== YT.PlayerState.BUFFERING) return;
 
             const data = player.getVideoData();
             const currentId = data && data.video_id;
 
-            // An ad is likely playing if: the video_id changed from what we loaded,
-            // OR the title is blank/empty (common in ad states).
-            const isLikelyAd = (currentId && lastVideoId && currentId !== lastVideoId) ||
-                               (data && (!data.title || data.title === ''));
+            // Only flag as ad if video_id is a non-empty string that differs from what we loaded
+            const isLikelyAd = currentId && currentId !== lastVideoId;
 
             if (isLikelyAd) {
                 document.getElementById('statusText').innerText = "Skipping ad...";
                 if (!adMuted) { player.mute(); adMuted = true; }
-                // Try seeking to end to force skip
                 const dur = player.getDuration();
                 if (dur > 0) player.seekTo(dur - 0.1, true);
             } else {
@@ -328,25 +388,83 @@
         const st = document.getElementById('statusText');
 
         if (event.data === YT.PlayerState.PLAYING) {
-            // Check if we just came out of an ad
             const data = player.getVideoData();
-            if (data && data.video_id && lastVideoId && data.video_id === lastVideoId) {
-                // We're playing the correct video
+            const currentId = data && data.video_id;
+            const isCorrectVideo = !lastVideoId || currentId === lastVideoId;
+
+            if (isCorrectVideo) {
                 if (adMuted) { player.unMute(); adMuted = false; }
+                if (!playingForReal) {
+                    playingForReal = true;
+                    songStartTime = Date.now();
+                    startPreviewCountdown();
+                    // Seek to 45s on first play (unless restarted from beginning)
+                    if (player.getCurrentTime() < 3) player.seekTo(45, true);
+                }
                 st.innerText = isResultsScreen ? "" : "Playing...";
                 btn.innerText = "⏸ Pause";
                 rBtn.innerText = "⏸ Pause";
                 retryCount = 0;
-                // Seek to 45s on first play of the track
-                if (player.getCurrentTime() < 5) player.seekTo(45, true);
             }
         } else if (event.data === YT.PlayerState.PAUSED) {
             btn.innerText = "▶ Play";
             rBtn.innerText = "▶ Resume";
             if (!isResultsScreen) st.innerText = "";
+            stopPreviewCountdown();
         } else if (event.data === YT.PlayerState.BUFFERING) {
             if (!adMuted) st.innerText = "Loading...";
         }
+    }
+
+    // --- Preview countdown timer ---
+    function startPreviewCountdown() {
+        stopPreviewCountdown();
+        if (previewSeconds === 0) {
+            document.getElementById('previewCountdown').innerText = "";
+            return;
+        }
+        let remaining = previewSeconds;
+        const cd = document.getElementById('previewCountdown');
+        cd.innerText = `⏱ ${remaining}s`;
+        previewTimer = setInterval(() => {
+            remaining--;
+            if (remaining <= 0) {
+                stopPreviewCountdown();
+                cd.innerText = "Time's up!";
+                player.pauseVideo();
+            } else {
+                cd.innerText = `⏱ ${remaining}s`;
+            }
+        }, 1000);
+    }
+
+    function stopPreviewCountdown() {
+        if (previewTimer) { clearInterval(previewTimer); previewTimer = null; }
+    }
+
+    // --- Play from start ---
+    function restartFromBeginning() {
+        playingForReal = false; // Allow seek logic to re-trigger fresh
+        player.seekTo(0, true);
+        player.playVideo();
+        // Override countdown to full length again
+        stopPreviewCountdown();
+        if (previewSeconds > 0) {
+            let remaining = previewSeconds;
+            const cd = document.getElementById('previewCountdown');
+            cd.innerText = `⏱ ${remaining}s`;
+            previewTimer = setInterval(() => {
+                remaining--;
+                if (remaining <= 0) {
+                    stopPreviewCountdown();
+                    cd.innerText = "Time's up!";
+                    player.pauseVideo();
+                } else {
+                    cd.innerText = `⏱ ${remaining}s`;
+                }
+            }, 1000);
+        }
+        playingForReal = true; // Mark as playing so onPlayerStateChange doesn't re-seek to 45s
     }
 
     function onPlayerError(event) {
@@ -358,6 +476,7 @@
             document.getElementById('statusText').innerText = "Signal lost.";
             document.getElementById('loadBtn').classList.remove('hidden');
             document.getElementById('controls').classList.add('hidden');
+            document.getElementById('extraControls').classList.add('hidden');
         }
     }
 
@@ -928,6 +1047,9 @@
         isResultsScreen = false;
         currentLyrics = "";
         adMuted = false;
+        playingForReal = false;
+        stopPreviewCountdown();
+        document.getElementById('previewCountdown').innerText = "";
 
         document.getElementById('lyricsDisplay').classList.add('hidden');
         document.getElementById('lyricsToggleBtn').innerText = "📜 Show Lyrics";
@@ -949,15 +1071,17 @@
             }
             document.getElementById('loadBtn').classList.add('hidden');
             document.getElementById('controls').classList.remove('hidden');
+            document.getElementById('extraControls').classList.remove('hidden');
             document.getElementById('pauseBtn').innerText = "▶ Play";
         } else {
             currentSong = getNextSong();
             playedIds.add(currentSong.id);
-            lastVideoId = currentSong.id; // Track expected video ID for ad detection
+            lastVideoId = currentSong.id;
             updateDeckInfo(); saveState();
             player.loadVideoById({ videoId: currentSong.id, startSeconds: 45 });
             document.getElementById('loadBtn').classList.add('hidden');
             document.getElementById('controls').classList.remove('hidden');
+            document.getElementById('extraControls').classList.remove('hidden');
             document.getElementById('pauseBtn').innerText = "▶ Play";
         }
     }
@@ -1001,7 +1125,11 @@
     }
 
     function submitTurn() {
-        if (document.querySelectorAll('.sc-check:checked').length >= 2) players[cur].score++;
+        const scored = document.querySelectorAll('.sc-check:checked').length >= 2;
+        if (scored) {
+            players[cur].score++;
+            celebrateScore(cur);
+        }
         if (players[cur].score >= 10) {
             document.getElementById('game').classList.add('hidden');
             document.getElementById('winScreen').classList.remove('hidden');
@@ -1012,12 +1140,43 @@
         document.querySelectorAll('.sc-check').forEach(c => c.checked = false);
         cur = (cur + 1) % players.length;
         if (!customPlaylistId) player.stopVideo();
+        stopPreviewCountdown();
         isResultsScreen = false;
+        playingForReal = false;
         document.getElementById('lyricsArea').classList.add('hidden');
         document.getElementById('results').classList.add('hidden');
+        document.getElementById('extraControls').classList.add('hidden');
         document.getElementById('loadBtn').classList.remove('hidden');
+        document.getElementById('previewCountdown').innerText = "";
         currentSong = null;
         updateBoard(); saveState();
+    }
+
+    function celebrateScore(playerIndex) {
+        // Flash the scoreboard entry
+        updateBoard();
+        setTimeout(() => {
+            const items = document.querySelectorAll('.score-item');
+            if (items[playerIndex]) {
+                items[playerIndex].classList.add('score-celebrate');
+                setTimeout(() => items[playerIndex].classList.remove('score-celebrate'), 700);
+            }
+        }, 50);
+
+        // Burst confetti emojis from center screen
+        const emojis = ['🎉','⭐','✨','🌟','💫','🎊'];
+        for (let i = 0; i < 8; i++) {
+            setTimeout(() => {
+                const el = document.createElement('div');
+                el.className = 'confetti-piece';
+                el.innerText = emojis[Math.floor(Math.random() * emojis.length)];
+                el.style.left = (30 + Math.random() * 40) + 'vw';
+                el.style.top = (40 + Math.random() * 20) + 'vh';
+                el.style.animationDelay = (Math.random() * 0.2) + 's';
+                document.body.appendChild(el);
+                setTimeout(() => el.remove(), 1100);
+            }, i * 60);
+        }
     }
 
     function triggerReset() {
