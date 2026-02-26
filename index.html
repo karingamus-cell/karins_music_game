@@ -245,6 +245,7 @@
                 <div style="display: flex; gap: 10px;">
                     <button onclick="selectDisneyPlaylist()" class="ghost featured-btn" style="flex: 1;">✨ Disney</button>
                     <button onclick="selectEurovisionPlaylist()" class="ghost featured-btn" style="flex: 1;">🎤 Eurovision</button>
+                    <button onclick="selectHitsTodayPlaylist()" class="ghost featured-btn" style="flex: 1;">🔥 Hits Today</button>
                 </div>
             </div>
             <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 25px;">
@@ -893,6 +894,12 @@
         document.getElementById('customStatus').innerText = "Disney Magic Linked! ✨";
     }
 
+    function selectHitsTodayPlaylist() {
+        document.getElementById('customUrl').value = "https://www.youtube.com/watch?v=8iT9DRe3cHE&list=PLOHoVaTp8R7f9GV4HW3joHrz4Oq16QBph";
+        applyCustomPlaylist();
+        document.getElementById('customStatus').innerText = "Today's Hits Linked! 🔥";
+    }
+
     function selectEurovisionPlaylist() {
         document.getElementById('customUrl').value = "https://www.youtube.com/playlist?list=PLFGFNKT7xpknOeLZfasz2apcdR32DxkAn";
         applyCustomPlaylist();
@@ -1010,6 +1017,7 @@
             const url = document.getElementById('customUrl').value;
             if (url.includes("Disney")) currentModeText = "Disney Magic";
             else if (url.includes("Eurovision")) currentModeText = "Eurovision Night";
+            else if (url.includes("PLOHoVaTp8R7f9GV4HW3joHrz4Oq16QBph")) currentModeText = "Hits Today";
             else currentModeText = "Custom Session";
         } else {
             let pool = getFilteredSongs();
