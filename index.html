@@ -217,6 +217,59 @@
             box-shadow: 0 0 16px rgba(255, 107, 107, 0.3) !important;
         }
 
+        /* ── Role badge ── */
+        .role-badge {
+            display: inline-block; padding: 5px 14px; border-radius: 50px;
+            font-size: 0.6rem; font-weight: 800; letter-spacing: 2px;
+            text-transform: uppercase; margin-bottom: 18px;
+        }
+        .role-badge.host { background: rgba(244,194,194,0.15); color: var(--primary); border: 1px solid var(--primary); }
+        .role-badge.player { background: rgba(168,129,175,0.15); color: var(--accent); border: 1px solid var(--accent); }
+
+        /* ── Session panel on setup screen ── */
+        .session-panel {
+            background: rgba(168,129,175,0.08); border: 1px solid rgba(168,129,175,0.25);
+            border-radius: 20px; padding: 20px; margin-bottom: 25px; text-align: center;
+        }
+        .session-code {
+            font-family: 'Playfair Display', serif; font-size: 2.5rem;
+            color: var(--primary); letter-spacing: 8px; margin: 8px 0;
+        }
+        #qrContainer img { border-radius: 12px; margin-top: 10px; }
+        .waiting-players { margin-top: 12px; font-size: 0.75rem; color: var(--text-muted); }
+        .waiting-players span {
+            display: inline-block; background: rgba(244,194,194,0.1);
+            border: 1px solid var(--glass-border); border-radius: 50px;
+            padding: 4px 12px; margin: 3px; font-size: 0.7rem; color: var(--text-main);
+        }
+
+        /* ── Player join screen ── */
+        #playerJoin { text-align: center; }
+        #playerJoin h1 { font-size: 2.2rem; }
+
+        /* ── Player waiting screen ── */
+        #playerWaiting { text-align: center; }
+        .listening-pulse {
+            font-size: 3rem; margin: 20px 0;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+        @keyframes pulse { 0%,100% { opacity:1; transform:scale(1); } 50% { opacity:0.5; transform:scale(0.9); } }
+        .player-scoreboard { margin-top: 25px; }
+        .player-score-row {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 10px 16px; margin: 6px 0;
+            background: rgba(255,255,255,0.02); border-radius: 12px;
+            border: 1px solid var(--glass-border); font-size: 0.85rem;
+        }
+        .player-score-row.active-turn {
+            background: rgba(244,194,194,0.08);
+            border-color: var(--primary); color: var(--primary);
+        }
+        .player-score-row b { color: var(--primary); }
+
+        /* ── Player reveal screen ── */
+        #playerReveal { text-align: center; }
+
         /* Preview length pills */
         .preview-pills { display: flex; gap: 8px; margin-top: 8px; }
         .preview-pill {
@@ -255,8 +308,10 @@
     <div class="card">
         <!-- SETUP PHASE -->
         <div id="setup">
+            <div class="role-badge host">🎛️ Host</div>
             <h1>Hits-ster</h1>
             <span class="subtitle">by Karin</span>
+
             <div class="input-group">
                 <label>Players (Max 10)</label>
                 <div class="player-input-wrapper">
@@ -308,12 +363,21 @@
                     <button class="preview-pill active" onclick="setPreview(0, this)">Unlimited</button>
                 </div>
             </div>
+            <!-- Session panel: shown after session is created, below all setup options -->
+            <div id="sessionPanel" class="session-panel hidden">
+                <div style="font-size:0.65rem; letter-spacing:2px; text-transform:uppercase; color:var(--text-muted);">📱 Want to play on your phone too?</div>
+                <div class="session-code" id="sessionCodeDisplay"></div>
+                <div style="font-size:0.7rem; color:var(--text-muted); margin-bottom:8px;">Scan the QR code to join from another device</div>
+                <div id="qrContainer"></div>
+                <div class="waiting-players" id="waitingPlayersList"></div>
+            </div>
             <button id="startBtn" class="hidden pink" onclick="startGame()">Rock On</button>
             <div class="rules">Reach 10 points. On your turn, listen and name 2 out of 3 details correctly to gain a point.</div>
         </div>
 
         <!-- GAME PHASE -->
         <div id="game" class="hidden">
+            <div class="role-badge host">🎛️ Host</div>
             <div id="modeInfo"></div>
             <h2 id="turnTxt" style="font-family: 'Playfair Display', serif; font-size: 2.2rem; margin: 0 0 8px 0;"></h2>
             <p id="deckInfo" style="font-size: 0.65rem; color: var(--text-muted); margin-bottom: 30px; letter-spacing: 1px;"></p>
@@ -360,11 +424,265 @@
             <p style="letter-spacing: 3px; text-transform: uppercase; color: var(--primary); margin-top: 25px; font-weight: 700; font-size: 0.8rem;">The Ultimate Hitster</p>
             <button onclick="location.reload()" class="pink" style="margin-top: 50px;">New Beginning</button>
         </div>
+
+        <!-- PLAYER: JOIN SCREEN -->
+        <div id="playerJoin" class="hidden">
+            <div class="role-badge player">🎵 Player</div>
+            <h1>Hits-ster</h1>
+            <span class="subtitle">by Karin</span>
+            <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom:25px;">Enter your name to join the session</p>
+            <div class="input-group">
+                <input type="text" id="joinName" placeholder="Your name..." autocomplete="off" style="text-align:center; font-size:1.1rem;">
+            </div>
+            <div id="joinCodeInfo" style="font-size:0.7rem; color:var(--text-muted); margin-bottom:15px; letter-spacing:1px;"></div>
+            <button onclick="joinSession()" class="pink">Join Game</button>
+            <p id="joinError" style="color:#ff6b6b; font-size:0.75rem; margin-top:15px; display:none;">Session not found or game already started.</p>
+        </div>
+
+        <!-- PLAYER: WAITING SCREEN (song playing) -->
+        <div id="playerWaiting" class="hidden">
+            <div class="role-badge player">🎵 Player</div>
+            <div id="pwTurnInfo" style="font-size:0.8rem; color:var(--text-muted); margin-bottom:5px; letter-spacing:1px; text-transform:uppercase;"></div>
+            <h2 id="pwTitle" style="font-family:'Playfair Display',serif; font-size:1.8rem; margin:0 0 20px 0;">Listening...</h2>
+            <div class="listening-pulse">🎵</div>
+            <p style="font-size:0.8rem; color:var(--text-muted); margin-top:5px;">The host is playing a song</p>
+            <div class="player-scoreboard" id="pwScoreboard"></div>
+        </div>
+
+        <!-- PLAYER: REVEAL SCREEN -->
+        <div id="playerReveal" class="hidden">
+            <div class="role-badge player">🎵 Player</div>
+            <h3 id="prTitle" style="font-family:'Playfair Display',serif; font-size:2rem; margin:15px 0 5px 0;"></h3>
+            <p id="prArtist" style="color:var(--text-muted); margin:0 0 5px 0; font-size:1rem;"></p>
+            <p id="prExtra" class="hidden" style="color:var(--accent); margin:0 0 15px 0; font-size:0.8rem; letter-spacing:1px; text-transform:uppercase; font-weight:600;"></p>
+            <div id="prYear" style="font-size:3.2rem; font-weight:800; color:var(--primary); margin-bottom:20px; letter-spacing:-2px;"></div>
+            <div id="prLyricsArea">
+                <button id="prLyricsBtn" onclick="togglePlayerLyrics()" class="lyrics-btn">📜 Show Lyrics</button>
+                <div id="prLyricsDisplay" class="lyrics-box hidden">Searching for lyrics...</div>
+            </div>
+            <div class="player-scoreboard" id="prScoreboard"></div>
+        </div>
     </div>
 </div>
 
 <script>
-    const STORAGE_KEY = 'hitster_karin_rose_v22';
+    const STORAGE_KEY = 'hitster_karin_rose_v23';
+
+    // ── Multiplayer state ──
+    const SESSION_PREFIX = 'hitstersession_';
+    let sessionCode = null;
+    let isHost = true;
+    let myPlayerName = null;
+    let hostPollInterval = null;
+    let playerPollInterval = null;
+    let playerCurrentLyrics = "";
+
+    // ── Generate a random 6-char session code ──
+    function generateSessionCode() {
+        const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+        let code = '';
+        for (let i = 0; i < 6; i++) code += chars[Math.floor(Math.random() * chars.length)];
+        return code;
+    }
+
+    // ── Create a new session (called at DOMContentLoaded if no ?join param) ──
+    function createSession() {
+        sessionCode = generateSessionCode();
+        const sessionData = {
+            code: sessionCode,
+            status: 'waiting',     // waiting | playing | revealed | ended
+            players: [],           // joined players (phones)
+            gameStarted: false,
+            currentSong: null,
+            currentTitle: '',
+            currentArtist: '',
+            currentYear: '',
+            currentExtra: '',
+            currentLyrics: '',
+            scoreboard: [],
+            currentTurn: '',
+            winner: null,
+            ts: Date.now()
+        };
+        try { window.storage.set(SESSION_PREFIX + sessionCode, JSON.stringify(sessionData), true); } catch(e) {}
+
+        // Show session panel
+        document.getElementById('sessionCodeDisplay').innerText = sessionCode;
+        document.getElementById('sessionPanel').classList.remove('hidden');
+
+        // Generate QR code using free API
+        const joinUrl = window.location.href.split('?')[0] + '?join=' + sessionCode;
+        const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=${encodeURIComponent(joinUrl)}&bgcolor=151218&color=f4c2c2&qzone=1`;
+        document.getElementById('qrContainer').innerHTML = `<img src="${qrUrl}" width="140" height="140" alt="QR Code">`;
+
+        // Poll for joining players
+        hostPollInterval = setInterval(pollForJoiners, 2000);
+    }
+
+    async function pollForJoiners() {
+        if (!sessionCode) return;
+        try {
+            const res = await window.storage.get(SESSION_PREFIX + sessionCode, true);
+            if (!res) return;
+            const data = JSON.parse(res.value);
+            const list = document.getElementById('waitingPlayersList');
+            if (data.players && data.players.length > 0) {
+                list.innerHTML = '<div style="margin-bottom:6px;">Joined:</div>' +
+                    data.players.map(n => `<span>${n}</span>`).join('');
+            } else {
+                list.innerHTML = '<div>Waiting for players to scan & join...</div>';
+            }
+        } catch(e) {}
+    }
+
+    // ── Write game state to shared storage so players can sync ──
+    async function syncToPlayers(extraFields = {}) {
+        if (!sessionCode) return;
+        try {
+            const res = await window.storage.get(SESSION_PREFIX + sessionCode, true);
+            if (!res) return;
+            const data = JSON.parse(res.value);
+            const updated = Object.assign(data, {
+                scoreboard: players.map(p => ({ name: p.name, score: p.score })),
+                currentTurn: players[cur] ? players[cur].name : '',
+                ts: Date.now()
+            }, extraFields);
+            await window.storage.set(SESSION_PREFIX + sessionCode, JSON.stringify(updated), true);
+        } catch(e) {}
+    }
+
+    // ── Player side: detect ?join=CODE in URL ──
+    function checkJoinParam() {
+        const params = new URLSearchParams(window.location.search);
+        const code = params.get('join');
+        if (code) {
+            isHost = false;
+            sessionCode = code;
+            // Show player join screen, hide everything else
+            document.getElementById('setup').classList.add('hidden');
+            document.getElementById('playerJoin').classList.remove('hidden');
+            document.getElementById('joinCodeInfo').innerText = `Session: ${code}`;
+            // Stop YouTube from loading (not needed on player phones)
+            clearInterval(adCheckInterval);
+            return true;
+        }
+        return false;
+    }
+
+    async function joinSession() {
+        const name = document.getElementById('joinName').value.trim();
+        if (!name) { document.getElementById('joinName').focus(); return; }
+
+        try {
+            const res = await window.storage.get(SESSION_PREFIX + sessionCode, true);
+            if (!res) { document.getElementById('joinError').style.display = 'block'; return; }
+            const data = JSON.parse(res.value);
+            if (data.gameStarted) { document.getElementById('joinError').innerText = 'Game already started!'; document.getElementById('joinError').style.display = 'block'; return; }
+
+            // Add this player to the session
+            myPlayerName = name;
+            if (!data.players.includes(name)) data.players.push(name);
+            await window.storage.set(SESSION_PREFIX + sessionCode, JSON.stringify(data), true);
+
+            // Show waiting screen
+            document.getElementById('playerJoin').classList.add('hidden');
+            document.getElementById('playerWaiting').classList.remove('hidden');
+            document.getElementById('pwTitle').innerText = 'Waiting for host...';
+
+            // Start polling for game state
+            playerPollInterval = setInterval(playerPoll, 2000);
+        } catch(e) {
+            document.getElementById('joinError').style.display = 'block';
+        }
+    }
+
+    async function playerPoll() {
+        try {
+            const res = await window.storage.get(SESSION_PREFIX + sessionCode, true);
+            if (!res) return;
+            const data = JSON.parse(res.value);
+
+            // Update scoreboard on waiting screen
+            renderPlayerScoreboard('pwScoreboard', data.scoreboard, data.currentTurn);
+
+            if (data.winner) {
+                // Game over
+                clearInterval(playerPollInterval);
+                document.getElementById('playerWaiting').classList.add('hidden');
+                document.getElementById('playerReveal').classList.add('hidden');
+                document.getElementById('winScreen').classList.remove('hidden');
+                document.getElementById('winnerName').innerText = `Congratulations ${data.winner}! You are a queen!`;
+                return;
+            }
+
+            if (data.status === 'playing') {
+                // Song is playing — show waiting screen
+                document.getElementById('playerReveal').classList.add('hidden');
+                document.getElementById('playerWaiting').classList.remove('hidden');
+                document.getElementById('pwTurnInfo').innerText = `It's ${data.currentTurn}'s turn`;
+                document.getElementById('pwTitle').innerText = '🎵 Listening...';
+                renderPlayerScoreboard('pwScoreboard', data.scoreboard, data.currentTurn);
+            } else if (data.status === 'revealed') {
+                // Song revealed — show full info
+                document.getElementById('playerWaiting').classList.add('hidden');
+                document.getElementById('playerReveal').classList.remove('hidden');
+                document.getElementById('prTitle').innerText = data.currentTitle || '';
+                document.getElementById('prArtist').innerText = data.currentArtist || '';
+                document.getElementById('prYear').innerText = data.currentYear || '';
+                const extra = document.getElementById('prExtra');
+                if (data.currentExtra) { extra.innerText = data.currentExtra; extra.classList.remove('hidden'); }
+                else { extra.classList.add('hidden'); }
+                renderPlayerScoreboard('prScoreboard', data.scoreboard, data.currentTurn);
+                // Reset lyrics if song changed
+                if (data.currentTitle !== (document.getElementById('prTitle')._lastTitle || '')) {
+                    playerCurrentLyrics = '';
+                    document.getElementById('prLyricsDisplay').classList.add('hidden');
+                    document.getElementById('prLyricsBtn').innerText = '📜 Show Lyrics';
+                    document.getElementById('prTitle')._lastTitle = data.currentTitle;
+                }
+            } else if (data.status === 'waiting') {
+                document.getElementById('pwTitle').innerText = 'Waiting for next song...';
+            }
+        } catch(e) {}
+    }
+
+    function renderPlayerScoreboard(containerId, scoreboard, currentTurn) {
+        if (!scoreboard || scoreboard.length === 0) return;
+        const el = document.getElementById(containerId);
+        el.innerHTML = scoreboard.map(p =>
+            `<div class="player-score-row ${p.name === currentTurn ? 'active-turn' : ''}">
+                <span>${p.name === currentTurn ? '🎤 ' : ''}${p.name}</span>
+                <b>${p.score}</b>
+            </div>`
+        ).join('');
+    }
+
+    async function togglePlayerLyrics() {
+        const display = document.getElementById('prLyricsDisplay');
+        const btn = document.getElementById('prLyricsBtn');
+        if (!display.classList.contains('hidden')) {
+            display.classList.add('hidden'); btn.innerText = '📜 Show Lyrics'; return;
+        }
+        display.classList.remove('hidden'); btn.innerText = '📜 Hide Lyrics';
+        if (playerCurrentLyrics) { display.innerText = playerCurrentLyrics; return; }
+        display.innerText = 'Searching for lyrics...';
+        const title = document.getElementById('prTitle').innerText;
+        const artist = document.getElementById('prArtist').innerText;
+        if (!title) { display.innerText = 'No song info yet.'; return; }
+        try {
+            const res = await fetch(`https://api.lyrics.ovh/v1/${encodeURIComponent(artist)}/${encodeURIComponent(title)}`);
+            if (res.ok) {
+                const d = await res.json();
+                if (d.lyrics && d.lyrics.length > 30) { playerCurrentLyrics = d.lyrics.trim(); display.innerText = playerCurrentLyrics; return; }
+            }
+            const res2 = await fetch(`https://lrclib.net/api/search?q=${encodeURIComponent(title + ' ' + artist)}`);
+            if (res2.ok) {
+                const results = await res2.json();
+                if (results.length > 0 && results[0].plainLyrics) { playerCurrentLyrics = results[0].plainLyrics.trim(); display.innerText = playerCurrentLyrics; return; }
+            }
+            display.innerText = 'Lyrics were too shy for this one!';
+        } catch(e) { display.innerText = 'Lyrics were too shy for this one!'; }
+    }
 
     var tag = document.createElement('script');
     tag.src = "https://www.youtube.com/iframe_api";
@@ -922,6 +1240,11 @@
     let currentModeText = "All Eras";
 
     document.addEventListener('DOMContentLoaded', () => {
+        // Player path — joining via QR code URL
+        if (checkJoinParam()) return;
+
+        // Host path — create session and set up filters
+        createSession();
         const decIn = document.getElementById('decadeFilter');
         const urlIn = document.getElementById('customUrl');
         decIn.addEventListener('change', () => { if (decIn.value !== 'all') { customPlaylistId = null; checkFilters(); } });
@@ -1099,6 +1422,9 @@
         document.getElementById('game').classList.remove('hidden');
         document.getElementById('modeInfo').innerText = `Horizon: ${currentModeText}`;
         updateBoard(); updateDeckInfo(); saveState();
+        // Mark session as started so players can no longer join
+        clearInterval(hostPollInterval);
+        syncToPlayers({ gameStarted: true, status: 'waiting' });
     }
 
     function updateDeckInfo() {
@@ -1170,6 +1496,7 @@
             document.getElementById('controls').classList.remove('hidden');
             document.getElementById('extraControls').classList.remove('hidden');
             document.getElementById('pauseBtn').innerText = "▶ Play";
+            syncToPlayers({ status: 'playing', currentTitle: '', currentArtist: '', currentYear: '' });
         }
     }
 
@@ -1397,6 +1724,15 @@
             resYear.innerText = currentSong.y || "----";
             songLink.href = `https://www.youtube.com/watch?v=${currentSong.id}`;
         }
+
+        // Sync to player phones
+        syncToPlayers({
+            status: 'revealed',
+            currentTitle: document.getElementById('resTitle').innerText,
+            currentArtist: document.getElementById('resArtist').innerText,
+            currentYear: document.getElementById('resYear').innerText,
+            currentExtra: document.getElementById('resExtra').innerText || ''
+        });
     }
 
     function submitTurn() {
@@ -1406,10 +1742,12 @@
             celebrateScore(cur);
         }
         if (players[cur].score >= 10) {
+            const winnerName = players[cur].name;
             document.getElementById('game').classList.add('hidden');
             document.getElementById('winScreen').classList.remove('hidden');
-            document.getElementById('winnerName').innerText = `Congratulations ${players[cur].name}! You are a queen!`;
+            document.getElementById('winnerName').innerText = `Congratulations ${winnerName}! You are a queen!`;
             localStorage.removeItem(STORAGE_KEY);
+            syncToPlayers({ status: 'ended', winner: winnerName });
             return;
         }
         document.querySelectorAll('.sc-check').forEach(c => c.checked = false);
@@ -1425,6 +1763,7 @@
         document.getElementById('previewCountdown').innerText = "";
         currentSong = null;
         updateBoard(); saveState();
+        syncToPlayers({ status: 'waiting' });
     }
 
     function celebrateScore(playerIndex) {
