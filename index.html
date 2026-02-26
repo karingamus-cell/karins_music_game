@@ -992,8 +992,20 @@
         });
     }
 
+    function trackGameStart() {
+        try {
+            fetch("https://script.google.com/a/macros/innovid.com/s/AKfycbzuyCBA6hN12dgUOQm7MbBEDhe3kpY3_DiWXWxPIe-rs59S3Om-jd23P8JHUV_pmwGr/exec", {
+                method: "POST",
+                mode: "no-cors",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ playerCount: players.length })
+            });
+        } catch(e) {}
+    }
+
     function startGame() {
         if (!isPlayerReady || players.length === 0) return;
+        trackGameStart();
         isPlaylistStarted = false;
         playedIds = new Set();
         if (customPlaylistId) {
