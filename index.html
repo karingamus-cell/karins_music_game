@@ -1156,24 +1156,43 @@
 
         if (customPlaylistId) {
             const data = player.getVideoData();
-            let ft = (data.title || "Untitled").replace(/\[.*?\]|\(.*?\)|\bOfficial Video\b|\bOfficial Audio\b|\bLyric Video\b|\bOfficial Clip\b|\bFrom.*\b/gi, '').trim();
+            const originalTitle = data.title || "Untitled";
+
+            // Step 1: Extract year from the ORIGINAL title before any stripping
+            // Catches: "(Eurovision 2012)", "- 2012", "| 2012", plain "2012" anywhere
+            let year = null;
+            const ymOrig = originalTitle.match(/\b(19[5-9]\d|20[0-2]\d)\b/);
+            if (ymOrig) year = ymOrig[0];
+
+            // Step 2: Clean up the title for display
+            let ft = originalTitle
+                .replace(/\(Eurovision[^)]*\)/gi, '')   // remove (Eurovision ...) blocks
+                .replace(/Eurovision Song Contest\s*\d*/gi, '')
+                .replace(/\bESC\s*\d*/gi, '')
+                .replace(/\[.*?\]/g, '')
+                .replace(/\(.*?\)/g, '')
+                .replace(/\bOfficial Video\b|\bOfficial Audio\b|\bLyric Video\b|\bOfficial Clip\b/gi, '')
+                .replace(/\s{2,}/g, ' ')
+                .trim();
+
+            // Remove the year from the cleaned title if it appears there too
+            if (year) ft = ft.replace(year, '').replace(/[-|]+\s*$/, '').trim();
+
             let artist = data.author || "Unknown";
             let name = ft;
-            let year = null;
 
-            // Try to extract year from title string first
-            const ym = ft.match(/\b(19|20)\d{2}\b/);
-            if (ym) { year = ym[0]; ft = ft.replace(year, '').trim(); }
+            // Step 3: Split artist - song name
+            if (ft.includes(" - ")) {
+                const parts = ft.split(" - ");
+                artist = parts[0].trim();
+                name = parts.slice(1).join(" - ").trim(); // handle double dashes
+            } else if (ft.includes(": ")) {
+                [artist, name] = ft.split(": ").map(s => s.trim());
+            }
 
-            // Parse artist/name from title
-            if (ft.includes(" - ")) { [artist, name] = ft.split(" - ").map(s => s.trim()); }
-            else if (ft.includes(": ")) { [artist, name] = ft.split(": ").map(s => s.trim()); }
-            else { name = ft; }
-
-            // If still no year, try Disney lookup against full original title
+            // Step 4: If still no year, try Disney lookup as fallback
             if (!year) {
-                const fullTitle = (data.title || "").toLowerCase();
-                year = getDisneyYear(fullTitle) || getDisneyYear(name) || "—";
+                year = getDisneyYear(originalTitle) || getDisneyYear(name) || "—";
             }
 
             resTitle.innerText = name;
