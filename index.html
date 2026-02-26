@@ -254,10 +254,10 @@
             <div class="input-group">
                 <label>Preview Length</label>
                 <div class="preview-pills">
-                    <button class="preview-pill active" onclick="setPreview(10, this)">10s</button>
+                    <button class="preview-pill" onclick="setPreview(10, this)">10s</button>
                     <button class="preview-pill" onclick="setPreview(20, this)">20s</button>
                     <button class="preview-pill" onclick="setPreview(30, this)">30s</button>
-                    <button class="preview-pill" onclick="setPreview(0, this)">Unlimited</button>
+                    <button class="preview-pill active" onclick="setPreview(0, this)">Unlimited</button>
                 </div>
             </div>
             <button id="startBtn" class="hidden pink" onclick="startGame()">Rock On</button>
@@ -332,7 +332,7 @@
     let adCheckInterval = null;
     let lastVideoId = "";
     let adMuted = false;
-    let previewSeconds = 10;       // NEW: preview length in seconds (0 = unlimited)
+    let previewSeconds = 0;       // default: unlimited
     let previewTimer = null;        // NEW: countdown timer
     let songStartTime = null;       // NEW: when the song actually started playing
     let playingForReal = false;     // NEW: true once the correct video is confirmed playing
@@ -444,27 +444,25 @@
 
     // --- Play from start ---
     function restartFromBeginning() {
-        playingForReal = false; // Allow seek logic to re-trigger fresh
+        stopPreviewCountdown();
+        playingForReal = true; // Already confirmed playing, just restarting position
         player.seekTo(0, true);
         player.playVideo();
-        // Override countdown to full length again
-        stopPreviewCountdown();
+        // Restart the countdown from the beginning
         if (previewSeconds > 0) {
+            document.getElementById('previewCountdown').innerText = `⏱ ${previewSeconds}s`;
             let remaining = previewSeconds;
-            const cd = document.getElementById('previewCountdown');
-            cd.innerText = `⏱ ${remaining}s`;
             previewTimer = setInterval(() => {
                 remaining--;
                 if (remaining <= 0) {
                     stopPreviewCountdown();
-                    cd.innerText = "Time's up!";
+                    document.getElementById('previewCountdown').innerText = "Time's up!";
                     player.pauseVideo();
                 } else {
-                    cd.innerText = `⏱ ${remaining}s`;
+                    document.getElementById('previewCountdown').innerText = `⏱ ${remaining}s`;
                 }
             }, 1000);
         }
-        playingForReal = true; // Mark as playing so onPlayerStateChange doesn't re-seek to 45s
     }
 
     function onPlayerError(event) {
@@ -1102,6 +1100,48 @@
         player.getPlayerState() === YT.PlayerState.PLAYING ? player.pauseVideo() : player.playVideo();
     }
 
+    // Disney film year lookup — maps keywords in song/title to release year
+    const disneyYears = {
+        "snow white": 1937, "pinocchio": 1940, "fantasia": 1940, "dumbo": 1941,
+        "bambi": 1942, "cinderella": 1950, "alice in wonderland": 1951,
+        "peter pan": 1953, "sleeping beauty": 1959, "101 dalmatians": 1961,
+        "jungle book": 1967, "aristocats": 1970, "robin hood": 1973,
+        "little mermaid": 1989, "beauty and the beast": 1991, "aladdin": 1992,
+        "lion king": 1994, "pocahontas": 1995, "hunchback": 1996,
+        "hercules": 1997, "mulan": 1998, "tarzan": 1999, "fantasia 2000": 1999,
+        "emperor's new groove": 2000, "atlantis": 2001, "lilo and stitch": 2002,
+        "lilo & stitch": 2002, "treasure planet": 2002, "brother bear": 2003,
+        "home on the range": 2004, "chicken little": 2005, "meet the robinsons": 2007,
+        "bolt": 2008, "princess and the frog": 2009, "tangled": 2010,
+        "winnie the pooh": 2011, "brave": 2012, "frozen": 2013,
+        "big hero 6": 2014, "zootopia": 2016, "moana": 2016,
+        "coco": 2017, "ralph breaks": 2018, "wreck-it ralph": 2012,
+        "toy story": 1995, "toy story 2": 1999, "toy story 3": 2010, "toy story 4": 2019,
+        "a bug's life": 1998, "monsters inc": 2001, "monsters, inc": 2001,
+        "finding nemo": 2003, "the incredibles": 2004, "incredibles": 2004,
+        "cars": 2006, "ratatouille": 2007, "wall-e": 2008, "wall·e": 2008,
+        "up": 2009, "brave": 2012, "inside out": 2015, "the good dinosaur": 2015,
+        "finding dory": 2016, "cars 3": 2017, "coco": 2017, "incredibles 2": 2018,
+        "onward": 2020, "soul": 2020, "luca": 2021, "turning red": 2022,
+        "lightyear": 2022, "elemental": 2023, "wish": 2023,
+        "encanto": 2021, "raya": 2021, "strange world": 2022,
+        "black cauldron": 1985, "great mouse detective": 1986,
+        "oliver": 1988, "oliver & company": 1988,
+        "rescuers": 1977, "fox and the hound": 1981,
+        "sword in the stone": 1963, "mary poppins": 1964,
+        "newsies": 1992, "descendant": 2015, "descendants": 2015,
+        "high school musical": 2006, "hannah montana": 2009,
+        "muppets": 2011, "maleficent": 2014, "jungle cruise": 2021
+    };
+
+    function getDisneyYear(titleStr) {
+        const lower = titleStr.toLowerCase();
+        for (const [keyword, year] of Object.entries(disneyYears)) {
+            if (lower.includes(keyword)) return year;
+        }
+        return null;
+    }
+
     function showResults() {
         isResultsScreen = true;
         player.pauseVideo();
@@ -1116,14 +1156,26 @@
 
         if (customPlaylistId) {
             const data = player.getVideoData();
-            let ft = (data.title || "Untitled").replace(/\[.*?\]|\(.*?\)|\bOfficial Video\b|\bOfficial Audio\b|\bLyric Video\b/gi, '').trim();
+            let ft = (data.title || "Untitled").replace(/\[.*?\]|\(.*?\)|\bOfficial Video\b|\bOfficial Audio\b|\bLyric Video\b|\bOfficial Clip\b|\bFrom.*\b/gi, '').trim();
             let artist = data.author || "Unknown";
             let name = ft;
-            let year = "Classics";
+            let year = null;
+
+            // Try to extract year from title string first
             const ym = ft.match(/\b(19|20)\d{2}\b/);
             if (ym) { year = ym[0]; ft = ft.replace(year, '').trim(); }
+
+            // Parse artist/name from title
             if (ft.includes(" - ")) { [artist, name] = ft.split(" - ").map(s => s.trim()); }
             else if (ft.includes(": ")) { [artist, name] = ft.split(": ").map(s => s.trim()); }
+            else { name = ft; }
+
+            // If still no year, try Disney lookup against full original title
+            if (!year) {
+                const fullTitle = (data.title || "").toLowerCase();
+                year = getDisneyYear(fullTitle) || getDisneyYear(name) || "—";
+            }
+
             resTitle.innerText = name;
             resArtist.innerText = artist;
             resYear.innerText = year;
