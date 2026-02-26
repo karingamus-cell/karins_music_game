@@ -173,6 +173,50 @@
             animation: confettiBurst 0.9s ease-out forwards;
         }
 
+        /* Player error tooltip */
+        .player-input-wrapper { position: relative; }
+        .player-error {
+            display: none;
+            position: absolute;
+            top: -38px;
+            left: 0;
+            background: #ff6b6b;
+            color: #fff;
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            padding: 8px 14px;
+            border-radius: 10px;
+            white-space: nowrap;
+            z-index: 100;
+            animation: tooltipPop 0.3s cubic-bezier(0.36, 0.07, 0.19, 0.97);
+        }
+        .player-error::after {
+            content: '';
+            position: absolute;
+            top: 100%; left: 18px;
+            border: 6px solid transparent;
+            border-top-color: #ff6b6b;
+        }
+        @keyframes tooltipPop {
+            0%   { opacity: 0; transform: translateY(6px) scale(0.95); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        .player-input-shake {
+            animation: shake 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97);
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%       { transform: translateX(-8px); }
+            40%       { transform: translateX(8px); }
+            60%       { transform: translateX(-5px); }
+            80%       { transform: translateX(5px); }
+        }
+        .player-input-highlight input {
+            border-color: #ff6b6b !important;
+            box-shadow: 0 0 16px rgba(255, 107, 107, 0.3) !important;
+        }
+
         /* Preview length pills */
         .preview-pills { display: flex; gap: 8px; margin-top: 8px; }
         .preview-pill {
@@ -215,9 +259,12 @@
             <span class="subtitle">by Karin</span>
             <div class="input-group">
                 <label>Players (Max 10)</label>
-                <div style="display: flex; gap: 12px;">
-                    <input type="text" id="pName" placeholder="Name" autocomplete="off">
-                    <button onclick="addPlayer()" style="width: auto; margin:0; padding: 0 25px; height: 50px;">+</button>
+                <div class="player-input-wrapper">
+                    <div class="player-error" id="playerError">⚠️ Add at least one player first!</div>
+                    <div style="display: flex; gap: 12px;" id="playerInputRow" >
+                        <input type="text" id="pName" placeholder="Enter a name..." autocomplete="off">
+                        <button onclick="addPlayer()" style="width: auto; margin:0; padding: 0 25px; height: 50px;">+</button>
+                    </div>
                 </div>
                 <div id="pList" style="margin-top: 20px; min-height: 40px;"></div>
             </div>
@@ -955,6 +1002,23 @@
         } catch (e) { }
     }
 
+    function showPlayerError() {
+        const row = document.getElementById('playerInputRow');
+        const tooltip = document.getElementById('playerError');
+        // Show tooltip
+        tooltip.style.display = 'block';
+        // Shake + highlight the input
+        row.classList.add('player-input-shake', 'player-input-highlight');
+        // Scroll the field into view on mobile
+        document.getElementById('pName').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        document.getElementById('pName').focus();
+        // Auto-hide after 3 seconds
+        setTimeout(() => {
+            tooltip.style.display = 'none';
+            row.classList.remove('player-input-shake', 'player-input-highlight');
+        }, 3000);
+    }
+
     function addPlayer() {
         if (players.length >= 10) return;
         let n = document.getElementById('pName').value.trim();
@@ -1009,7 +1073,11 @@
     }
 
     function startGame() {
-        if (!isPlayerReady || players.length === 0) return;
+        if (!isPlayerReady) return;
+        if (players.length === 0) {
+            showPlayerError();
+            return;
+        }
         trackGameStart();
         isPlaylistStarted = false;
         playedIds = new Set();
