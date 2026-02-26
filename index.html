@@ -335,7 +335,8 @@
             </div>
             <div id="results" class="hidden">
                 <h3 id="resTitle" style="font-family: 'Playfair Display', serif; font-size: 2rem; margin: 15px 0 5px 0;"></h3>
-                <p id="resArtist" style="color: var(--text-muted); margin: 0 0 20px 0; font-size: 1rem;"></p>
+                <p id="resArtist" style="color: var(--text-muted); margin: 0 0 5px 0; font-size: 1rem;"></p>
+                <p id="resExtra" class="hidden" style="color: var(--accent); margin: 0 0 20px 0; font-size: 0.8rem; letter-spacing: 1px; text-transform: uppercase; font-weight: 600;"></p>
                 <div id="resYear" style="font-size: 3.2rem; font-weight: 800; color: var(--primary); margin-bottom: 25px; letter-spacing: -2px;"></div>
                 <div class="checkbox-container">
                     <label class="checkbox-item"><input type="checkbox" class="sc-check"> Track Name</label>
@@ -1176,44 +1177,134 @@
         player.getPlayerState() === YT.PlayerState.PLAYING ? player.pauseVideo() : player.playVideo();
     }
 
-    // Disney film year lookup — maps keywords in song/title to release year
-    const disneyYears = {
-        "snow white": 1937, "pinocchio": 1940, "fantasia": 1940, "dumbo": 1941,
-        "bambi": 1942, "cinderella": 1950, "alice in wonderland": 1951,
-        "peter pan": 1953, "sleeping beauty": 1959, "101 dalmatians": 1961,
-        "jungle book": 1967, "aristocats": 1970, "robin hood": 1973,
-        "little mermaid": 1989, "beauty and the beast": 1991, "aladdin": 1992,
-        "lion king": 1994, "pocahontas": 1995, "hunchback": 1996,
-        "hercules": 1997, "mulan": 1998, "tarzan": 1999, "fantasia 2000": 1999,
-        "emperor's new groove": 2000, "atlantis": 2001, "lilo and stitch": 2002,
-        "lilo & stitch": 2002, "treasure planet": 2002, "brother bear": 2003,
-        "home on the range": 2004, "chicken little": 2005, "meet the robinsons": 2007,
-        "bolt": 2008, "princess and the frog": 2009, "tangled": 2010,
-        "winnie the pooh": 2011, "brave": 2012, "frozen": 2013,
-        "big hero 6": 2014, "zootopia": 2016, "moana": 2016,
-        "coco": 2017, "ralph breaks": 2018, "wreck-it ralph": 2012,
-        "toy story": 1995, "toy story 2": 1999, "toy story 3": 2010, "toy story 4": 2019,
-        "a bug's life": 1998, "monsters inc": 2001, "monsters, inc": 2001,
-        "finding nemo": 2003, "the incredibles": 2004, "incredibles": 2004,
-        "cars": 2006, "ratatouille": 2007, "wall-e": 2008, "wall·e": 2008,
-        "up": 2009, "brave": 2012, "inside out": 2015, "the good dinosaur": 2015,
-        "finding dory": 2016, "cars 3": 2017, "coco": 2017, "incredibles 2": 2018,
-        "onward": 2020, "soul": 2020, "luca": 2021, "turning red": 2022,
-        "lightyear": 2022, "elemental": 2023, "wish": 2023,
-        "encanto": 2021, "raya": 2021, "strange world": 2022,
-        "black cauldron": 1985, "great mouse detective": 1986,
-        "oliver": 1988, "oliver & company": 1988,
-        "rescuers": 1977, "fox and the hound": 1981,
-        "sword in the stone": 1963, "mary poppins": 1964,
-        "newsies": 1992, "descendant": 2015, "descendants": 2015,
-        "high school musical": 2006, "hannah montana": 2009,
-        "muppets": 2011, "maleficent": 2014, "jungle cruise": 2021
-    };
+    // Disney lookup — returns { year, movie } for display
+    const disneyMovies = [
+        { keys: ["snow white"], movie: "Snow White and the Seven Dwarfs", year: 1937 },
+        { keys: ["pinocchio"], movie: "Pinocchio", year: 1940 },
+        { keys: ["fantasia 2000"], movie: "Fantasia 2000", year: 1999 },
+        { keys: ["fantasia"], movie: "Fantasia", year: 1940 },
+        { keys: ["dumbo"], movie: "Dumbo", year: 1941 },
+        { keys: ["bambi"], movie: "Bambi", year: 1942 },
+        { keys: ["cinderella"], movie: "Cinderella", year: 1950 },
+        { keys: ["alice in wonderland"], movie: "Alice in Wonderland", year: 1951 },
+        { keys: ["peter pan"], movie: "Peter Pan", year: 1953 },
+        { keys: ["sleeping beauty"], movie: "Sleeping Beauty", year: 1959 },
+        { keys: ["101 dalmatians"], movie: "101 Dalmatians", year: 1961 },
+        { keys: ["sword in the stone"], movie: "The Sword in the Stone", year: 1963 },
+        { keys: ["mary poppins"], movie: "Mary Poppins", year: 1964 },
+        { keys: ["jungle book"], movie: "The Jungle Book", year: 1967 },
+        { keys: ["aristocats"], movie: "The Aristocats", year: 1970 },
+        { keys: ["robin hood"], movie: "Robin Hood", year: 1973 },
+        { keys: ["rescuers down under"], movie: "The Rescuers Down Under", year: 1990 },
+        { keys: ["rescuers"], movie: "The Rescuers", year: 1977 },
+        { keys: ["fox and the hound"], movie: "The Fox and the Hound", year: 1981 },
+        { keys: ["black cauldron"], movie: "The Black Cauldron", year: 1985 },
+        { keys: ["great mouse detective"], movie: "The Great Mouse Detective", year: 1986 },
+        { keys: ["oliver & company", "oliver and company"], movie: "Oliver & Company", year: 1988 },
+        { keys: ["little mermaid"], movie: "The Little Mermaid", year: 1989 },
+        { keys: ["beauty and the beast"], movie: "Beauty and the Beast", year: 1991 },
+        { keys: ["aladdin"], movie: "Aladdin", year: 1992 },
+        { keys: ["newsies"], movie: "Newsies", year: 1992 },
+        { keys: ["lion king"], movie: "The Lion King", year: 1994 },
+        { keys: ["pocahontas"], movie: "Pocahontas", year: 1995 },
+        { keys: ["toy story 4"], movie: "Toy Story 4", year: 2019 },
+        { keys: ["toy story 3"], movie: "Toy Story 3", year: 2010 },
+        { keys: ["toy story 2"], movie: "Toy Story 2", year: 1999 },
+        { keys: ["toy story"], movie: "Toy Story", year: 1995 },
+        { keys: ["hunchback"], movie: "The Hunchback of Notre Dame", year: 1996 },
+        { keys: ["hercules"], movie: "Hercules", year: 1997 },
+        { keys: ["mulan"], movie: "Mulan", year: 1998 },
+        { keys: ["a bug's life", "a bugs life"], movie: "A Bug's Life", year: 1998 },
+        { keys: ["tarzan"], movie: "Tarzan", year: 1999 },
+        { keys: ["emperor's new groove", "emperors new groove"], movie: "The Emperor's New Groove", year: 2000 },
+        { keys: ["monsters, inc", "monsters inc"], movie: "Monsters, Inc.", year: 2001 },
+        { keys: ["atlantis"], movie: "Atlantis: The Lost Empire", year: 2001 },
+        { keys: ["lilo & stitch", "lilo and stitch"], movie: "Lilo & Stitch", year: 2002 },
+        { keys: ["treasure planet"], movie: "Treasure Planet", year: 2002 },
+        { keys: ["finding nemo"], movie: "Finding Nemo", year: 2003 },
+        { keys: ["brother bear"], movie: "Brother Bear", year: 2003 },
+        { keys: ["the incredibles", "incredibles 2"], movie: "Incredibles 2", year: 2018 },
+        { keys: ["incredibles"], movie: "The Incredibles", year: 2004 },
+        { keys: ["home on the range"], movie: "Home on the Range", year: 2004 },
+        { keys: ["chicken little"], movie: "Chicken Little", year: 2005 },
+        { keys: ["cars 3"], movie: "Cars 3", year: 2017 },
+        { keys: ["cars 2"], movie: "Cars 2", year: 2011 },
+        { keys: ["cars"], movie: "Cars", year: 2006 },
+        { keys: ["high school musical"], movie: "High School Musical", year: 2006 },
+        { keys: ["meet the robinsons"], movie: "Meet the Robinsons", year: 2007 },
+        { keys: ["ratatouille"], movie: "Ratatouille", year: 2007 },
+        { keys: ["wall-e", "wall·e", "walle"], movie: "WALL·E", year: 2008 },
+        { keys: ["bolt"], movie: "Bolt", year: 2008 },
+        { keys: ["up "], movie: "Up", year: 2009 },
+        { keys: ["princess and the frog"], movie: "The Princess and the Frog", year: 2009 },
+        { keys: ["tangled"], movie: "Tangled", year: 2010 },
+        { keys: ["winnie the pooh"], movie: "Winnie the Pooh", year: 2011 },
+        { keys: ["muppets"], movie: "The Muppets", year: 2011 },
+        { keys: ["brave"], movie: "Brave", year: 2012 },
+        { keys: ["wreck-it ralph", "wreck it ralph", "ralph breaks"], movie: "Wreck-It Ralph", year: 2012 },
+        { keys: ["frozen 2"], movie: "Frozen 2", year: 2019 },
+        { keys: ["frozen"], movie: "Frozen", year: 2013 },
+        { keys: ["maleficent"], movie: "Maleficent", year: 2014 },
+        { keys: ["big hero 6"], movie: "Big Hero 6", year: 2014 },
+        { keys: ["descendants"], movie: "Descendants", year: 2015 },
+        { keys: ["inside out 2"], movie: "Inside Out 2", year: 2024 },
+        { keys: ["inside out"], movie: "Inside Out", year: 2015 },
+        { keys: ["zootopia", "zootropolis"], movie: "Zootopia", year: 2016 },
+        { keys: ["moana 2"], movie: "Moana 2", year: 2024 },
+        { keys: ["moana"], movie: "Moana", year: 2016 },
+        { keys: ["finding dory"], movie: "Finding Dory", year: 2016 },
+        { keys: ["coco"], movie: "Coco", year: 2017 },
+        { keys: ["soul"], movie: "Soul", year: 2020 },
+        { keys: ["onward"], movie: "Onward", year: 2020 },
+        { keys: ["luca"], movie: "Luca", year: 2021 },
+        { keys: ["encanto"], movie: "Encanto", year: 2021 },
+        { keys: ["raya"], movie: "Raya and the Last Dragon", year: 2021 },
+        { keys: ["jungle cruise"], movie: "Jungle Cruise", year: 2021 },
+        { keys: ["turning red"], movie: "Turning Red", year: 2022 },
+        { keys: ["strange world"], movie: "Strange World", year: 2022 },
+        { keys: ["lightyear"], movie: "Lightyear", year: 2022 },
+        { keys: ["wish"], movie: "Wish", year: 2023 },
+        { keys: ["elemental"], movie: "Elemental", year: 2023 },
+    ];
 
-    function getDisneyYear(titleStr) {
+    function getDisneyInfo(titleStr) {
         const lower = titleStr.toLowerCase();
-        for (const [keyword, year] of Object.entries(disneyYears)) {
-            if (lower.includes(keyword)) return year;
+        for (const entry of disneyMovies) {
+            for (const key of entry.keys) {
+                if (lower.includes(key)) return { movie: entry.movie, year: entry.year };
+            }
+        }
+        return null;
+    }
+
+    // Eurovision: extract country from title parentheses
+    // Handles: "Song - Artist (Country)", "Song (Country 2012)", "Song (Country - Eurovision...)"
+    const eurovisionCountries = [
+        "Albania","Andorra","Armenia","Australia","Austria","Azerbaijan","Belarus",
+        "Belgium","Bosnia","Bulgaria","Croatia","Cyprus","Czech Republic","Denmark",
+        "Estonia","Finland","France","Georgia","Germany","Greece","Hungary","Iceland",
+        "Ireland","Israel","Italy","Latvia","Lithuania","Luxembourg","Malta","Moldova",
+        "Monaco","Montenegro","Morocco","Netherlands","North Macedonia","Norway",
+        "Poland","Portugal","Romania","Russia","San Marino","Serbia","Slovakia",
+        "Slovenia","Spain","Sweden","Switzerland","Turkey","Ukraine","United Kingdom",
+        "UK","Yugoslavia","Serbia and Montenegro"
+    ];
+
+    function getEurovisionCountry(titleStr) {
+        // First try to find country in parentheses: "(Sweden)", "(Sweden 2012)", "(Sweden - Eurovision...)"
+        const parenMatch = titleStr.match(/\(([^)]+)\)/g);
+        if (parenMatch) {
+            for (const block of parenMatch) {
+                const inner = block.replace(/[()]/g, '').trim();
+                for (const country of eurovisionCountries) {
+                    if (inner.toLowerCase().includes(country.toLowerCase())) return country;
+                }
+            }
+        }
+        // Fallback: scan full title for country name
+        for (const country of eurovisionCountries) {
+            const re = new RegExp('\\b' + country.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b', 'i');
+            if (re.test(titleStr)) return country;
         }
         return null;
     }
@@ -1229,20 +1320,46 @@
         const resTitle = document.getElementById('resTitle');
         const resArtist = document.getElementById('resArtist');
         const resYear = document.getElementById('resYear');
+        const resExtra = document.getElementById('resExtra');
+
+        // Always hide resExtra by default; show only when we have content
+        resExtra.classList.add('hidden');
+        resExtra.innerText = '';
+
+        const isDisney = customPlaylistId && document.getElementById('customUrl').value.includes("Disney");
+        const isEurovision = customPlaylistId && document.getElementById('customUrl').value.includes("Eurovision");
 
         if (customPlaylistId) {
             const data = player.getVideoData();
             const originalTitle = data.title || "Untitled";
 
-            // Step 1: Extract year from the ORIGINAL title before any stripping
-            // Catches: "(Eurovision 2012)", "- 2012", "| 2012", plain "2012" anywhere
+            // Step 1: Extract year from ORIGINAL title before any stripping
             let year = null;
             const ymOrig = originalTitle.match(/\b(19[5-9]\d|20[0-2]\d)\b/);
             if (ymOrig) year = ymOrig[0];
 
-            // Step 2: Clean up the title for display
+            // Step 2: For Disney — get movie name & year from lookup
+            if (isDisney) {
+                const info = getDisneyInfo(originalTitle);
+                if (info) {
+                    if (!year) year = String(info.year);
+                    resExtra.innerText = '🎬 ' + info.movie;
+                    resExtra.classList.remove('hidden');
+                }
+            }
+
+            // Step 3: For Eurovision — extract country
+            if (isEurovision) {
+                const country = getEurovisionCountry(originalTitle);
+                if (country) {
+                    resExtra.innerText = '🌍 ' + country;
+                    resExtra.classList.remove('hidden');
+                }
+            }
+
+            // Step 4: Clean up title for display
             let ft = originalTitle
-                .replace(/\(Eurovision[^)]*\)/gi, '')   // remove (Eurovision ...) blocks
+                .replace(/\(Eurovision[^)]*\)/gi, '')
                 .replace(/Eurovision Song Contest\s*\d*/gi, '')
                 .replace(/\bESC\s*\d*/gi, '')
                 .replace(/\[.*?\]/g, '')
@@ -1251,24 +1368,23 @@
                 .replace(/\s{2,}/g, ' ')
                 .trim();
 
-            // Remove the year from the cleaned title if it appears there too
             if (year) ft = ft.replace(year, '').replace(/[-|]+\s*$/, '').trim();
 
             let artist = data.author || "Unknown";
             let name = ft;
 
-            // Step 3: Split artist - song name
             if (ft.includes(" - ")) {
                 const parts = ft.split(" - ");
                 artist = parts[0].trim();
-                name = parts.slice(1).join(" - ").trim(); // handle double dashes
+                name = parts.slice(1).join(" - ").trim();
             } else if (ft.includes(": ")) {
                 [artist, name] = ft.split(": ").map(s => s.trim());
             }
 
-            // Step 4: If still no year, try Disney lookup as fallback
+            // Step 5: Final fallback for year
             if (!year) {
-                year = getDisneyYear(originalTitle) || getDisneyYear(name) || "—";
+                const info = getDisneyInfo(originalTitle);
+                year = (info && String(info.year)) || "—";
             }
 
             resTitle.innerText = name;
