@@ -925,7 +925,7 @@
     document.addEventListener('DOMContentLoaded', () => {
         const decIn = document.getElementById('decadeFilter');
         const urlIn = document.getElementById('customUrl');
-        decIn.addEventListener('change', () => { if (decIn.value !== 'all') { customPlaylistId = null; checkFilters(); } });
+        decIn.addEventListener('change', () => { if (!customPlaylistId) checkFilters(); });
         urlIn.addEventListener('input', () => {
             if (urlIn.value.includes('list=')) {
                 document.getElementById('applyCustomBtn').classList.remove('hidden');
@@ -1336,7 +1336,7 @@
 
             // Step 1: Extract year from ORIGINAL title before any stripping
             let year = null;
-            const ymOrig = originalTitle.match(/\b(19[5-9]\d|20[0-2]\d)\b/);
+            const ymOrig = originalTitle.match(/\b(19\d{2}|20\d{2})\b/);
             if (ymOrig) year = ymOrig[0];
 
             // Step 2: For Disney — get movie name & year from lookup
